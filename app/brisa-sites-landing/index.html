@@ -20,13 +20,16 @@
 <!-- ═══ NAVBAR ═══ -->
 <nav class="navbar">
   <div class="nav-inner">
-    <a href="./" class="logo">
-      <svg viewBox="0 0 32 32" fill="none">
-        <path d="M4 20 Q 8 14, 14 16 T 28 12" stroke="#B85940" stroke-width="2" stroke-linecap="round" fill="none"/>
-        <path d="M4 24 Q 10 18, 16 20 T 28 16" stroke="#C9A961" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
-      </svg>
-      Brisa Sites
-    </a>
+    <div class="nav-left">
+      <a href="/" class="nav-back-link">&larr; Portafolio</a>
+      <a href="./" class="logo">
+        <svg viewBox="0 0 32 32" fill="none">
+          <path d="M4 20 Q 8 14, 14 16 T 28 12" stroke="#B85940" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M4 24 Q 10 18, 16 20 T 28 16" stroke="#C9A961" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+        </svg>
+        Brisa Sites
+      </a>
+    </div>
     <div class="nav-links">
       <a href="#como-funciona"><span class="lang-es">Cómo funciona</span><span class="lang-en">How it works</span></a>
       <a href="#precios"><span class="lang-es">Precios</span><span class="lang-en">Pricing</span></a>
@@ -43,30 +46,44 @@
   <div class="container">
     <div class="hero-grid">
       <div>
-        <span class="eyebrow"><span class="lang-es">Miami · Hollywood · Little Havana</span><span class="lang-en">Miami · Hollywood · Little Havana</span></span>
+        <div class="region-toggle" role="radiogroup" aria-label="Seleccionar región">
+          <button class="region-btn" role="radio" aria-checked="true" data-region="usa">USA</button>
+          <button class="region-btn" role="radio" aria-checked="false" data-region="co">Colombia</button>
+        </div>
+
+        <span class="eyebrow region-usa"><span class="lang-es">Miami · Hollywood · Little Havana</span><span class="lang-en">Miami · Hollywood · Little Havana</span></span>
+        <span class="eyebrow region-co">Medellín · Bogotá · Cali</span>
         <h1 class="hero-title">
           <span class="lang-es">Tu negocio merece estar <em>bien parado</em> en <span class="underline">internet</span>.</span>
           <span class="lang-en">Your business deserves to <em>stand strong</em> on the <span class="underline">internet</span>.</span>
         </h1>
-        <p class="hero-subtitle">
+        <p class="hero-subtitle region-usa">
           <span class="lang-es">Sitios web profesionales, bilingües y listos en 7 días. Para restaurantes, barberías, botánicas, tabaquerías y tiendas que todavía dependen de Yelp o solo redes sociales.</span>
           <span class="lang-en">Professional bilingual websites, ready in 7 days. For restaurants, barbershops, botánicas, cigar shops and boutiques that still rely on Yelp or social media alone.</span>
         </p>
+        <p class="hero-subtitle region-co">Sitios web profesionales y listos en 7 días. Para restaurantes, barberías, salones, profesionales independientes y tiendas que todavía dependen solo de redes sociales o Mercado Libre.</p>
         <div class="hero-cta">
-          <a href="#precios" class="btn btn-primary btn-large">
+          <a href="#precios" class="btn btn-primary btn-large region-usa">
             <span class="lang-es">Ver precios desde $29/mes</span>
             <span class="lang-en">See pricing from $29/mo</span>
           </a>
+          <a href="#precios" class="btn btn-primary btn-large region-co">Ver precios desde $69.000/mes</a>
           <a href="#como-funciona" class="btn-text">
             <span class="lang-es">Cómo funciona →</span>
             <span class="lang-en">How it works →</span>
           </a>
         </div>
-        <div class="hero-trust">
+        <div class="hero-trust region-usa">
           <span><span class="lang-es">Sin pagos iniciales</span><span class="lang-en">No setup fees</span></span>
           <span><span class="lang-es">Listo en 7 días</span><span class="lang-en">Ready in 7 days</span></span>
           <span><span class="lang-es">Bilingüe ES / EN</span><span class="lang-en">Bilingual ES / EN</span></span>
           <span><span class="lang-es">Hosting incluido</span><span class="lang-en">Hosting included</span></span>
+        </div>
+        <div class="hero-trust region-co">
+          <span>Sin pagos iniciales</span>
+          <span>Listo en 7 días</span>
+          <span>Soporte en español</span>
+          <span>Hosting incluido</span>
         </div>
       </div>
 
@@ -110,7 +127,7 @@
 
 <!-- ═══ SOCIAL PROOF STRIP ═══ -->
 <div class="proof-strip">
-  <div class="proof-track">
+  <div class="proof-track region-usa">
     <span><span class="lang-es">Restaurantes Latinos</span><span class="lang-en">Latin Restaurants</span></span>
     <span><span class="lang-es">Barberías</span><span class="lang-en">Barbershops</span></span>
     <span><span class="lang-es">Botánicas</span><span class="lang-en">Botánicas</span></span>
@@ -127,6 +144,20 @@
     <span><span class="lang-es">Cafeterías</span><span class="lang-en">Cafés</span></span>
     <span><span class="lang-es">Salones de Belleza</span><span class="lang-en">Beauty Salons</span></span>
     <span><span class="lang-es">Galerías</span><span class="lang-en">Galleries</span></span>
+  </div>
+  <div class="proof-track region-co">
+    <span>Restaurantes &amp; Cafés</span>
+    <span>Barberías &amp; Salones</span>
+    <span>Inmobiliarios</span>
+    <span>Profesionales</span>
+    <span>Tiendas Boutique</span>
+    <span>Gimnasios &amp; Estudios</span>
+    <span>Restaurantes &amp; Cafés</span>
+    <span>Barberías &amp; Salones</span>
+    <span>Inmobiliarios</span>
+    <span>Profesionales</span>
+    <span>Tiendas Boutique</span>
+    <span>Gimnasios &amp; Estudios</span>
   </div>
 </div>
 
@@ -205,10 +236,11 @@
       <div class="step">
         <div class="step-num"><span class="lang-es">— Día 4-6</span><span class="lang-en">— Day 4-6</span></div>
         <h3><span class="lang-es">Construimos</span><span class="lang-en">We build</span></h3>
-        <p>
+        <p class="region-usa">
           <span class="lang-es">Armamos el sitio con tu contenido, fotos, productos y todo lo que necesite tu negocio. Bilingüe siempre.</span>
           <span class="lang-en">We build the site with your content, photos, products and everything your business needs. Always bilingual.</span>
         </p>
+        <p class="region-co">Armamos el sitio con tu contenido, fotos, productos y todo lo que necesite tu negocio. Con tu identidad propia.</p>
       </div>
       <div class="step">
         <div class="step-num"><span class="lang-es">— Día 7</span><span class="lang-en">— Day 7</span></div>
@@ -235,7 +267,7 @@
       <span class="lang-en">Your website is your digital home. But if nobody knows it exists, nobody enters. 60% of local business traffic comes from Google — and to show up there, you have to work it. That's exactly what the Presencia plan does.</span>
     </p>
 
-    <div class="problem-grid" style="margin-top: 40px;">
+    <div class="problem-grid region-usa" style="margin-top: 40px;">
       <div class="problem-card">
         <span class="problem-num">01</span>
         <h3><span class="lang-es">Solo sitio web</span><span class="lang-en">Website only</span></h3>
@@ -265,9 +297,33 @@
       </div>
     </div>
 
-    <p style="text-align: center; margin-top: 40px; font-size: 14px; color: var(--warm-grey);">
-      <span class="lang-es">💡 La mayoría empieza con el Plan Sitio y sube a Presencia cuando ve los primeros reportes de tráfico. <strong>Sin presión, a tu ritmo.</strong></span>
-      <span class="lang-en">💡 Most start with the Sitio Plan and upgrade to Presencia when they see the first traffic reports. <strong>No pressure, at your pace.</strong></span>
+    <div class="problem-grid region-co" style="margin-top: 40px;">
+      <div class="problem-card">
+        <span class="problem-num">01</span>
+        <h3>Solo sitio web</h3>
+        <p>Tienes una presencia digital profesional. Tus clientes actuales te encuentran fácil. Pero el tráfico orgánico de Google no llega solo — necesita alimentarse.</p>
+        <p style="margin-top: 12px; font-size: 13px; color: var(--gold); font-weight: 600;">→ Plan Sitio — $69.000/mes</p>
+      </div>
+      <div class="problem-card" style="border: 2px solid var(--terracotta); position: relative;">
+        <span class="problem-num" style="background: var(--terracotta); color: white;">02</span>
+        <h3>Sitio + presencia activa</h3>
+        <p>Google Business optimizado, reseñas activas, SEO local trabajado mes a mes. Los clientes nuevos que buscan tu tipo de negocio en Google — te encuentran a ti primero.</p>
+        <p style="margin-top: 12px; font-size: 13px; color: var(--terracotta); font-weight: 600;">→ Plan Presencia — $129.000/mes</p>
+      </div>
+      <div class="problem-card">
+        <span class="problem-num">03</span>
+        <h3>Sitio + marketing completo</h3>
+        <p>Todo lo anterior más contenido activo en redes, campañas de email y tienda online. Para el negocio que quiere crecer en serio y dejar de depender 100% del boca a boca.</p>
+        <p style="margin-top: 12px; font-size: 13px; color: var(--gold); font-weight: 600;">→ Plan Crecimiento — $229.000/mes</p>
+      </div>
+    </div>
+
+    <p class="region-usa" style="text-align: center; margin-top: 40px; font-size: 14px; color: var(--warm-grey);">
+      <span class="lang-es">La mayoría empieza con el Plan Sitio y sube a Presencia cuando ve los primeros reportes de tráfico. <strong>Sin presión, a tu ritmo.</strong></span>
+      <span class="lang-en">Most start with the Sitio Plan and upgrade to Presencia when they see the first traffic reports. <strong>No pressure, at your pace.</strong></span>
+    </p>
+    <p class="region-co" style="text-align: center; margin-top: 40px; font-size: 14px; color: var(--warm-grey);">
+      La mayoría empieza con el plan más básico y sube a Presencia cuando ve los primeros reportes de tráfico. <strong>Sin presión, a tu ritmo.</strong>
     </p>
   </div>
 </section>
@@ -285,7 +341,7 @@
       <span class="lang-en">Each template is designed for a specific sector. We know what a Latin restaurant, a neighborhood botánica or a barbershop with regulars needs. Click your vertical to see how we work with you.</span>
     </p>
 
-    <div class="verticals-grid">
+    <div class="verticals-grid region-usa">
       <a href="restaurantes/" class="vertical-card">
         <div class="vertical-icon">🍽️</div>
         <h4><span class="lang-es">Restaurantes & Cafés</span><span class="lang-en">Restaurants & Cafés</span></h4>
@@ -341,6 +397,38 @@
         <span class="vertical-cta"><span class="lang-es">Ver más para galerías →</span><span class="lang-en">More for galleries →</span></span>
       </a>
     </div>
+    <div class="verticals-grid region-co">
+      <div class="vertical-card">
+        <div class="vertical-icon">🍽️</div>
+        <h4>Restaurantes &amp; Cafés</h4>
+        <p>Menú digital, reservas, galería, integración WhatsApp y plataformas de pedido.</p>
+      </div>
+      <div class="vertical-card">
+        <div class="vertical-icon">✂️</div>
+        <h4>Barberías &amp; Salones</h4>
+        <p>Booking integrado, lista de barberos/estilistas, precios y antes/después.</p>
+      </div>
+      <div class="vertical-card">
+        <div class="vertical-icon">🏠</div>
+        <h4>Inmobiliarios pequeños</h4>
+        <p>Listado de propiedades, filtros, galería de fotos, formulario de contacto directo.</p>
+      </div>
+      <div class="vertical-card">
+        <div class="vertical-icon">👨‍⚕️</div>
+        <h4>Profesionales independientes</h4>
+        <p>Portafolio de servicios, agenda, testimonios, formulario de cita. Médicos, odontólogos, abogados.</p>
+      </div>
+      <div class="vertical-card">
+        <div class="vertical-icon">🛍️</div>
+        <h4>Tiendas Boutique</h4>
+        <p>Catálogo con variantes (talla, color), checkout simple, panel para subir productos.</p>
+      </div>
+      <div class="vertical-card">
+        <div class="vertical-icon">💪</div>
+        <h4>Gimnasios &amp; Estudios</h4>
+        <p>Horarios de clases, planes y membresías, galería, formulario de inscripción.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -357,7 +445,8 @@
       <span class="lang-en">Everything you see is paid once a year. No "hidden fees", no "extras for minor changes". Cancel anytime, we maintain your site while you're a client.</span>
     </p>
 
-    <div class="pricing-grid">
+    <!-- USA PRICING -->
+    <div class="pricing-grid region-usa">
       <!-- PLAN SITIO -->
       <div class="price-card">
         <div class="price-name"><span class="lang-es">Plan Sitio</span><span class="lang-en">Sitio Plan</span></div>
@@ -447,6 +536,82 @@
       </div>
     </div>
 
+    <!-- COLOMBIA PRICING -->
+    <div class="pricing-grid region-co">
+      <!-- PLAN SITIO CO -->
+      <div class="price-card">
+        <div class="price-name">Plan Sitio</div>
+        <h3>Tu casa en internet</h3>
+        <p class="price-tagline">Para negocios que quieren presencia digital profesional y empezar desde lo más asequible.</p>
+        <div class="price-display">
+          <span class="price-currency">COP $</span>
+          <span class="price-num">69.000</span>
+          <span class="price-period">/mes</span>
+        </div>
+        <p class="price-annual">COP $690.000 al año · 2 meses gratis vs mensual</p>
+        <p class="price-early-adopter">Early adopter: COP $552.000 anual (8 meses)</p>
+        <ul class="price-features">
+          <li>Sitio web profesional (4-6 páginas únicas)</li>
+          <li>Logo personalizado (4 propuestas)</li>
+          <li>WhatsApp flotante + formulario de contacto</li>
+          <li>Google Maps integrado</li>
+          <li>Google Analytics instalado desde el día 1</li>
+          <li>SEO base (meta tags, schema, sitemap)</li>
+          <li>Hosting + dominio + SSL incluidos</li>
+          <li>Soporte por WhatsApp en español</li>
+        </ul>
+        <a href="#contacto" class="btn-card">Empezar con Plan Sitio</a>
+      </div>
+
+      <!-- PLAN PRESENCIA CO (FEATURED) -->
+      <div class="price-card featured">
+        <span class="featured-badge">Más popular</span>
+        <div class="price-name">Plan Presencia</div>
+        <h3>Sitio + clientes nuevos</h3>
+        <p class="price-tagline">Para negocios que quieren aparecer en Google y recibir clientes, no solo tener un sitio bonito.</p>
+        <div class="price-display">
+          <span class="price-currency">COP $</span>
+          <span class="price-num">129.000</span>
+          <span class="price-period">/mes</span>
+        </div>
+        <p class="price-annual">COP $1.290.000 al año · 2 meses gratis vs mensual</p>
+        <p class="price-early-adopter">Early adopter: COP $1.032.000 anual</p>
+        <ul class="price-features">
+          <li>Todo lo del Plan Sitio</li>
+          <li>Páginas avanzadas: reservas, galería, menú</li>
+          <li>Google Business Profile optimizado</li>
+          <li>SEO local activo mes a mes</li>
+          <li>Gestión de reseñas (solicitar + responder)</li>
+          <li>4 publicaciones mensuales en Google Business</li>
+          <li>Reporte mensual de tráfico y visibilidad</li>
+        </ul>
+        <a href="#contacto" class="btn-card">Empezar con Plan Presencia</a>
+      </div>
+
+      <!-- PLAN CRECIMIENTO CO -->
+      <div class="price-card">
+        <div class="price-name">Plan Crecimiento</div>
+        <h3>Marketing completo</h3>
+        <p class="price-tagline">Para negocios que quieren vender en línea y tener marketing activo en redes y email.</p>
+        <div class="price-display">
+          <span class="price-currency">COP $</span>
+          <span class="price-num">229.000</span>
+          <span class="price-period">/mes</span>
+        </div>
+        <p class="price-annual">COP $2.290.000 al año · 2 meses gratis vs mensual</p>
+        <p class="price-early-adopter">Early adopter: COP $1.832.000 anual</p>
+        <ul class="price-features">
+          <li>Todo lo del Plan Presencia</li>
+          <li>Tienda online (catálogo hasta 50 productos)</li>
+          <li>Carrito de compras + checkout</li>
+          <li>12 posts/mes para Instagram y Facebook</li>
+          <li>Email campaign mensual a tus clientes</li>
+          <li>Reporte de analítica avanzada mensual</li>
+        </ul>
+        <a href="#contacto" class="btn-card">Empezar con Plan Crecimiento</a>
+      </div>
+    </div>
+
     <p style="text-align: center; margin-top: 40px; font-size: 14px; color: var(--warm-grey);">
       <span class="lang-es">¿Necesitas algo más grande? <a href="#contacto" style="color: var(--terracotta); font-weight: 600;">Hablemos</a>.</span>
       <span class="lang-en">Need something bigger? <a href="#contacto" style="color: var(--terracotta); font-weight: 600;">Let's talk</a>.</span>
@@ -463,7 +628,8 @@
       <span class="lang-en">Why <em>it's not the same</em>.</span>
     </h2>
 
-    <div class="comparison-table">
+    <!-- USA COMPARISON -->
+    <div class="comparison-table region-usa">
       <div class="comp-row header">
         <div></div>
         <div>Wix / Squarespace</div>
@@ -513,6 +679,58 @@
         <div class="brisa-col"><span class="check">✓ <span class="lang-es">En español</span><span class="lang-en">In Spanish</span></span></div>
       </div>
     </div>
+
+    <!-- COLOMBIA COMPARISON -->
+    <div class="comparison-table region-co">
+      <div class="comp-row header">
+        <div></div>
+        <div>Wix / Squarespace</div>
+        <div>Freelancer típico</div>
+        <div class="brisa-col">Brisa Sites</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-feature">Costo año 1</div>
+        <div>COP $1.2M-3M</div>
+        <div>COP $2M-5M</div>
+        <div class="brisa-col"><strong>COP $552k-1.83M</strong></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-feature">Lo arma</div>
+        <div>Tú mismo</div>
+        <div>Freelancer (4-6 sem)</div>
+        <div class="brisa-col"><strong>Nosotros (7 días)</strong></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-feature">Bilingüe</div>
+        <div class="cross">Plugin extra</div>
+        <div class="cross">Costo extra</div>
+        <div class="brisa-col">No aplica</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-feature">Logo personalizado</div>
+        <div class="cross">No incluido</div>
+        <div class="cross">COP $500k-1M extra</div>
+        <div class="brisa-col"><span class="check">✓ Incluido</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-feature">Hosting</div>
+        <div class="check">✓</div>
+        <div class="cross">COP $40k-120k/mes</div>
+        <div class="brisa-col"><span class="check">✓ Incluido</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-feature">Mantenimiento</div>
+        <div>Lo haces tú</div>
+        <div class="cross">Pago extra cada año</div>
+        <div class="brisa-col"><span class="check">✓ Incluido</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-feature">Soporte WhatsApp</div>
+        <div class="cross">Ticket en inglés</div>
+        <div>Variable</div>
+        <div class="brisa-col"><span class="check">✓ En español</span></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -529,7 +747,8 @@
       <span class="lang-en">Each site is designed with the specific business sector in mind. We don't use generic templates — every client gets a design with their own identity.</span>
     </p>
 
-    <div class="examples-grid">
+    <!-- USA EXAMPLES -->
+    <div class="examples-grid region-usa">
       <div class="example-card">
         <div class="example-mockup">
           <div class="example-mockup-bar"><span></span><span></span><span></span></div>
@@ -624,6 +843,103 @@
         </div>
       </div>
     </div>
+
+    <!-- COLOMBIA EXAMPLES -->
+    <div class="examples-grid region-co">
+      <div class="example-card">
+        <div class="example-mockup">
+          <div class="example-mockup-bar"><span></span><span></span><span></span></div>
+          <div class="example-mockup-body">
+            <h5>Sabor de la <em>casa</em></h5>
+            <div class="lines"><div></div><div></div><div></div></div>
+          </div>
+        </div>
+        <div class="example-info">
+          <h4>Restaurante Latino</h4>
+          <p>Menú digital + reservas propias</p>
+          <span class="example-tag">Plan Presencia</span>
+        </div>
+      </div>
+
+      <div class="example-card">
+        <div class="example-mockup" style="background: linear-gradient(135deg, #E8F5E8, #D4E8D4);">
+          <div class="example-mockup-bar"><span></span><span></span><span></span></div>
+          <div class="example-mockup-body">
+            <h5>Tu <em>experiencia</em> profesional</h5>
+            <div class="lines"><div></div><div></div><div></div></div>
+          </div>
+        </div>
+        <div class="example-info">
+          <h4>Profesional independiente</h4>
+          <p>Portafolio + agenda online</p>
+          <span class="example-tag">Plan Presencia</span>
+        </div>
+      </div>
+
+      <div class="example-card">
+        <div class="example-mockup" style="background: linear-gradient(135deg, #2A2723, #4A4540);">
+          <div class="example-mockup-bar"><span></span><span></span><span></span></div>
+          <div class="example-mockup-body" style="color: #F7F2E9;">
+            <h5 style="color: #C9A961;"><em>Tu próximo hogar</em></h5>
+            <div class="lines">
+              <div style="background: rgba(247,242,233,0.2);"></div>
+              <div style="background: rgba(247,242,233,0.2);"></div>
+              <div style="background: rgba(247,242,233,0.2);"></div>
+            </div>
+          </div>
+        </div>
+        <div class="example-info">
+          <h4>Inmobiliaria</h4>
+          <p>Listado propiedades + filtros</p>
+          <span class="example-tag">Plan Crecimiento</span>
+        </div>
+      </div>
+
+      <div class="example-card">
+        <div class="example-mockup" style="background: linear-gradient(135deg, #E8F4F8, #D4E8F0);">
+          <div class="example-mockup-bar"><span></span><span></span><span></span></div>
+          <div class="example-mockup-body">
+            <h5>Tu estilo, <em>tu marca</em></h5>
+            <div class="lines"><div></div><div></div><div></div></div>
+          </div>
+        </div>
+        <div class="example-info">
+          <h4>Barbería</h4>
+          <p>Booking propio sin intermediarios</p>
+          <span class="example-tag">Plan Presencia</span>
+        </div>
+      </div>
+
+      <div class="example-card">
+        <div class="example-mockup" style="background: linear-gradient(135deg, #FFF9E6, #F0E8D0);">
+          <div class="example-mockup-bar"><span></span><span></span><span></span></div>
+          <div class="example-mockup-body">
+            <h5>Recuerdos que <em>viajan</em></h5>
+            <div class="lines"><div></div><div></div><div></div></div>
+          </div>
+        </div>
+        <div class="example-info">
+          <h4>Tienda Boutique</h4>
+          <p>Catálogo + checkout simple</p>
+          <span class="example-tag">Plan Crecimiento</span>
+        </div>
+      </div>
+
+      <div class="example-card">
+        <div class="example-mockup" style="background: linear-gradient(135deg, #F8E8E8, #F0D8D8);">
+          <div class="example-mockup-bar"><span></span><span></span><span></span></div>
+          <div class="example-mockup-body">
+            <h5>Fuerza que <em>transforma</em></h5>
+            <div class="lines"><div></div><div></div><div></div></div>
+          </div>
+        </div>
+        <div class="example-info">
+          <h4>Gimnasio</h4>
+          <p>Horarios + membresías online</p>
+          <span class="example-tag">Plan Sitio</span>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -640,18 +956,20 @@
           <span class="lang-es">Soy Jose. Combino datos y diseño para hacer <em>sitios que sí venden</em>.</span>
           <span class="lang-en">I'm Jose. I combine data and design to build <em>sites that actually sell</em>.</span>
         </h2>
-        <p>
+        <p class="region-usa">
           <span class="lang-es">Llevo años trabajando con datos en empresas grandes. He visto qué hace que un negocio crezca y qué lo frena. Aprendí que <strong>la mayoría de negocios pequeños hispanos no necesitan más complejidad</strong> — necesitan una herramienta digital sencilla, profesional y que les permita competir.</span>
           <span class="lang-en">I've spent years working with data in large companies. I've seen what makes businesses grow and what holds them back. I learned that <strong>most small Hispanic businesses don't need more complexity</strong> — they need a digital tool that's simple, professional, and lets them compete.</span>
         </p>
+        <p class="region-co">Llevo años trabajando con datos en empresas grandes. He visto qué hace que un negocio crezca y qué lo frena. Aprendí que <strong>la mayoría de negocios pequeños en Colombia no necesitan más complejidad</strong> — necesitan una herramienta digital sencilla, profesional y que les permita competir.</p>
         <p>
           <span class="lang-es">Brisa Sites nace de esa idea: combinar tecnología moderna con un diseño cálido y honesto, para entregarte un sitio profesional <strong>en días, no semanas</strong>, y a precios que tienen sentido para tu tipo de negocio.</span>
           <span class="lang-en">Brisa Sites is born from that idea: combine modern technology with warm, honest design, to deliver a professional site <strong>in days, not weeks</strong>, at prices that make sense for your type of business.</span>
         </p>
-        <p>
+        <p class="region-usa">
           <span class="lang-es">Si quieres saber si esto encaja con tu negocio, hablamos. Sin compromiso, sin presión, sin lenguaje gringo.</span>
           <span class="lang-en">If you want to know if this fits your business, let's talk. No commitment, no pressure, no corporate jargon.</span>
         </p>
+        <p class="region-co">Si quieres saber si esto encaja con tu negocio, hablamos. Sin compromiso, sin presión, sin jerga corporativa.</p>
         <p class="about-signature">— Jose, Brisa Sites</p>
       </div>
     </div>
@@ -667,7 +985,8 @@
       <span class="lang-en">What <em>everyone asks</em>.</span>
     </h2>
 
-    <div class="faq-list">
+    <!-- USA FAQ -->
+    <div class="faq-list region-usa">
       <div class="faq-item">
         <div class="faq-q"><span class="lang-es">¿Cómo es posible un sitio profesional desde $29 al mes?</span><span class="lang-en">How is a professional site possible from $29/month?</span></div>
         <div class="faq-a">
@@ -732,20 +1051,58 @@
         </div>
       </div>
     </div>
+
+    <!-- COLOMBIA FAQ -->
+    <div class="faq-list region-co">
+      <div class="faq-item">
+        <div class="faq-q">¿Cómo es posible un sitio profesional desde $69.000 al mes?</div>
+        <div class="faq-a">Usamos tecnología moderna (incluyendo IA) que nos permite reducir el tiempo de producción de semanas a días. Lo que un freelancer cobra millones por hacer en 6 semanas, nosotros lo entregamos en 7 días por mucho menos. La diferencia no es en calidad — es en eficiencia.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Qué pasa si no me gusta el resultado?</div>
+        <div class="faq-a">Garantía de satisfacción de 30 días sobre la calidad del sitio. Si en el primer mes el sitio no cumple lo que acordamos en el brief, lo corregimos hasta que quedes contento — o te devolvemos el pago. Lo que no podemos garantizar en 30 días son los resultados de tráfico y posicionamiento en Google: esos toman entre 60 y 90 días en verse, y dependen de trabajo constante, no de magia.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Cuándo voy a ver resultados en Google?</div>
+        <div class="faq-a">Honestamente: entre 60 y 90 días para ver tráfico orgánico real. Google necesita tiempo para indexar, rastrear y posicionar un sitio nuevo — eso no cambia con ningún proveedor. Lo que sí cambia es qué se hace en esos 90 días: con el Plan Presencia, tu Google Business Profile empieza a funcionar desde la semana 2, y eso ya genera visitas directas desde Maps. Con el Plan Sitio, instalamos Analytics desde el día 1 para que puedas medir desde el principio y decidir con datos cuándo subir de plan.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Tengo que pagar el año completo de una vez?</div>
+        <div class="faq-a">El pago anual es la forma más conveniente — equivale a 10 meses de precio, los otros 2 son gratis. Además, como early adopter puedes acceder a un descuento especial pagando solo 8 meses al año. Si prefieres pago mensual, también puedo acomodarlo con un pequeño ajuste de precio. Lo hablamos en la conversación inicial.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Qué incluye el servicio mes a mes?</div>
+        <div class="faq-a">Es un servicio integral: hosting profesional, infraestructura técnica, certificado SSL, backups automáticos, actualizaciones de seguridad, soporte directo por WhatsApp y los cambios menores anuales que vienen con tu plan. Tú te enfocas en tu negocio — nosotros nos ocupamos de que el sitio funcione perfecto, esté siempre actualizado y se vea profesional.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Hacen cambios después del lanzamiento?</div>
+        <div class="faq-a">Sí. Cada plan incluye cambios menores al año (cambios de fotos, textos, agregar un producto, ajustar precios, etc.). Cambios mayores como rediseño completo o sección nueva tienen un costo aparte que cotizamos antes.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Qué pasa con el hosting y el dominio?</div>
+        <div class="faq-a">Todo incluido. Nosotros nos encargamos del hosting, del dominio .com, del certificado SSL, de los backups y de mantener todo actualizado. Tú no tocas nada técnico.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">¿Tienen experiencia con mi tipo de negocio?</div>
+        <div class="faq-a">Trabajamos especialmente con negocios pequeños en Medellín, Bogotá y ciudades principales: restaurantes, barberías, salones, profesionales independientes, tiendas boutique, gimnasios. Conocemos el mercado local.</div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ═══ CTA FINAL ═══ -->
 <section class="cta-final" id="contacto">
   <div class="container">
-    <h2>
+    <h2 class="region-usa">
       <span class="lang-es">Tu negocio merece <em>más</em> que un perfil de Yelp.</span>
       <span class="lang-en">Your business deserves <em>more</em> than a Yelp profile.</span>
     </h2>
-    <p>
+    <h2 class="region-co">Tu negocio merece <em>más</em> que un perfil de redes sociales.</h2>
+    <p class="region-usa">
       <span class="lang-es">Empecemos con una conversación por WhatsApp. Sin compromiso, sin presión. Te explicamos qué podemos hacer y cuánto cuesta.</span>
       <span class="lang-en">Let's start with a WhatsApp conversation. No commitment, no pressure. We explain what we can do and what it costs.</span>
     </p>
+    <p class="region-co">Empecemos con una conversación por WhatsApp. Sin compromiso, sin presión. Te explicamos qué podemos hacer y cuánto cuesta.</p>
     <div class="cta-final-buttons">
       <a href="https://wa.me/17865160915?text=Hola%20Brisa%20Sites,%20me%20interesa%20info%20para%20mi%20negocio" class="btn btn-primary btn-large">
         <span class="lang-es">Hablar por WhatsApp →</span>
@@ -762,7 +1119,8 @@
 <!-- ═══ FOOTER ═══ -->
 <footer class="footer">
   <div class="container">
-    <div class="footer-grid">
+    <!-- USA FOOTER -->
+    <div class="footer-grid region-usa">
       <div>
         <div class="footer-logo">
           <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
@@ -775,7 +1133,7 @@
           <span class="lang-es">Sitios web profesionales para negocios pequeños hispanos en Miami y Hollywood. Sin complicaciones, sin sorpresas.</span>
           <span class="lang-en">Professional websites for small Hispanic businesses in Miami and Hollywood. No fuss, no surprises.</span>
         </p>
-        <p>📍 Hollywood, FL</p>
+        <p>Hollywood, FL</p>
       </div>
       <div>
         <h4><span class="lang-es">Verticales</span><span class="lang-en">Verticals</span></h4>
@@ -804,9 +1162,53 @@
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span><span class="lang-es">© 2026 Brisa Sites · Hecho en Hollywood, FL</span><span class="lang-en">© 2026 Brisa Sites · Made in Hollywood, FL</span></span>
-      <span><span class="lang-es">Sitios desde $29/mes · Sin pagos iniciales</span><span class="lang-en">Sites from $29/mo · No setup fees</span></span>
+    <!-- COLOMBIA FOOTER -->
+    <div class="footer-grid region-co">
+      <div>
+        <div class="footer-logo">
+          <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
+            <path d="M4 20 Q 8 14, 14 16 T 28 12" stroke="#B85940" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M4 24 Q 10 18, 16 20 T 28 16" stroke="#C9A961" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+          </svg>
+          Brisa Sites
+        </div>
+        <p class="footer-tagline">Sitios web profesionales para negocios pequeños en Colombia. Sin complicaciones, sin sorpresas.</p>
+        <p>Medellín · Bogotá · Cali</p>
+      </div>
+      <div>
+        <h4>Verticales</h4>
+        <ul>
+          <li><span>Restaurantes &amp; Cafés</span></li>
+          <li><span>Barberías &amp; Salones</span></li>
+          <li><span>Inmobiliarios</span></li>
+          <li><span>Profesionales</span></li>
+          <li><span>Tiendas Boutique</span></li>
+          <li><span>Gimnasios &amp; Estudios</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#precios">Precios</a></li>
+          <li><a href="#faq">Preguntas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="https://wa.me/17865160915">WhatsApp</a></li>
+          <li><a href="mailto:josedago1163@gmail.com">Email</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom region-usa">
+      <span><span class="lang-es">&copy; 2026 Brisa Sites &middot; Hecho en Hollywood, FL</span><span class="lang-en">&copy; 2026 Brisa Sites &middot; Made in Hollywood, FL</span></span>
+      <span><span class="lang-es">Sitios desde $29/mes &middot; Sin pagos iniciales</span><span class="lang-en">Sites from $29/mo &middot; No setup fees</span></span>
+    </div>
+    <div class="footer-bottom region-co">
+      <span>&copy; 2026 Brisa Sites &middot; Medellín &middot; Bogotá &middot; Cali</span>
+      <span>Sitios desde $69.000/mes &middot; Sin pagos iniciales</span>
     </div>
   </div>
 </footer>

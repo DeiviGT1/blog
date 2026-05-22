@@ -13,6 +13,12 @@ def brisa_index():
     return send_from_directory(LANDING_DIR, 'index.html')
 
 
+@brisa_sites_bp.route('/brisa-sites/admin')
+@brisa_sites_bp.route('/brisa-sites/admin/')
+def brisa_admin():
+    return send_from_directory(LANDING_DIR, 'admin.html')
+
+
 @brisa_sites_bp.route('/brisa-sites/assets/<path:filename>')
 def brisa_assets(filename):
     return send_from_directory(os.path.join(LANDING_DIR, 'assets'), filename)

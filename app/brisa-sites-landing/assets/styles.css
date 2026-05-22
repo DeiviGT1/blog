@@ -747,6 +747,14 @@ h1.hero-title {
   padding-bottom: 28px;
   border-bottom: 1px solid var(--line);
 }
+.price-annual + .price-early-adopter {
+  border-bottom: 1px solid var(--line);
+}
+.price-annual:has(+ .price-early-adopter) {
+  border-bottom: none;
+  margin-bottom: 8px;
+  padding-bottom: 0;
+}
 .price-card.featured .price-annual {
   border-color: rgba(247, 242, 233, 0.15);
 }
@@ -1320,4 +1328,72 @@ h1.hero-title {
 .lang-toggle svg {
   width: 14px;
   height: 14px;
+}
+
+/* ─── REGION TOGGLE ──────────────────────────── */
+body[data-region="usa"] .region-co { display: none !important; }
+body[data-region="co"] .region-usa { display: none !important; }
+
+.region-toggle {
+  display: inline-flex;
+  gap: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  padding: 3px;
+  margin-bottom: 20px;
+}
+.region-btn {
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  background: transparent;
+  color: var(--charcoal);
+  border: none;
+  font-family: var(--font-body);
+}
+.region-btn[aria-checked="true"] {
+  background: var(--terracotta);
+  color: var(--cream);
+}
+.region-btn[aria-checked="false"]:hover {
+  color: var(--terracotta);
+}
+
+/* ─── NAV BACK LINK ──────────────────────────── */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nav-back-link {
+  font-size: 13px;
+  color: var(--warm-grey);
+  transition: color var(--t-fast);
+  white-space: nowrap;
+}
+.nav-back-link:hover {
+  color: var(--terracotta);
+}
+@media (max-width: 768px) {
+  .nav-back-link {
+    display: none;
+  }
+}
+
+/* ─── EARLY ADOPTER PRICE LINE ───────────────── */
+.price-early-adopter {
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 600;
+  margin-top: -20px;
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+}
+.price-card.featured .price-early-adopter {
+  border-color: rgba(247, 242, 233, 0.15);
 }

@@ -1,4 +1,4 @@
-/* Brisa Sites - Interactividad: idioma, FAQ, animaciones */
+/* Brisa Sites - Interactividad: idioma, región, FAQ, animaciones */
 
 (function() {
   // ─── LANGUAGE TOGGLE ──────────────────────────
@@ -24,33 +24,76 @@
     });
   }
 
+  // ─── REGION TOGGLE ────────────────────────────
+  function initRegion() {
+    var savedRegion = localStorage.getItem('brisa-region') || 'usa';
+    applyRegion(savedRegion);
+  }
+
+  function applyRegion(region) {
+    document.body.dataset.region = region;
+    localStorage.setItem('brisa-region', region);
+
+    // Update toggle buttons
+    var regionBtns = document.querySelectorAll('.region-btn');
+    regionBtns.forEach(function(btn) {
+      var isActive = btn.dataset.region === region;
+      btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+    });
+
+    if (region === 'co') {
+      // Colombia: force Spanish, hide lang toggle
+      document.documentElement.lang = 'es';
+      var langToggles = document.querySelectorAll('.lang-toggle');
+      langToggles.forEach(function(btn) { btn.style.display = 'none'; });
+    } else {
+      // USA: restore lang toggle visibility and respect saved language
+      var langToggles = document.querySelectorAll('.lang-toggle');
+      langToggles.forEach(function(btn) { btn.style.display = ''; });
+      var savedLang = localStorage.getItem('brisa-lang') || 'es';
+      document.documentElement.lang = savedLang;
+      updateToggleButton();
+    }
+  }
+
   // Wait for DOM ready
   document.addEventListener('DOMContentLoaded', function() {
 
     // Set up language toggle buttons
-    const langButtons = document.querySelectorAll('.lang-toggle');
-    langButtons.forEach(btn => {
+    var langButtons = document.querySelectorAll('.lang-toggle');
+    langButtons.forEach(function(btn) {
       btn.addEventListener('click', toggleLanguage);
     });
     updateToggleButton();
 
+    // Set up region toggle buttons
+    var regionBtns = document.querySelectorAll('.region-btn');
+    regionBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        applyRegion(btn.dataset.region);
+      });
+    });
+
+    // Initialize region
+    initRegion();
+
     // ─── FAQ ACCORDION ───────────────────────────
-    const faqItems = document.querySelectorAll('.faq-item');
-    faqItems.forEach(item => {
-      const question = item.querySelector('.faq-q');
+    var faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(function(item) {
+      var question = item.querySelector('.faq-q');
       if (question) {
-        question.addEventListener('click', () => {
+        question.addEventListener('click', function() {
           item.classList.toggle('open');
         });
       }
     });
 
     // ─── FADE-IN AL SCROLL ───────────────────────
-    const fadeEls = document.querySelectorAll('.fade-in');
+    var fadeEls = document.querySelectorAll('.fade-in');
 
     if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
             observer.unobserve(entry.target);
@@ -61,19 +104,19 @@
         rootMargin: '0px 0px -60px 0px'
       });
 
-      fadeEls.forEach(el => observer.observe(el));
+      fadeEls.forEach(function(el) { observer.observe(el); });
     } else {
-      fadeEls.forEach(el => el.classList.add('visible'));
+      fadeEls.forEach(function(el) { el.classList.add('visible'); });
     }
 
     // ─── SMOOTH SCROLL EN ANCLAS ─────────────────
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
       anchor.addEventListener('click', function(e) {
-        const target = document.querySelector(this.getAttribute('href'));
+        var target = document.querySelector(this.getAttribute('href'));
         if (target) {
           e.preventDefault();
-          const offset = 80;
-          const targetPos = target.getBoundingClientRect().top + window.scrollY - offset;
+          var offset = 80;
+          var targetPos = target.getBoundingClientRect().top + window.scrollY - offset;
           window.scrollTo({ top: targetPos, behavior: 'smooth' });
         }
       });

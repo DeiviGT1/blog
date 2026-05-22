@@ -195,20 +195,73 @@
   color: var(--muted-text-color);
 }
 
-.article-footer .zenodo-link {
+.academic-citation-card {
+  margin-top: 2rem;
+  padding: 1.5rem 1.8rem;
+  border-left: 3px solid var(--hover-bg-color);
+  background-color: var(--card-bg-color, rgba(128, 128, 128, 0.06));
+  border-radius: 0 6px 6px 0;
+}
+
+.citation-badge {
   display: inline-block;
-  margin-top: 1rem;
-  font-size: 0.88rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hover-bg-color);
+  border: 1px solid var(--hover-bg-color);
+  border-radius: 3px;
+  padding: 0.15rem 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.citation-title {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--text-color);
+  margin: 0 0 0.4rem;
+}
+
+.citation-author {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.25rem;
+}
+
+.citation-meta {
+  font-size: 0.78rem;
+  color: var(--muted-text-color);
+  margin: 0 0 0.8rem;
+}
+
+.citation-separator {
+  margin: 0 0.4rem;
+}
+
+.citation-abstract {
+  font-size: 0.82rem;
+  color: var(--muted-text-color);
+  line-height: 1.65;
+  margin: 0 0 1rem;
+  font-style: italic;
+}
+
+.citation-link {
+  display: inline-block;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--hover-bg-color);
-  border: 1.5px solid var(--hover-bg-color);
-  border-radius: 20px;
-  padding: 0.4rem 1rem;
   text-decoration: none;
+  padding: 0.35rem 1rem;
+  border: 1.5px solid var(--hover-bg-color);
+  border-radius: 4px;
   transition: background-color 0.3s, color 0.3s;
 }
 
-.article-footer .zenodo-link:hover {
+.citation-link:hover {
   background-color: var(--hover-bg-color);
   color: var(--hover-text-color);
 }

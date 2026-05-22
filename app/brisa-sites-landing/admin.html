@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Brisa Sites Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <h1 class="login-title">Brisa Sites</h1>
+    <p class="login-subtitle">Panel de administracion</p>
+    <form id="login-form" class="login-form">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" name="username" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Contrasena</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+      </div>
+      <p id="login-error" class="login-error" hidden>Credenciales incorrectas.</p>
+      <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD (hidden until authenticated) ═══ -->
+<div id="dashboard" class="dashboard" hidden>
+
+  <!-- ─── HEADER ─── -->
+  <header class="admin-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <span class="header-logo">Brisa Sites Admin</span>
+        <nav class="header-nav">
+          <a href="/">&larr; Portafolio</a>
+          <a href="/brisa-sites/">&larr; Landing</a>
+        </nav>
+      </div>
+      <button id="logout-btn" class="btn btn-logout">Salir</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ═══ 1. HERO + KPI ═══ -->
+    <section class="admin-section section-cream">
+      <div class="container">
+        <h2 class="greeting">Hola Jose. Aqui esta el estado actual de Brisa Sites.</h2>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Stage actual</span>
+            <span class="kpi-value">Validacion</span>
+            <span class="kpi-sub">1-3 clientes piloto</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Bandwidth disponible</span>
+            <span class="kpi-value">5-10 h/semana</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Meta 90 dias</span>
+            <span class="kpi-value">8 clientes</span>
+            <span class="kpi-sub">5 USA + 3 Colombia</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">MRR objetivo</span>
+            <span class="kpi-value">$520+</span>
+            <span class="kpi-sub">USD mensual</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 2. ESTRUCTURA DEL PROYECTO ═══ -->
+    <section class="admin-section section-white">
+      <div class="container">
+        <h3 class="section-heading">Estructura del proyecto</h3>
+        <button class="collapse-toggle" data-target="project-tree">Mostrar / Ocultar</button>
+        <div id="project-tree" class="collapsible open">
+          <pre class="tree-block"><code>brisa-sites/
+├── 00-strategy/              # vision, pricing, ICP, competencia
+│   ├── README.md
+│   ├── pricing-usa.md
+│   ├── pricing-colombia.md
+│   ├── icp-personas.md
+│   └── roadmap.md
+├── 01-agents/                # Claude agents y scripts
+│   ├── README.md
+│   ├── content-generator/
+│   ├── design-generator/
+│   ├── seo-generator/
+│   └── shared/
+├── 02-templates/             # plantillas base por vertical
+│   ├── restaurantes/
+│   ├── barberias/
+│   ├── botanicas/
+│   ├── tabaquerias/
+│   ├── tiendas/
+│   └── galerias/
+├── 03-clients/               # gitignore si privado
+│   ├── _template/
+│   ├── usa-001-{nombre}/
+│   └── col-001-{nombre}/
+├── 04-sales/
+│   ├── decks/
+│   ├── proposals/
+│   ├── outreach/
+│   ├── case-studies/
+│   └── referral-program.md
+├── 05-marketing/
+│   ├── landing-usa/
+│   ├── landing-colombia/
+│   ├── social/
+│   └── content-calendar.md
+├── 06-operations/
+│   ├── onboarding-checklist.md
+│   ├── 7-day-delivery-process.md
+│   ├── client-brief-template.md
+│   └── retention-playbook.md
+├── 07-finance/
+│   ├── pricing-models.xlsx
+│   ├── contracts-usa/
+│   ├── contracts-colombia/
+│   ├── payment-gateways.md
+│   └── revenue-tracking.xlsx
+└── README.md</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 3. PLAN VENTAS USA — 90 DIAS ═══ -->
+    <section class="admin-section section-cream">
+      <div class="container">
+        <h3 class="section-heading">Plan ventas USA — 90 dias</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="timeline-badge">Semanas 1-2</span>
+            <h4 class="timeline-title">Activar referidos de pilotos</h4>
+            <p>Pedir 3 referencias a cada cliente actual. Programa formal: "1 mes gratis por cada cliente que cierre y dure 60 dias".</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semanas 1-4</span>
+            <h4 class="timeline-title">Outreach Instagram + WhatsApp</h4>
+            <p>Lista de 100 negocios sin sitio o con sitio malo en Hialeah, Little Havana, Hollywood. 10 DMs/dia x 5 dias = 50/semana. Conversion realista 2-4%.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semanas 2-12</span>
+            <h4 class="timeline-title">Walking sales sabados (2 h)</h4>
+            <p>Tarjeta fisica con QR a landing en espanol. Foco: dueno en el mostrador, no empleado.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semana 4</span>
+            <h4 class="timeline-title">Caso de exito #1 en video</h4>
+            <p>Reel de 60 seg con piloto: antes (Yelp/IG) -> despues (sitio propio + Google Business).</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semanas 4-12</span>
+            <h4 class="timeline-title">Contenido minimo viable</h4>
+            <p>2 posts IG/semana mostrando "antes/despues" y "construyendo un sitio en 7 dias".</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semana 8</span>
+            <h4 class="timeline-title">Partnerships locales</h4>
+            <p>3 contadores hispanos en Hollywood/Hialeah. Comision 15% del primer ano por referido.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semana 12</span>
+            <h4 class="timeline-title">Revision de pricing</h4>
+            <p>Si churn &lt; 10% y conversion &gt; 5%, subir Plan Sitio a $39 (pilotos quedan grandfathered).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 4. PLAN VENTAS COLOMBIA — 60 DIAS ═══ -->
+    <section class="admin-section section-white">
+      <div class="container">
+        <h3 class="section-heading">Plan ventas Colombia — 60 dias</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="timeline-badge">Semana 1</span>
+            <h4 class="timeline-title">Landing /co dedicada</h4>
+            <p>Reposicionar, no traducir. Eliminar "Miami/Hollywood", verticales aplicables, numero WhatsApp colombiano.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semana 1</span>
+            <h4 class="timeline-title">Wompi configurada</h4>
+            <p>Cuenta empresarial Bancolombia para acreditacion 1-2 dias.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semanas 1-3</span>
+            <h4 class="timeline-title">Calls 1-on-1 con contactos potenciales</h4>
+            <p>30 min, demo en vivo, propuesta cerrada en 24h. Pricing: anual con descuento agresivo (12 meses por 8) para reducir churn temprano.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semana 2</span>
+            <h4 class="timeline-title">Primer cliente como early adopter</h4>
+            <p>-30% adicional vitalicio a cambio de testimonio en video.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semanas 3-6</span>
+            <h4 class="timeline-title">WhatsApp Business + Instagram CO</h4>
+            <p>Cuenta @brisasites.co. Contenido especifico: "tu negocio en Medellin/Bogota merece mas que un perfil de Mercado Libre".</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semanas 4-8</span>
+            <h4 class="timeline-title">Aliados locales</h4>
+            <p>2-3 contadores en Medellin o Envigado, 15% comision ano 1.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-badge">Semana 8</span>
+            <h4 class="timeline-title">Decision go/no-go</h4>
+            <p>Si no cerraste 3 clientes con contactos calientes, el problema no es bandwidth — es producto o pricing CO.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 5. COMPARATIVO DE PASARELAS COLOMBIA ═══ -->
+    <section class="admin-section section-cream">
+      <div class="container">
+        <h3 class="section-heading">Comparativo de pasarelas Colombia</h3>
+        <div class="gateway-grid">
+          <div class="gateway-card recommended">
+            <div class="gateway-header">
+              <h4>Wompi</h4>
+              <span class="recommended-badge">RECOMENDADA</span>
+            </div>
+            <div class="gateway-commission">
+              <span class="commission-label">Comision</span>
+              <p>2,99% + IVA + COP 600 tarjeta / 1,49% + COP 1.200 PSE / 1,79% Nequi</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Pros</span>
+              <p>Tokenizacion solida para cobros recurrentes. Soporta Nequi. API moderna. Acreditacion 1-2 dias con Bancolombia.</p>
+            </div>
+            <div class="gateway-cons">
+              <span class="cons-label">Contras</span>
+              <p>Necesita cuenta empresarial Bancolombia para acreditacion rapida.</p>
+            </div>
+          </div>
+
+          <div class="gateway-card">
+            <div class="gateway-header">
+              <h4>Bold</h4>
+            </div>
+            <div class="gateway-commission">
+              <span class="commission-label">Comision</span>
+              <p>2,80% + IVA + COP 500 nacional / 3,50% internacional</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Pros</span>
+              <p>Comision ligeramente menor. Excelente si clientes necesitan datafono fisico.</p>
+            </div>
+            <div class="gateway-cons">
+              <span class="cons-label">Contras</span>
+              <p>Suscripciones recurrentes no es su fuerte. Para SaaS puro mensual, Wompi da mas control.</p>
+            </div>
+          </div>
+
+          <div class="gateway-card">
+            <div class="gateway-header">
+              <h4>Mercado Pago</h4>
+            </div>
+            <div class="gateway-commission">
+              <span class="commission-label">Comision</span>
+              <p>~3,49% + IVA tipico, sin cargo fijo</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Pros</span>
+              <p>Suscripciones recurrentes bien soportadas. Confianza de marca alta.</p>
+            </div>
+            <div class="gateway-cons">
+              <span class="cons-label">Contras</span>
+              <p>~0,5% mas cara que Wompi. ICP PYME confia mas en marca Bancolombia.</p>
+            </div>
+          </div>
+
+          <div class="gateway-card">
+            <div class="gateway-header">
+              <h4>ePayco</h4>
+            </div>
+            <div class="gateway-commission">
+              <span class="commission-label">Comision</span>
+              <p>~2,99% + IVA / PSE + Efecty + Baloto</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Pros</span>
+              <p>Acepta pagos en efectivo (clientes sin bancarizar).</p>
+            </div>
+            <div class="gateway-cons">
+              <span class="cons-label">Contras</span>
+              <p>API mas antigua. Tus clientes target si estan bancarizados.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 6. PRICING COMPARATIVO USA VS COLOMBIA ═══ -->
+    <section class="admin-section section-white">
+      <div class="container">
+        <h3 class="section-heading">Pricing comparativo USA vs Colombia</h3>
+        <div class="pricing-compare-grid">
+          <div class="pricing-compare-card">
+            <h4>Plan Sitio</h4>
+            <div class="pricing-row">
+              <span class="pricing-region">USA</span>
+              <span class="pricing-amount">$29/mes / $290/ano</span>
+            </div>
+            <div class="pricing-row">
+              <span class="pricing-region">Colombia</span>
+              <span class="pricing-amount">COP $69k/mes / COP $690k/ano</span>
+            </div>
+            <div class="pricing-row highlight">
+              <span class="pricing-region">CO early adopter</span>
+              <span class="pricing-amount">COP $552k anual (equivale a 8 meses)</span>
+            </div>
+          </div>
+
+          <div class="pricing-compare-card">
+            <h4>Plan Presencia</h4>
+            <div class="pricing-row">
+              <span class="pricing-region">USA</span>
+              <span class="pricing-amount">$59/mes / $590/ano</span>
+            </div>
+            <div class="pricing-row">
+              <span class="pricing-region">Colombia</span>
+              <span class="pricing-amount">COP $129k/mes / COP $1.29M/ano</span>
+            </div>
+            <div class="pricing-row highlight">
+              <span class="pricing-region">CO early adopter</span>
+              <span class="pricing-amount">COP $1.03M anual</span>
+            </div>
+          </div>
+
+          <div class="pricing-compare-card">
+            <h4>Plan Crecimiento</h4>
+            <div class="pricing-row">
+              <span class="pricing-region">USA</span>
+              <span class="pricing-amount">$99/mes / $990/ano</span>
+            </div>
+            <div class="pricing-row">
+              <span class="pricing-region">Colombia</span>
+              <span class="pricing-amount">COP $229k/mes / COP $2.29M/ano</span>
+            </div>
+            <div class="pricing-row highlight">
+              <span class="pricing-region">CO early adopter</span>
+              <span class="pricing-amount">COP $1.83M anual</span>
+            </div>
+          </div>
+        </div>
+        <p class="pricing-footnote">Tipo de cambio aproximado: 1 USD ≈ 4.000 COP. Ajustar al cambio del dia al facturar.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 7. TO-DOS PROXIMOS 7 DIAS ═══ -->
+    <section class="admin-section section-cream">
+      <div class="container">
+        <h3 class="section-heading">To-dos proximos 7 dias</h3>
+        <p class="todo-counter" id="todo-counter"></p>
+        <ul class="todo-list" id="todo-list"></ul>
+      </div>
+    </section>
+
+    <!-- ═══ 8. ESTADO DE CLIENTES ═══ -->
+    <section class="admin-section section-white">
+      <div class="container">
+        <h3 class="section-heading">Estado de clientes</h3>
+        <div class="table-wrapper">
+          <table class="client-table" id="client-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Region</th>
+                <th>Vertical</th>
+                <th>Plan</th>
+                <th>Estado</th>
+                <th>MRR</th>
+                <th>Notas</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="client-tbody"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="5" class="total-label">Total MRR</td>
+                <td id="total-mrr" class="total-value">$0</td>
+                <td colspan="2"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <button id="add-client-btn" class="btn btn-secondary btn-add-row">+ Agregar fila</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="assets/admin.js"></script>
+</body>
+</html>

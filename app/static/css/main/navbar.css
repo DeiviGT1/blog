@@ -211,6 +211,24 @@ input:not(:checked) + .slider .moon-icon {
   gap: 8px;
 }
 
+.brisa-sites-bottom {
+  background-color: #B85940;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  width: 100%;
+  display: block;
+  padding: 10px 0;
+  box-sizing: border-box;
+  font-weight: 600;
+  transition: background-color .2s;
+}
+
+.brisa-sites-bottom:hover {
+  background-color: #94422F;
+  color: #fff;
+}
+
 .excel-course-bottom {
   background-color: #217346;
   color: #fff;
