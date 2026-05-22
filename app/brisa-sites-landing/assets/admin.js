@@ -88,13 +88,13 @@ function initDashboard() {
 // ═══════════════════════════════════════════════
 
 var DEFAULT_TODOS = [
-  { id: 1, text: 'Reorganizar carpetas en /Users/josed/Projects/brisa-sites/ segun estructura propuesta. Mover HTMLs sueltos a 05-marketing/ o 00-strategy/.', done: false },
+  { id: 1, text: 'Reorganizar carpetas en /Users/josed/Projects/brisa-sites/ según estructura propuesta. Mover HTMLs sueltos a 05-marketing/ o 00-strategy/.', done: false },
   { id: 2, text: 'Crear landing /co como variante regional. No traducir — reposicionar.', done: false },
-  { id: 3, text: 'Mensaje a 1-3 pilotos USA con programa de referidos formal (1 mes gratis por cliente cerrado y que dure 60 dias).', done: false },
+  { id: 3, text: 'Mensaje a 1-3 pilotos USA con programa de referidos formal (1 mes gratis por cliente cerrado y que dure 60 días).', done: false },
   { id: 4, text: 'Lista de 100 prospects USA en Hialeah/Little Havana/Hollywood: nombre, vertical, sitio actual, WhatsApp, IG.', done: false },
-  { id: 5, text: 'Lista de contactos potenciales en Colombia: nombre, ciudad, vertical, relacion, plan probable.', done: false },
-  { id: 6, text: 'Abrir cuenta Wompi sandbox y probar flujo de suscripcion recurrente.', done: false },
-  { id: 7, text: 'Agendar apertura de cuenta empresarial Bancolombia (bottleneck mas lento del proceso CO).', done: false }
+  { id: 5, text: 'Lista de contactos potenciales en Colombia: nombre, ciudad, vertical, relación, plan probable.', done: false },
+  { id: 6, text: 'Abrir cuenta Wompi sandbox y probar flujo de suscripción recurrente.', done: false },
+  { id: 7, text: 'Agendar apertura de cuenta empresarial Bancolombia (bottleneck más lento del proceso CO).', done: false }
 ];
 
 function getTodos() {
@@ -320,7 +320,7 @@ function addClient() {
 }
 
 function deleteClient(idx) {
-  if (!confirm('Eliminar esta fila?')) return;
+  if (!confirm('¿Eliminar esta fila?')) return;
   var clients = getClients();
   clients.splice(idx, 1);
   saveClients(clients);
