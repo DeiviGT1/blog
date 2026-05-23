@@ -85,56 +85,43 @@
     <!-- ═══ 2. ESTRUCTURA DEL PROYECTO ═══ -->
     <section class="admin-section section-white">
       <div class="container">
-        <h3 class="section-heading">Estructura del proyecto</h3>
+        <h3 class="section-heading">Estructura del proyecto · Site Builder Agent</h3>
+        <p style="color: #666; margin-bottom: 12px; font-size: 14px;">Ubicación: <code>/Users/josed/Projects/site-builder</code></p>
         <button class="collapse-toggle" data-target="project-tree">Mostrar / Ocultar</button>
         <div id="project-tree" class="collapsible open">
-          <pre class="tree-block"><code>brisa-sites/
-├── 00-strategy/              # visión, pricing, ICP, competencia
-│   ├── README.md
-│   ├── pricing-usa.md
-│   ├── pricing-colombia.md
-│   ├── icp-personas.md
-│   └── roadmap.md
-├── 01-agents/                # Claude agents y scripts
-│   ├── README.md
-│   ├── content-generator/
-│   ├── design-generator/
-│   ├── seo-generator/
-│   └── shared/
-├── 02-templates/             # plantillas base por vertical
-│   ├── restaurantes/
-│   ├── barberias/
-│   ├── botanicas/
-│   ├── tabaquerias/
-│   ├── tiendas/
-│   └── galerias/
-├── 03-clients/               # gitignore si privado
-│   ├── _template/
-│   ├── usa-001-{nombre}/
-│   └── col-001-{nombre}/
-├── 04-sales/
-│   ├── decks/
-│   ├── proposals/
-│   ├── outreach/
-│   ├── case-studies/
-│   └── referral-program.md
-├── 05-marketing/
-│   ├── landing-usa/
-│   ├── landing-colombia/
-│   ├── social/
-│   └── content-calendar.md
-├── 06-operations/
-│   ├── onboarding-checklist.md
-│   ├── 7-day-delivery-process.md
-│   ├── client-brief-template.md
-│   └── retention-playbook.md
-├── 07-finance/
-│   ├── pricing-models.xlsx
-│   ├── contracts-usa/
-│   ├── contracts-colombia/
-│   ├── payment-gateways.md
-│   └── revenue-tracking.xlsx
-└── README.md</code></pre>
+          <pre class="tree-block"><code>site-builder/
+├── .claude/
+│   ├── agents/                    # Subagentes Claude (pipeline 6 fases)
+│   │   ├── brand-designer.md      # 4 logos SVG + paleta + tipografía
+│   │   ├── business-researcher.md # Análisis negocio, Yelp, Google
+│   │   ├── site-architect.md      # Estructura páginas + 3 personalidades
+│   │   ├── catalog-provisioner.md # Productos/servicios + contenido
+│   │   ├── code-generator.md      # Next.js 15 v1/v2/v3
+│   │   ├── qa-validator.md        # QA seguridad, SEO, i18n, forms
+│   │   ├── deploy-agent.md        # Vercel deployment
+│   │   └── marketing-agent.md     # SEO, GBP, email sequences
+│   └── skills/
+│       ├── svg-logo-design/       # Generación nativa SVG con Claude
+│       ├── snipcart-integration/  # Ecommerce Tier 2
+│       └── stripe-integration/    # Ecommerce Tier 3 + age verify
+├── scaffolding/base/              # Config base (no plantillas pre-hechas)
+│   ├── package.json, tsconfig, next.config.ts
+│   ├── tailwind.config, next-intl, middleware
+│   └── (cada sitio se construye desde cero)
+├── output/                        # Sitios generados (26+)
+│   ├── {negocio}-YYYY-MM-DD-HHMM/
+│   │   ├── brand/                 # Logos, paleta
+│   │   ├── architecture/          # Sitemap, design personalities
+│   │   ├── catalog/               # Productos/servicios
+│   │   └── src/app/[locale]/      # Código Next.js (v1/v2/v3)
+│   └── ...
+├── clients.json                   # Registro central de clientes + prospectos
+├── CLAUDE.md                      # Instrucciones del agente
+├── HOW-TO.md                      # Guía práctica (3 flujos principales)
+└── README.md
+
+Pipeline: Intake → Brand → Architecture → Catalog → Code → QA + Deploy
+Stack: Next.js 15 · Tailwind · shadcn/ui · next-intl · Payload CMS · Neon · Vercel</code></pre>
         </div>
       </div>
     </section>
@@ -308,60 +295,141 @@
       </div>
     </section>
 
-    <!-- ═══ 6. PRICING COMPARATIVO USA VS COLOMBIA ═══ -->
+    <!-- ═══ 6. PRICING HÍBRIDO — USA VS COLOMBIA ═══ -->
     <section class="admin-section section-white">
       <div class="container">
-        <h3 class="section-heading">Pricing comparativo USA vs Colombia</h3>
-        <div class="pricing-compare-grid">
+        <h3 class="section-heading">Pricing híbrido · Setup + Mensualidad</h3>
+        <p style="color: #666; margin-bottom: 16px; font-size: 14px;">Modelo elegido: <strong>Híbrido</strong>. El cliente paga setup (trabajo inicial) + mensualidad (mantenimiento continuo).</p>
+        <div class="pricing-compare-grid" style="grid-template-columns: 1fr 1fr;">
           <div class="pricing-compare-card">
             <h4>Plan Sitio</h4>
+            <div class="pricing-row" style="border-left: 3px solid #B85940; padding-left: 10px;">
+              <span class="pricing-region">Setup (una vez)</span>
+              <span class="pricing-amount"></span>
+            </div>
             <div class="pricing-row">
               <span class="pricing-region">USA</span>
-              <span class="pricing-amount">$29/mes / $290/año</span>
+              <span class="pricing-amount">$99 USD</span>
             </div>
             <div class="pricing-row">
               <span class="pricing-region">Colombia</span>
-              <span class="pricing-amount">COP $69k/mes / COP $690k/año</span>
+              <span class="pricing-amount">COP $299.000</span>
+            </div>
+            <div class="pricing-row" style="border-left: 3px solid #C9A961; padding-left: 10px; margin-top: 8px;">
+              <span class="pricing-region">Mensualidad</span>
+              <span class="pricing-amount"></span>
+            </div>
+            <div class="pricing-row">
+              <span class="pricing-region">USA</span>
+              <span class="pricing-amount">$29/mes</span>
+            </div>
+            <div class="pricing-row">
+              <span class="pricing-region">Colombia</span>
+              <span class="pricing-amount">COP $59.000/mes</span>
             </div>
             <div class="pricing-row highlight">
-              <span class="pricing-region">CO early adopter</span>
-              <span class="pricing-amount">COP $552k anual (equivale a 8 meses)</span>
+              <span class="pricing-region">Año 1 total USA</span>
+              <span class="pricing-amount">$447 · vs freelancer $3,000</span>
+            </div>
+            <div class="pricing-row highlight">
+              <span class="pricing-region">Año 1 total CO</span>
+              <span class="pricing-amount">COP $1.007.000 · vs freelancer $1.8M</span>
             </div>
           </div>
 
-          <div class="pricing-compare-card">
-            <h4>Plan Presencia</h4>
+          <div class="pricing-compare-card" style="border: 2px solid #B85940;">
+            <h4>Plan Sweet Spot ★</h4>
+            <div class="pricing-row" style="border-left: 3px solid #B85940; padding-left: 10px;">
+              <span class="pricing-region">Setup (una vez)</span>
+              <span class="pricing-amount"></span>
+            </div>
             <div class="pricing-row">
               <span class="pricing-region">USA</span>
-              <span class="pricing-amount">$59/mes / $590/año</span>
+              <span class="pricing-amount">$199 USD</span>
             </div>
             <div class="pricing-row">
               <span class="pricing-region">Colombia</span>
-              <span class="pricing-amount">COP $129k/mes / COP $1.29M/año</span>
+              <span class="pricing-amount">COP $599.000</span>
             </div>
-            <div class="pricing-row highlight">
-              <span class="pricing-region">CO early adopter</span>
-              <span class="pricing-amount">COP $1.03M anual</span>
+            <div class="pricing-row" style="border-left: 3px solid #C9A961; padding-left: 10px; margin-top: 8px;">
+              <span class="pricing-region">Mensualidad</span>
+              <span class="pricing-amount"></span>
             </div>
-          </div>
-
-          <div class="pricing-compare-card">
-            <h4>Plan Crecimiento</h4>
             <div class="pricing-row">
               <span class="pricing-region">USA</span>
-              <span class="pricing-amount">$99/mes / $990/año</span>
+              <span class="pricing-amount">$59/mes</span>
             </div>
             <div class="pricing-row">
               <span class="pricing-region">Colombia</span>
-              <span class="pricing-amount">COP $229k/mes / COP $2.29M/año</span>
+              <span class="pricing-amount">COP $99.000/mes</span>
             </div>
             <div class="pricing-row highlight">
-              <span class="pricing-region">CO early adopter</span>
-              <span class="pricing-amount">COP $1.83M anual</span>
+              <span class="pricing-region">Año 1 total USA</span>
+              <span class="pricing-amount">$907 · vs freelancer $5,000</span>
+            </div>
+            <div class="pricing-row highlight">
+              <span class="pricing-region">Año 1 total CO</span>
+              <span class="pricing-amount">COP $1.787.000 · vs freelancer $5M</span>
             </div>
           </div>
         </div>
-        <p class="pricing-footnote">Tipo de cambio aproximado: 1 USD ≈ 4.000 COP. Ajustar al cambio del día al facturar.</p>
+        <p class="pricing-footnote">Tipo de cambio: 1 USD ≈ 4.000 COP. Cambios menores incluidos: 1/mes (Sitio), 3/mes (Sweet Spot). Soporte bilingüe ES/EN.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 6B. CALCULADORA RÁPIDA ═══ -->
+    <section class="admin-section section-cream">
+      <div class="container">
+        <h3 class="section-heading">Calculadora rápida · Proyección</h3>
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 24px;">
+          <div style="background: white; border: 1px solid #e0dcd0; border-radius: 6px; padding: 20px;">
+            <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 12px; font-family: monospace;">Configuración</p>
+            <div style="margin-bottom: 12px;">
+              <label style="font-size: 13px; display: block; margin-bottom: 4px;">Clientes Sitio activos</label>
+              <input type="number" id="calc-sitio" value="5" min="0" style="width: 100%; padding: 6px 10px; border: 1px solid #d9d4c5; border-radius: 3px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 12px;">
+              <label style="font-size: 13px; display: block; margin-bottom: 4px;">Clientes Sweet Spot activos</label>
+              <input type="number" id="calc-sweet" value="10" min="0" style="width: 100%; padding: 6px 10px; border: 1px solid #d9d4c5; border-radius: 3px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 12px;">
+              <label style="font-size: 13px; display: block; margin-bottom: 4px;">Región</label>
+              <select id="calc-region" style="width: 100%; padding: 6px 10px; border: 1px solid #d9d4c5; border-radius: 3px; font-size: 14px;">
+                <option value="usa">USA (USD)</option>
+                <option value="co">Colombia (COP)</option>
+                <option value="mix">Mix 50/50</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <label style="font-size: 13px; display: block; margin-bottom: 4px;">Costos fijos/mes (USD)</label>
+              <input type="number" id="calc-fixed" value="120" min="0" style="width: 100%; padding: 6px 10px; border: 1px solid #d9d4c5; border-radius: 3px; font-size: 14px;">
+            </div>
+          </div>
+          <div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
+              <div style="background: white; border: 1px solid #e0dcd0; border-radius: 6px; padding: 16px;">
+                <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-family: monospace;">MRR Mensual</p>
+                <p style="font-size: 24px; font-weight: 700; font-family: 'Fraunces', serif;" id="calc-mrr">$735</p>
+              </div>
+              <div style="background: white; border: 1px solid #e0dcd0; border-radius: 6px; padding: 16px;">
+                <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-family: monospace;">ARR Anual</p>
+                <p style="font-size: 24px; font-weight: 700; font-family: 'Fraunces', serif;" id="calc-arr">$8,820</p>
+              </div>
+              <div style="background: #1c1c1a; color: #f5f1e8; border-radius: 6px; padding: 16px;">
+                <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(245,241,232,0.6); font-family: monospace;">Profit/mes</p>
+                <p style="font-size: 24px; font-weight: 700; font-family: 'Fraunces', serif; color: #7eb87e;" id="calc-profit">$615</p>
+              </div>
+              <div style="background: white; border: 1px solid #e0dcd0; border-radius: 6px; padding: 16px;">
+                <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-family: monospace;">Setups pendientes</p>
+                <p style="font-size: 24px; font-weight: 700; font-family: 'Fraunces', serif;" id="calc-setups">$2,135</p>
+                <p style="font-size: 11px; color: #888;" id="calc-setups-detail">Si todos son nuevos</p>
+              </div>
+            </div>
+            <div style="background: #1c1c1a; color: #f5f1e8; padding: 16px 20px; border-radius: 6px;">
+              <p style="font-size: 13px;" id="calc-summary">Con 15 clientes activos (5 Sitio + 10 Sweet Spot) generas $735 USD/mes de MRR recurrente. Después de costos fijos ($120), tu profit mensual es $615 USD.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

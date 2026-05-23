@@ -175,7 +175,7 @@ var EMPTY_CLIENT = {
 };
 
 var REGIONS = ['USA', 'CO'];
-var PLANS = ['Sitio', 'Presencia', 'Crecimiento'];
+var PLANS = ['Sitio', 'Sweet Spot'];
 var ESTADOS = ['Lead', 'Demo', 'Propuesta', 'Cliente activo', 'Churn'];
 
 function getClients() {
@@ -340,3 +340,54 @@ function initClients() {
   renderClients();
   document.getElementById('add-client-btn').addEventListener('click', addClient);
 }
+
+// ═══════════════════════════════════════════════
+// CALCULATOR
+// ═══════════════════════════════════════════════
+
+var PRICING = {
+  usa: { sitioSetup: 99, sitioMonth: 29, sweetSetup: 199, sweetMonth: 59 },
+  co:  { sitioSetup: 75, sitioMonth: 15, sweetSetup: 150, sweetMonth: 25 }
+};
+
+function calcRender() {
+  var nSitio = parseInt(document.getElementById('calc-sitio').value) || 0;
+  var nSweet = parseInt(document.getElementById('calc-sweet').value) || 0;
+  var region = document.getElementById('calc-region').value;
+  var fixed = parseFloat(document.getElementById('calc-fixed').value) || 0;
+
+  var p;
+  if (region === 'mix') {
+    p = {
+      sitioMonth: (PRICING.usa.sitioMonth + PRICING.co.sitioMonth) / 2,
+      sweetMonth: (PRICING.usa.sweetMonth + PRICING.co.sweetMonth) / 2,
+      sitioSetup: (PRICING.usa.sitioSetup + PRICING.co.sitioSetup) / 2,
+      sweetSetup: (PRICING.usa.sweetSetup + PRICING.co.sweetSetup) / 2
+    };
+  } else {
+    p = PRICING[region];
+  }
+
+  var mrr = nSitio * p.sitioMonth + nSweet * p.sweetMonth;
+  var arr = mrr * 12;
+  var profit = mrr - fixed;
+  var setups = nSitio * p.sitioSetup + nSweet * p.sweetSetup;
+
+  document.getElementById('calc-mrr').textContent = '$' + mrr.toLocaleString('en-US');
+  document.getElementById('calc-arr').textContent = '$' + arr.toLocaleString('en-US');
+  var profitEl = document.getElementById('calc-profit');
+  profitEl.textContent = '$' + profit.toLocaleString('en-US');
+  profitEl.style.color = profit >= 0 ? '#7eb87e' : '#d68080';
+  document.getElementById('calc-setups').textContent = '$' + setups.toLocaleString('en-US');
+  document.getElementById('calc-summary').textContent =
+    'Con ' + (nSitio + nSweet) + ' clientes activos (' + nSitio + ' Sitio + ' + nSweet + ' Sweet Spot) generas $' +
+    mrr.toLocaleString('en-US') + ' USD/mes de MRR recurrente. Después de costos fijos ($' +
+    fixed.toLocaleString('en-US') + '), tu profit mensual es $' + profit.toLocaleString('en-US') + ' USD.';
+}
+
+document.querySelectorAll('#calc-sitio, #calc-sweet, #calc-region, #calc-fixed').forEach(function(el) {
+  el.addEventListener('input', calcRender);
+  el.addEventListener('change', calcRender);
+});
+
+calcRender();
