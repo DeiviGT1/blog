@@ -295,6 +295,113 @@ Stack: Next.js 15 · Tailwind · shadcn/ui · next-intl · Payload CMS · Neon �
       </div>
     </section>
 
+    <!-- ═══ 5B. PASARELAS USA ═══ -->
+    <section class="admin-section section-white">
+      <div class="container">
+        <h3 class="section-heading">Comparativo de pasarelas USA</h3>
+        <p style="color: #666; margin-bottom: 16px; font-size: 14px;">Qué recomendarle a cada cliente USA dependiendo de su caso. Todas aceptan tarjetas de crédito/débito USA.</p>
+        <div class="gateway-grid">
+          <div class="gateway-card recommended">
+            <div class="gateway-header">
+              <h4>Stripe</h4>
+              <span class="recommended-badge">RECOMENDADA GENERAL</span>
+            </div>
+            <div class="gateway-commission">
+              <span class="commission-label">Comisión</span>
+              <p>2.9% + $0.30 por transacción. Sin monthly fee.</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Pros</span>
+              <p>Estándar de la industria. API excelente. Soporta suscripciones, invoices, pagos recurrentes. Checkout embebido o hosted. Dashboard completo. Payout en 2 días.</p>
+            </div>
+            <div class="gateway-cons">
+              <span class="cons-label">Contras</span>
+              <p>Requiere SSN o EIN del dueño del negocio para activar cuenta. No acepta cash.</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Mejor para</span>
+              <p><strong>La mayoría de clientes USA.</strong> Restaurantes con delivery, barberías con booking online, tiendas con ecommerce. Si aceptan tarjeta, Stripe.</p>
+            </div>
+          </div>
+
+          <div class="gateway-card">
+            <div class="gateway-header">
+              <h4>Square</h4>
+            </div>
+            <div class="gateway-commission">
+              <span class="commission-label">Comisión</span>
+              <p>2.6% + $0.10 en persona / 2.9% + $0.30 online. Sin monthly fee.</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Pros</span>
+              <p>Lector de tarjetas físico gratis (tap to pay). POS integrado. Excelente para negocios con mostrador + online. Reporting sencillo para el dueño.</p>
+            </div>
+            <div class="gateway-cons">
+              <span class="cons-label">Contras</span>
+              <p>Menos flexible que Stripe para integraciones custom. Ecommerce más limitado en personalización.</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Mejor para</span>
+              <p><strong>Barberías, restaurantes, tiendas con punto físico</strong> que necesitan cobrar en persona Y online. El lector tap-to-pay gratis es un gran selling point.</p>
+            </div>
+          </div>
+
+          <div class="gateway-card">
+            <div class="gateway-header">
+              <h4>PayPal Commerce</h4>
+            </div>
+            <div class="gateway-commission">
+              <span class="commission-label">Comisión</span>
+              <p>2.99% + $0.49 estándar / 2.59% + $0.49 con volumen. Botón Venmo incluido.</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Pros</span>
+              <p>Muchos hispanos ya tienen PayPal. Incluye Venmo (popular en USA joven). Confianza de marca alta. No necesita SSN del dueño para empezar.</p>
+            </div>
+            <div class="gateway-cons">
+              <span class="cons-label">Contras</span>
+              <p>Comisión más alta. Holds de fondos frecuentes en cuentas nuevas. Checkout menos limpio que Stripe. Soporte malo.</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Mejor para</span>
+              <p><strong>Clientes que ya cobran por PayPal/Venmo</strong> y no quieren cambiar. Botánicas y tiendas que venden por IG y mandan link de pago.</p>
+            </div>
+          </div>
+
+          <div class="gateway-card">
+            <div class="gateway-header">
+              <h4>Clover</h4>
+            </div>
+            <div class="gateway-commission">
+              <span class="commission-label">Comisión</span>
+              <p>2.3% + $0.10 en persona / 3.5% + $0.10 online. Hardware desde $49.</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Pros</span>
+              <p>Sistema POS completo con hardware propio. Gestión de inventario, empleados, propinas. Muy popular en restaurantes USA.</p>
+            </div>
+            <div class="gateway-cons">
+              <span class="cons-label">Contras</span>
+              <p>Hardware tiene costo. Lock-in al ecosistema Clover. Planes mensuales ($14.95+). Online commerce es secundario.</p>
+            </div>
+            <div class="gateway-pros">
+              <span class="pros-label">Mejor para</span>
+              <p><strong>Restaurantes con volumen alto</strong> que necesitan POS completo. Si ya tienen Clover, integrar con su sitio web.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #1c1c1a; color: #f5f1e8; padding: 20px 24px; border-radius: 6px; margin-top: 20px; position: relative;">
+          <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #B85940;"></div>
+          <h4 style="font-family: 'Fraunces', serif; margin-bottom: 8px;">Regla rápida para recomendar</h4>
+          <p style="font-size: 13.5px; opacity: 0.9; margin-bottom: 6px;"><strong style="color: #C9A961;">Ecommerce / online only →</strong> Stripe (siempre)</p>
+          <p style="font-size: 13.5px; opacity: 0.9; margin-bottom: 6px;"><strong style="color: #C9A961;">Punto físico + online →</strong> Square (lector gratis + integra con sitio)</p>
+          <p style="font-size: 13.5px; opacity: 0.9; margin-bottom: 6px;"><strong style="color: #C9A961;">Ya cobra por PayPal/Venmo →</strong> PayPal Commerce (no cambiar lo que funciona)</p>
+          <p style="font-size: 13.5px; opacity: 0.9;"><strong style="color: #C9A961;">Restaurante con volumen →</strong> Clover si ya lo tiene, Square si no</p>
+        </div>
+      </div>
+    </section>
+
     <!-- ═══ 6. PRICING HÍBRIDO — USA VS COLOMBIA ═══ -->
     <section class="admin-section section-white">
       <div class="container">
