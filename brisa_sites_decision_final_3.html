@@ -1,0 +1,2764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brisa Sites · Decisión Final de Modelo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f5f1e8; --bg-card: #fbf8f2; --bg-input: #fff;
+    --ink: #1c1c1a; --ink-soft: #4a4a44; --ink-muted: #8a8780;
+    --rule: #d9d4c5; --rule-soft: #ebe6d7;
+    --terracotta: #b04a2a; --terracotta-dark: #8a3919;
+    --olive: #4f5b2e; --ochre: #d4933a; --teal: #2d5a5a;
+    --green-positive: #3a7a3a; --red-negative: #9c3030;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Manrope', sans-serif; font-weight: 400;
+    line-height: 1.5; font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1320px; margin: 0 auto; padding: 48px 40px; }
+  .header { border-bottom: 2px solid var(--ink); padding-bottom: 28px; margin-bottom: 32px; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--terracotta); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--terracotta); }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 800;
+    font-size: clamp(32px, 4.2vw, 50px); line-height: 1.02;
+    letter-spacing: -0.02em; margin-bottom: 14px;
+    font-variation-settings: "opsz" 144;
+  }
+  h1 em { font-style: italic; color: var(--terracotta); font-weight: 400; }
+  .header p { font-size: 15.5px; color: var(--ink-soft); max-width: 800px; }
+  .tagline {
+    display: inline-flex; gap: 12px; margin-top: 16px;
+    background: var(--ink); color: var(--bg);
+    padding: 8px 18px; border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  .tagline span { color: var(--ochre); }
+
+  .tabs-nav {
+    display: flex; gap: 0; border-bottom: 1px solid var(--rule);
+    margin-bottom: 40px; overflow-x: auto;
+  }
+  .tab-button {
+    background: transparent; border: none; padding: 16px 24px;
+    font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500;
+    color: var(--ink-muted); cursor: pointer; position: relative;
+    transition: color 0.15s; white-space: nowrap; letter-spacing: -0.01em;
+  }
+  .tab-button .num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--ink-muted); margin-right: 8px; letter-spacing: 0.1em;
+  }
+  .tab-button:hover { color: var(--ink); }
+  .tab-button.active { color: var(--ink); font-weight: 700; }
+  .tab-button.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 3px; background: var(--terracotta);
+  }
+  .tab-button.active .num { color: var(--terracotta); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-intro { margin-bottom: 32px; }
+  .section-intro h2 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 32px; letter-spacing: -0.015em; margin-bottom: 10px;
+  }
+  .section-intro p { color: var(--ink-soft); font-size: 15.5px; max-width: 800px; }
+
+  .grid-main { display: grid; grid-template-columns: 380px 1fr; gap: 28px; margin-bottom: 40px; }
+  .panel {
+    background: var(--bg-card); border: 1px solid var(--rule);
+    border-radius: 4px; padding: 24px;
+  }
+  .panel-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--rule);
+  }
+  .panel-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .panel-number {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--ink-muted); letter-spacing: 0.15em;
+  }
+  .panel + .panel { margin-top: 20px; }
+
+  .input-row {
+    display: grid; grid-template-columns: 1fr 130px;
+    gap: 12px; align-items: center; margin-bottom: 12px;
+  }
+  .input-label { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+  .input-label small {
+    display: block; font-size: 11px; color: var(--ink-muted);
+    font-weight: 400; margin-top: 1px; font-family: 'JetBrains Mono', monospace;
+  }
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  .input-prefix {
+    position: absolute; left: 10px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--ink-muted); pointer-events: none;
+  }
+  input[type="number"] {
+    width: 100%; padding: 8px 10px 8px 24px;
+    border: 1px solid var(--rule); background: var(--bg-input);
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    color: var(--ink); border-radius: 3px; text-align: right;
+    transition: border-color 0.15s;
+  }
+  input[type="number"].no-prefix { padding-left: 10px; }
+  input[type="number"]:focus { outline: none; border-color: var(--terracotta); }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .slider-row { margin-bottom: 16px; }
+  .slider-header {
+    display: flex; justify-content: space-between;
+    align-items: baseline; margin-bottom: 6px;
+  }
+  .slider-name { font-size: 13px; color: var(--ink); font-weight: 600; }
+  .slider-value { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--terracotta); }
+  input[type="range"] {
+    width: 100%; height: 4px; background: var(--rule);
+    outline: none; -webkit-appearance: none; border-radius: 2px; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 18px; height: 18px; background: var(--ink);
+    border-radius: 50%; cursor: pointer; transition: transform 0.1s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); background: var(--terracotta); }
+
+  .plan-edit {
+    padding: 14px; border: 1px solid var(--rule-soft);
+    border-radius: 3px; margin-bottom: 12px; background: #fff;
+  }
+  .plan-edit-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+  }
+  .plan-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
+  .plan-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot-sitio { background: #7a8a4e; }
+  .dot-sweetspot { background: #d96b48; }
+
+  .results-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card {
+    background: var(--bg-card); border: 1px solid var(--rule);
+    padding: 22px 20px; border-radius: 4px;
+  }
+  .kpi-card.featured { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .kpi-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--ink-muted); margin-bottom: 8px;
+  }
+  .kpi-card.featured .kpi-label { color: rgba(245, 241, 232, 0.65); }
+  .kpi-value {
+    font-family: 'Fraunces', serif; font-size: 28px;
+    font-weight: 800; line-height: 1; letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144;
+  }
+  .kpi-value .currency { font-size: 15px; font-weight: 500; color: var(--ink-muted); margin-right: 2px; }
+  .kpi-card.featured .kpi-value .currency { color: rgba(245, 241, 232, 0.6); }
+  .kpi-sub { font-size: 11px; color: var(--ink-muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+  .kpi-card.featured .kpi-sub { color: rgba(245, 241, 232, 0.55); }
+  .kpi-positive { color: var(--green-positive); }
+  .kpi-negative { color: var(--red-negative); }
+  .kpi-card.featured .kpi-positive { color: #7eb87e; }
+  .kpi-card.featured .kpi-negative { color: #d68080; }
+
+  .results-section {
+    background: var(--bg-card); border: 1px solid var(--rule);
+    border-radius: 4px; padding: 28px; margin-bottom: 24px;
+  }
+  .results-section-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .results-section-sub { font-size: 12px; color: var(--ink-muted); margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; }
+  .chart-canvas-wrap { position: relative; height: 300px; }
+
+  .breakeven-row {
+    display: grid; grid-template-columns: 1fr auto auto;
+    gap: 16px; padding: 12px 0;
+    border-bottom: 1px solid var(--rule-soft); align-items: center;
+  }
+  .breakeven-row:last-child { border: none; }
+  .be-plan { display: flex; align-items: center; font-size: 14px; font-weight: 600; }
+  .be-detail { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-muted); }
+  .be-result { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--terracotta); min-width: 90px; text-align: right; }
+
+  .feature-matrix {
+    background: var(--bg-card); border: 1px solid var(--rule);
+    border-radius: 4px; overflow: hidden; margin-bottom: 32px;
+  }
+  .feature-matrix table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .feature-matrix thead th {
+    background: var(--ink); color: var(--bg); text-align: left;
+    padding: 16px 18px; font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.12em; font-weight: 500; vertical-align: top;
+  }
+  .feature-matrix thead th .plan-title {
+    display: block; font-family: 'Fraunces', serif; font-size: 18px;
+    font-weight: 700; text-transform: none; letter-spacing: -0.01em;
+    margin-top: 4px; margin-bottom: 4px;
+  }
+  .feature-matrix thead th .plan-price {
+    display: block; font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 700; color: var(--ochre);
+    text-transform: none; letter-spacing: 0;
+  }
+  .feature-matrix thead th .plan-price small { font-size: 12px; color: rgba(245, 241, 232, 0.6); font-weight: 400; }
+  .feature-matrix tbody td { padding: 12px 18px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; font-size: 13.5px; }
+  .feature-matrix tbody td.feature-name { font-weight: 600; color: var(--ink); background: rgba(217, 212, 197, 0.18); }
+  .feature-matrix tbody td.has { color: var(--ink); font-weight: 500; }
+  .feature-matrix tbody td.no { color: var(--ink-muted); text-align: center; }
+  .feature-matrix tbody td.upgraded { color: var(--terracotta-dark); font-weight: 600; }
+  .feature-matrix tbody td.upgraded::before { content: '+ '; color: var(--terracotta); font-weight: 700; }
+  .feature-matrix tbody td.star { color: var(--terracotta-dark); font-weight: 700; }
+  .feature-matrix tbody td.star::before { content: '★ '; color: var(--ochre); }
+  .feature-matrix tbody tr:last-child td { border-bottom: none; }
+  .feature-matrix tbody tr.section-header td {
+    background: var(--ink); color: var(--bg);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.12em; padding: 8px 18px;
+  }
+
+  .callout {
+    background: var(--ink); color: var(--bg);
+    padding: 24px 28px; margin-bottom: 24px;
+    border-radius: 4px; position: relative;
+  }
+  .callout::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--terracotta); }
+  .callout h4 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; margin-bottom: 8px; }
+  .callout p { color: rgba(245, 241, 232, 0.85); font-size: 13.5px; margin: 0 0 8px; }
+  .callout p:last-child { margin: 0; }
+
+  .capacity-bar {
+    height: 22px; background: var(--rule-soft);
+    border-radius: 3px; overflow: hidden; position: relative; margin-top: 8px;
+  }
+  .capacity-fill { height: 100%; background: var(--olive); transition: width 0.3s, background 0.3s; }
+  .capacity-fill.warning { background: var(--ochre); }
+  .capacity-fill.danger { background: var(--red-negative); }
+  .capacity-label {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 600; color: var(--ink); z-index: 2;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .helper {
+    font-size: 12px; color: var(--ink-muted); margin-top: 10px; line-height: 1.5;
+    padding: 10px 12px; background: var(--rule-soft);
+    border-radius: 3px; border-left: 3px solid var(--terracotta);
+  }
+
+  .scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+  .scenario { background: var(--bg-card); border: 1px solid var(--rule); padding: 18px 20px; border-radius: 4px; }
+  .scenario .scen-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--terracotta); margin-bottom: 6px;
+  }
+  .scenario .scen-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+  .scenario .scen-row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 3px 0; color: var(--ink-soft); }
+  .scenario .scen-row .v { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--ink); }
+
+  .model-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+  .model-card {
+    background: var(--bg-card); border: 1px solid var(--rule);
+    padding: 28px; border-radius: 4px; position: relative;
+  }
+  .model-card.featured { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .model-card h3 { font-family: 'Fraunces', serif; font-size: 24px; margin-bottom: 4px; font-weight: 700; letter-spacing: -0.01em; }
+  .model-card .subtitle {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--terracotta); letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  .model-card.featured .subtitle { color: var(--ochre); }
+  .model-card .stat-row {
+    display: flex; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--rule-soft); font-size: 13.5px;
+  }
+  .model-card.featured .stat-row { border-color: rgba(245, 241, 232, 0.12); }
+  .model-card .stat-row .label { color: var(--ink-muted); }
+  .model-card.featured .stat-row .label { color: rgba(245, 241, 232, 0.6); }
+  .model-card .stat-row .value { font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+  .recommendation {
+    background: linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-dark) 100%);
+    color: var(--bg); padding: 32px; border-radius: 4px; margin-top: 32px;
+  }
+  .recommendation h3 { font-family: 'Fraunces', serif; font-size: 22px; margin-bottom: 12px; font-weight: 700; }
+  .recommendation p { font-size: 14px; line-height: 1.55; opacity: 0.95; margin-bottom: 10px; }
+
+  .analogy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+  .analogy {
+    background: var(--bg-card); border: 1px solid var(--rule);
+    padding: 20px; border-radius: 4px;
+  }
+  .analogy .icon { font-size: 28px; margin-bottom: 8px; }
+  .analogy h4 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
+  .analogy p { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+  @media (max-width: 980px) {
+    .grid-main { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: repeat(2, 1fr); }
+    .container { padding: 24px 16px; }
+    .model-comparison, .analogy-grid, .scenarios { grid-template-columns: 1fr; }
+  }
+
+  /* TAB 5 CALCULATORS */
+  .calc-block {
+    background: var(--bg-card); border: 1px solid var(--rule);
+    border-radius: 4px; padding: 32px; margin-bottom: 32px;
+  }
+  .calc-block-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 6px; padding-bottom: 16px; border-bottom: 2px solid var(--ink);
+  }
+  .calc-block-title {
+    font-family: 'Fraunces', serif; font-size: 26px;
+    font-weight: 700; letter-spacing: -0.015em;
+  }
+  .calc-block-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--terracotta); letter-spacing: 0.15em;
+  }
+  .calc-block-desc { color: var(--ink-soft); font-size: 14px; margin-bottom: 24px; }
+
+  .calc-grid {
+    display: grid; grid-template-columns: 340px 1fr; gap: 24px;
+  }
+  .calc-inputs { background: #fff; border: 1px solid var(--rule); border-radius: 3px; padding: 20px; }
+  .calc-inputs-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--ink-muted); margin-bottom: 14px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .verdict-strip {
+    background: var(--ink); color: var(--bg);
+    padding: 18px 22px; border-radius: 3px;
+    margin-top: 16px; display: flex; align-items: center; gap: 16px;
+  }
+  .verdict-strip.healthy { background: var(--green-positive); }
+  .verdict-strip.warning { background: var(--ochre); color: var(--ink); }
+  .verdict-strip.danger { background: var(--red-negative); }
+  .verdict-strip .v-icon { font-size: 26px; }
+  .verdict-strip .v-text { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; }
+  .verdict-strip .v-detail { font-size: 12.5px; opacity: 0.85; margin-top: 2px; }
+
+  .calc-kpi-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-bottom: 16px;
+  }
+  .calc-kpi {
+    background: #fff; border: 1px solid var(--rule);
+    padding: 16px; border-radius: 3px;
+  }
+  .calc-kpi-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--ink-muted); margin-bottom: 6px;
+  }
+  .calc-kpi-value {
+    font-family: 'Fraunces', serif; font-size: 24px;
+    font-weight: 800; line-height: 1; letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144;
+  }
+  .calc-kpi-value .currency { font-size: 13px; color: var(--ink-muted); font-weight: 500; }
+  .calc-kpi-sub { font-size: 11px; color: var(--ink-muted); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+
+  /* USD/COP STYLES */
+  .usd-conversion-table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 14px;
+  }
+  .usd-conversion-table th {
+    background: var(--ink); color: var(--bg);
+    padding: 10px 14px; text-align: left;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500;
+  }
+  .usd-conversion-table td {
+    padding: 12px 14px; border-bottom: 1px solid var(--rule-soft);
+    background: #fff;
+  }
+  .usd-conversion-table td.plan-cell { font-weight: 600; color: var(--ink); font-family: 'Fraunces', serif; font-size: 14px; }
+  .usd-conversion-table td.num-cell {
+    font-family: 'JetBrains Mono', monospace; color: var(--terracotta-dark);
+    font-weight: 500; text-align: right;
+  }
+
+  /* META PROGRESS */
+  .meta-progress {
+    background: #fff; border: 1px solid var(--rule);
+    padding: 20px; border-radius: 3px; margin-top: 14px;
+  }
+  .meta-progress-bar {
+    height: 28px; background: var(--rule-soft);
+    border-radius: 3px; overflow: hidden; position: relative; margin-top: 10px;
+  }
+  .meta-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terracotta) 0%, var(--ochre) 100%);
+    transition: width 0.4s ease; display: flex; align-items: center;
+    padding-left: 12px; color: white;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  }
+
+  .path-step {
+    display: grid; grid-template-columns: 60px 1fr auto;
+    gap: 14px; padding: 12px 0;
+    border-bottom: 1px solid var(--rule-soft); align-items: center;
+  }
+  .path-step:last-child { border: none; }
+  .path-step-num {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px;
+  }
+  .path-step-num.done { background: var(--green-positive); }
+  .path-step-text { font-size: 13.5px; color: var(--ink-soft); }
+  .path-step-text strong { color: var(--ink); }
+  .path-step-val {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    color: var(--terracotta-dark); font-weight: 500;
+  }
+
+  /* PÚBLICO / ADMIN BADGES */
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+    text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;
+    vertical-align: middle; margin-left: 8px;
+  }
+  .badge-public { background: var(--olive); color: #fff; }
+  .badge-admin { background: var(--ink-muted); color: #fff; }
+  .section-badge {
+    display: inline-block; padding: 4px 14px; border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .section-badge.public { background: var(--olive); color: #fff; }
+  .section-badge.admin { background: var(--ink-muted); color: #fff; }
+
+  @media (max-width: 980px) {
+    .calc-grid { grid-template-columns: 1fr; }
+    .calc-kpi-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="eyebrow">Brisa Sites · Modelo elegido · Híbrido · 2 planes</div>
+    <h1>Modelo <em>Híbrido</em> · Setup + Mensualidad</h1>
+    <p>Modelo elegido: <strong>Híbrido</strong> (setup inicial + mensualidad de mantenimiento). Dos planes: <strong>Sitio</strong> y <strong>Sweet Spot</strong>. Las secciones marcadas <span class="badge badge-public" style="font-size:8px;">público</span> son lo que ve el cliente. Las marcadas <span class="badge badge-admin" style="font-size:8px;">admin</span> son solo para ti.</p>
+    <div class="tagline"><span>★</span> Híbrido elegido <span>★</span> 2 planes <span>★</span> Público + Admin</div>
+  </header>
+
+  <nav class="tabs-nav">
+    <button class="tab-button active" data-tab="suscripcion"><span class="num">01</span>Suscripción Pura <span class="badge badge-admin">admin</span></button>
+    <button class="tab-button" data-tab="hibrido"><span class="num">02</span>Modelo Híbrido <span class="badge badge-public">público</span></button>
+    <button class="tab-button" data-tab="comparacion"><span class="num">03</span>Comparación Directa <span class="badge badge-admin">admin</span></button>
+    <button class="tab-button" data-tab="mercado"><span class="num">04</span>Análisis de Mercado <span class="badge badge-admin">admin</span></button>
+    <button class="tab-button" data-tab="calculadoras"><span class="num">05</span>Calculadoras <span class="badge badge-admin">admin</span></button>
+  </nav>
+
+  <!-- ============================================ -->
+  <!-- TAB 1: SUSCRIPCIÓN PURA                       -->
+  <!-- ============================================ -->
+  <div class="tab-content active" id="tab-suscripcion">
+
+    <div class="section-intro">
+      <h2>Modelo Suscripción Pura</h2>
+      <p>El cliente paga una cuota mensual fija, sin pago inicial. Todo está incluido: web, hosting, dominio, soporte, mantenimiento. Si deja de pagar, el servicio se suspende (el cliente puede llevarse su contenido). Es el modelo Wix/Squarespace pero con servicio humano managed en español.</p>
+    </div>
+
+    <div class="feature-matrix">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 30%">Característica</th>
+            <th>
+              <span class="plan-dot dot-sitio"></span>Brisa Sitio
+              <span class="plan-title">Presencia · Anzuelo</span>
+              <span class="plan-price">$79.000<small>/mes</small></span>
+            </th>
+            <th>
+              <span class="plan-dot dot-sweetspot"></span>Brisa Sweet Spot
+              <span class="plan-title">★ El plan estrella</span>
+              <span class="plan-price">$159.000<small>/mes</small></span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="3">Sitio web</td></tr>
+          <tr><td class="feature-name">Sitio web bilingüe ES/EN</td><td class="has">4-6 páginas únicas</td><td class="upgraded">6-10 páginas + ficha producto</td></tr>
+          <tr><td class="feature-name">Logo personalizado</td><td class="has">3 propuestas</td><td class="has">3 propuestas</td></tr>
+          <tr><td class="feature-name">Hosting + dominio + SSL</td><td class="has">Incluido</td><td class="has">Incluido</td></tr>
+          <tr><td class="feature-name">WhatsApp + formulario</td><td class="has">✓</td><td class="has">✓</td></tr>
+          <tr><td class="feature-name">Google Maps + Analytics</td><td class="has">✓</td><td class="has">✓</td></tr>
+          <tr><td class="feature-name">SEO base (meta, schema, sitemap)</td><td class="has">✓</td><td class="upgraded">+ SEO fichas producto</td></tr>
+
+          <tr class="section-header"><td colspan="3">E-commerce (lo que distingue Sweet Spot)</td></tr>
+          <tr><td class="feature-name">Tienda online</td><td class="no">—</td><td class="star">Hasta 50 productos</td></tr>
+          <tr><td class="feature-name">Carrito + checkout</td><td class="no">—</td><td class="star">✓ Completo</td></tr>
+          <tr><td class="feature-name">Pasarela de pago</td><td class="no">—</td><td class="star">Wompi o ePayco</td></tr>
+          <tr><td class="feature-name">Carga inicial productos</td><td class="no">—</td><td class="star">Hasta 20 productos</td></tr>
+
+          <tr class="section-header"><td colspan="3">Visibilidad y reputación</td></tr>
+          <tr><td class="feature-name">Google Business Profile</td><td class="no">—</td><td class="star">Optimizado + verificado</td></tr>
+          <tr><td class="feature-name">Gestión reseñas</td><td class="no">—</td><td class="star">Solicitar + responder</td></tr>
+          <tr><td class="feature-name">Reporte mensual tráfico</td><td class="no">—</td><td class="star">✓</td></tr>
+
+          <tr class="section-header"><td colspan="3">Soporte y operación</td></tr>
+          <tr><td class="feature-name">Soporte WhatsApp en español</td><td class="has">&lt;24h respuesta</td><td class="has">&lt;12h respuesta</td></tr>
+          <tr><td class="feature-name">Cambios menores incluidos</td><td class="has">3-4 al año</td><td class="has">6-8 al año</td></tr>
+          <tr><td class="feature-name">Backups automáticos</td><td class="has">Semanal</td><td class="has">Diario</td></tr>
+          <tr><td class="feature-name">Cancelación</td><td class="has">30 días aviso</td><td class="has">30 días aviso</td></tr>
+
+          <tr class="section-header"><td colspan="3">Tu tiempo (con automatización Claude)</td></tr>
+          <tr><td class="feature-name">Horas/mes promedio</td><td class="has">~1 h</td><td class="has">~3 h</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-main">
+      <div>
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Costos fijos mensuales</div>
+            <div class="panel-number">01</div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Claude Max <small>$100 USD/mes</small></label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="s-cost-claude" value="400000" step="10000"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Vercel Pro <small>$20 USD/mes</small></label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="s-cost-vercel" value="80000" step="10000"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Otros (Figma, etc.)</label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="s-cost-other" value="0" step="10000"></div>
+          </div>
+          <div class="helper"><strong>Fijo:</strong> <span id="s-fixed-total">$480.000</span> COP · ≈<span id="s-fixed-usd">$120</span> USD</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Costo variable / cliente</div>
+            <div class="panel-number">02</div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Dominio prorrateado</label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="s-var-domain" value="4000" step="500"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Hosting allocation</label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="s-var-hosting" value="2000" step="500"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Stripe fees</label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="s-var-stripe" value="6000" step="500"></div>
+          </div>
+          <div class="helper"><strong>Variable:</strong> <span id="s-var-total">$12.000</span> COP/cliente/mes</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Precios y horas</div>
+            <div class="panel-number">03</div>
+          </div>
+          <div class="plan-edit">
+            <div class="plan-edit-header"><div class="plan-name"><span class="plan-dot dot-sitio"></span>Brisa Sitio</div></div>
+            <div class="input-row">
+              <label class="input-label">Precio/mes COP</label>
+              <div class="input-wrap"><span class="input-prefix">$</span>
+                <input type="number" id="s-price-sitio" value="79000" step="5000"></div>
+            </div>
+            <div class="input-row">
+              <label class="input-label">Horas/mes</label>
+              <input type="number" class="no-prefix" id="s-hours-sitio" value="1" step="0.5" min="0.5">
+            </div>
+          </div>
+          <div class="plan-edit">
+            <div class="plan-edit-header"><div class="plan-name"><span class="plan-dot dot-sweetspot"></span>Brisa Sweet Spot</div></div>
+            <div class="input-row">
+              <label class="input-label">Precio/mes COP</label>
+              <div class="input-wrap"><span class="input-prefix">$</span>
+                <input type="number" id="s-price-sweetspot" value="159000" step="5000"></div>
+            </div>
+            <div class="input-row">
+              <label class="input-label">Horas/mes</label>
+              <input type="number" class="no-prefix" id="s-hours-sweetspot" value="3" step="0.5" min="0.5">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Clientes activos</div>
+            <div class="panel-number">04</div>
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-name"><span class="plan-dot dot-sitio"></span>Plan Sitio</span>
+              <span class="slider-value" id="s-val-sitio">5</span>
+            </div>
+            <input type="range" id="s-clients-sitio" min="0" max="50" value="5">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-name"><span class="plan-dot dot-sweetspot"></span>Sweet Spot ★</span>
+              <span class="slider-value" id="s-val-sweetspot">10</span>
+            </div>
+            <input type="range" id="s-clients-sweetspot" min="0" max="50" value="10">
+          </div>
+          <div class="input-row" style="margin-top:16px;">
+            <label class="input-label">Churn mensual <small>%</small></label>
+            <input type="number" class="no-prefix" id="s-churn" value="4" step="0.5" min="0" max="20">
+          </div>
+          <div class="input-row">
+            <label class="input-label">Capacidad horas/mes</label>
+            <input type="number" class="no-prefix" id="s-capacity" value="60" step="5" min="10">
+          </div>
+          <div style="margin-top: 14px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--ink-muted); margin-bottom:4px;">
+              <span>Uso de capacidad</span>
+              <span id="s-hours-used">35 / 60 h</span>
+            </div>
+            <div class="capacity-bar">
+              <div class="capacity-label" id="s-capacity-pct">58%</div>
+              <div class="capacity-fill" id="s-capacity-fill" style="width:58%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="results-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">MRR mensual</div>
+            <div class="kpi-value"><span class="currency">$</span><span id="s-kpi-mrr">1.99M</span></div>
+            <div class="kpi-sub" id="s-kpi-mrr-usd">≈ $497 USD/mes</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">ARR (anual)</div>
+            <div class="kpi-value"><span class="currency">$</span><span id="s-kpi-arr">23.8M</span></div>
+            <div class="kpi-sub" id="s-kpi-arr-usd">≈ $5.96K USD/año</div>
+          </div>
+          <div class="kpi-card featured">
+            <div class="kpi-label">Profit mensual</div>
+            <div class="kpi-value"><span class="currency">$</span><span id="s-kpi-profit" class="kpi-positive">1.33M</span></div>
+            <div class="kpi-sub" id="s-kpi-margin">Margen: 66.8%</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">LTV cliente promedio</div>
+            <div class="kpi-value"><span class="currency">$</span><span id="s-kpi-ltv">3.31M</span></div>
+            <div class="kpi-sub" id="s-kpi-ltv-detail">Vida ~25 meses (1/churn)</div>
+          </div>
+        </div>
+
+        <div class="results-section">
+          <div class="results-section-title">Punto de equilibrio</div>
+          <div class="results-section-sub">CUÁNTOS CLIENTES DE UN MISMO PLAN CUBREN COSTOS FIJOS</div>
+          <div class="breakeven-row">
+            <div class="be-plan"><span class="plan-dot dot-sitio"></span>Solo Plan Sitio</div>
+            <div class="be-detail" id="s-be-sitio-detail">—</div>
+            <div class="be-result"><span id="s-be-sitio">8</span> clientes</div>
+          </div>
+          <div class="breakeven-row">
+            <div class="be-plan"><span class="plan-dot dot-sweetspot"></span>Solo Sweet Spot ★</div>
+            <div class="be-detail" id="s-be-sweetspot-detail">—</div>
+            <div class="be-result"><span id="s-be-sweetspot">4</span> clientes</div>
+          </div>
+          <div class="breakeven-row" style="border-top: 2px solid var(--ink); padding-top: 14px; margin-top: 4px;">
+            <div class="be-plan" style="font-size: 15px;">Tu mezcla actual</div>
+            <div class="be-detail" id="s-be-mix-detail">—</div>
+            <div class="be-result" style="font-size: 20px;"><span id="s-be-mix-status" class="kpi-positive">✓ Sobre punto eq.</span></div>
+          </div>
+        </div>
+
+        <div class="results-section">
+          <div class="results-section-title">Revenue vs costos al escalar</div>
+          <div class="results-section-sub">PROYECCIÓN AL CRECER CLIENTES · MIX PROPORCIONAL ACTUAL</div>
+          <div class="chart-canvas-wrap"><canvas id="s-scaleChart"></canvas></div>
+        </div>
+
+        <div class="results-section">
+          <div class="results-section-title">Composición del MRR</div>
+          <div class="results-section-sub">DE DÓNDE VIENE EL DINERO</div>
+          <div class="chart-canvas-wrap"><canvas id="s-mixChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin-bottom: 16px; font-weight: 600;">Escenarios proyectados</h3>
+    <div class="scenarios">
+      <div class="scenario">
+        <div class="scen-label">Mes 1-3</div>
+        <div class="scen-title">Primeros clientes</div>
+        <div class="scen-row"><span>Mix:</span><span class="v">3 + 5</span></div>
+        <div class="scen-row"><span>Clientes:</span><span class="v">8</span></div>
+        <div class="scen-row"><span>MRR:</span><span class="v">$1.03M</span></div>
+        <div class="scen-row"><span>Profit/mes:</span><span class="v">$453K</span></div>
+        <div class="scen-row"><span>Horas:</span><span class="v">18 / 60h</span></div>
+      </div>
+      <div class="scenario" style="border: 2px solid var(--terracotta);">
+        <div class="scen-label" style="color: var(--terracotta);">Mes 6-9 · Objetivo</div>
+        <div class="scen-title">Crecimiento</div>
+        <div class="scen-row"><span>Mix:</span><span class="v">8 + 16</span></div>
+        <div class="scen-row"><span>Clientes:</span><span class="v">24</span></div>
+        <div class="scen-row"><span>MRR:</span><span class="v">$3.17M</span></div>
+        <div class="scen-row"><span>Profit/mes:</span><span class="v">$2.40M</span></div>
+        <div class="scen-row"><span>Horas:</span><span class="v">56 / 60h</span></div>
+      </div>
+      <div class="scenario">
+        <div class="scen-label">Mes 12+</div>
+        <div class="scen-title">Escala</div>
+        <div class="scen-row"><span>Mix:</span><span class="v">15 + 27</span></div>
+        <div class="scen-row"><span>Clientes:</span><span class="v">42</span></div>
+        <div class="scen-row"><span>MRR:</span><span class="v">$5.48M</span></div>
+        <div class="scen-row"><span>Profit/mes:</span><span class="v">$4.50M</span></div>
+        <div class="scen-row"><span>Horas:</span><span class="v">96h ⚠ Subcontratar</span></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>Cuándo te conviene Suscripción Pura</h4>
+      <p><strong style="color: var(--ochre);">✓ Te conviene si:</strong> Apuntas a USA hispano (Miami) donde la cultura SaaS está más madura. Quieres simplicidad operativa (un solo cobro, sin setup). Tienes paciencia para que el MRR crezca lento. Vas a evangelizar al cliente sobre el modelo "servicio managed".</p>
+      <p><strong style="color: var(--red-negative);">✗ No te conviene si:</strong> Apuntas a Colombia donde la cultura tradicional prefiere "comprar y ser dueño". Necesitas cashflow rápido para reinvertir. Vas a enfrentar la objeción "¿y si me quiero ir? pierdo todo".</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 2: HÍBRIDO                                -->
+  <!-- ============================================ -->
+  <div class="tab-content" id="tab-hibrido">
+
+    <div class="section-intro">
+      <h2>Modelo Híbrido · Setup + Mensualidad</h2>
+      <p>El cliente paga un setup inicial ($299K-$599K) que cubre el TRABAJO INICIAL de diseñar y construir el sitio. Después paga una mensualidad baja ($59K-$99K) que cubre el MANTENIMIENTO CONTINUO del servicio. El sitio es del cliente. La mensualidad es como pagar administración del edificio.</p>
+    </div>
+
+    <div class="section-badge public">Público · Argumento de venta</div>
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin-bottom: 16px; font-weight: 600;">¿Por qué pagan la mensualidad si ya compraron el sitio?</h3>
+
+    <div class="analogy-grid">
+      <div class="analogy">
+        <div class="icon">🏢</div>
+        <h4>Apartamento + administración</h4>
+        <p>Compras el apartamento, es tuyo. Pero pagas $400K-$800K/mes de administración. Si no pagas, el edificio se cae a pedazos (ascensor, portería, aseo). Tu sitio web igual.</p>
+      </div>
+      <div class="analogy">
+        <div class="icon">🚗</div>
+        <h4>Carro + seguro + revisión</h4>
+        <p>El carro es tuyo. Pero pagas seguro, revisión técnico-mecánica, mantenimiento. Sin eso, el carro deja de funcionar (o de ser legal). Tu sitio web necesita actualizaciones de seguridad iguales.</p>
+      </div>
+      <div class="analogy">
+        <div class="icon">🏠</div>
+        <h4>Casa + servicios públicos</h4>
+        <p>La casa es tuya. Pero pagas servicios o no opera. Tu sitio paga hosting profesional, SSL, backups, soporte humano — sin eso, no funciona.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>El argumento que cierra el cliente:</h4>
+      <p>"El sitio web es tuyo. El código, el dominio, el contenido — todo a tu nombre. Lo que pagas mensualmente es el <strong style="color: var(--ochre);">mantenimiento del servicio</strong>: hosting profesional, soporte cuando lo necesites, cambios menores cuando los pidas, y la tranquilidad de que alguien técnico está pendiente de que todo siga funcionando. Si en algún momento decides irte, te entregamos los archivos y no debes nada más."</p>
+    </div>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin: 32px 0 16px; font-weight: 600;">Qué cubre cada cobro</h3>
+    <div class="section-badge public">Público · Lo que ve el cliente</div>
+    <div class="feature-matrix">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 30%">Concepto</th>
+            <th>
+              <span class="plan-dot dot-sitio"></span>Brisa Sitio
+              <span class="plan-price">$299K<small> setup</small></span>
+              <span class="plan-price" style="font-size: 18px; color: var(--ochre);">+ $59K<small>/mes</small></span>
+            </th>
+            <th>
+              <span class="plan-dot dot-sweetspot"></span>Brisa Sweet Spot
+              <span class="plan-price">$599K<small> setup</small></span>
+              <span class="plan-price" style="font-size: 18px; color: var(--ochre);">+ $99K<small>/mes</small></span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="3">Setup inicial (pago único · "compras tu sitio")</td></tr>
+          <tr><td class="feature-name">Diseño + construcción del sitio</td><td class="has">4-6 páginas únicas bilingües</td><td class="upgraded">6-10 páginas + tienda online</td></tr>
+          <tr><td class="feature-name">Logo personalizado</td><td class="has">3 propuestas</td><td class="has">3 propuestas</td></tr>
+          <tr><td class="feature-name">Setup técnico inicial</td><td class="has">Dominio, hosting, SSL</td><td class="has">+ pasarela de pago configurada</td></tr>
+          <tr><td class="feature-name">Configuración inicial</td><td class="has">Google Maps, Analytics, WhatsApp</td><td class="upgraded">+ Google Business + carga 20 productos</td></tr>
+          <tr><td class="feature-name">Entregable</td><td class="star">Sitio web funcionando</td><td class="star">Sitio + tienda online funcionando</td></tr>
+
+          <tr class="section-header"><td colspan="3">Mensualidad (servicio continuo · "administración del edificio")</td></tr>
+          <tr><td class="feature-name">Hosting profesional</td><td class="has">✓ Vercel/AWS</td><td class="has">✓ Vercel/AWS</td></tr>
+          <tr><td class="feature-name">Renovación dominio + SSL</td><td class="has">✓ Anual</td><td class="has">✓ Anual</td></tr>
+          <tr><td class="feature-name">Mantenimiento técnico</td><td class="has">Actualizaciones + parches seguridad</td><td class="has">Actualizaciones + parches seguridad</td></tr>
+          <tr><td class="feature-name">Soporte en español</td><td class="has">&lt;24h respuesta</td><td class="has">&lt;12h respuesta</td></tr>
+          <tr><td class="feature-name">Cambios menores incluidos</td><td class="has">1 al mes</td><td class="has">3 al mes</td></tr>
+          <tr><td class="feature-name">Monitoreo uptime</td><td class="has">✓</td><td class="has">✓</td></tr>
+          <tr><td class="feature-name">Google Business mantenimiento</td><td class="no">—</td><td class="star">Posts + reseñas + actualización</td></tr>
+          <tr><td class="feature-name">Reporte mensual</td><td class="no">—</td><td class="star">Tráfico + ventas</td></tr>
+
+          <tr class="section-header"><td colspan="3">Año 1 total cliente</td></tr>
+          <tr><td class="feature-name">Inversión año 1</td><td class="has">$299K + 12×$59K = <strong>$1.007M</strong></td><td class="upgraded"><strong>$599K + 12×$99K = $1.787M</strong></td></tr>
+          <tr><td class="feature-name">Vs freelancer one-shot</td><td class="has">Freelancer: $1.8M (sin soporte)</td><td class="upgraded">Freelancer ecommerce: $5M (sin soporte)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-badge admin" style="margin-top: 32px;">Admin · Métricas internas y calculadora</div>
+    <div class="grid-main">
+      <div>
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Costos fijos mensuales</div>
+            <div class="panel-number">01</div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Claude Max + Vercel + otros</label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="h-fixed" value="480000" step="10000"></div>
+          </div>
+          <div class="helper"><strong>Total:</strong> mismo que modelo suscripción</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Precios setup + mensual</div>
+            <div class="panel-number">02</div>
+          </div>
+          <div class="plan-edit">
+            <div class="plan-edit-header"><div class="plan-name"><span class="plan-dot dot-sitio"></span>Brisa Sitio</div></div>
+            <div class="input-row">
+              <label class="input-label">Setup inicial</label>
+              <div class="input-wrap"><span class="input-prefix">$</span>
+                <input type="number" id="h-setup-sitio" value="299000" step="10000"></div>
+            </div>
+            <div class="input-row">
+              <label class="input-label">Mensualidad</label>
+              <div class="input-wrap"><span class="input-prefix">$</span>
+                <input type="number" id="h-month-sitio" value="59000" step="5000"></div>
+            </div>
+            <div class="input-row">
+              <label class="input-label">Horas setup (una vez)</label>
+              <input type="number" class="no-prefix" id="h-hsetup-sitio" value="18" step="1">
+            </div>
+            <div class="input-row">
+              <label class="input-label">Horas/mes ongoing</label>
+              <input type="number" class="no-prefix" id="h-hmonth-sitio" value="0.8" step="0.1" min="0.1">
+            </div>
+          </div>
+          <div class="plan-edit">
+            <div class="plan-edit-header"><div class="plan-name"><span class="plan-dot dot-sweetspot"></span>Brisa Sweet Spot</div></div>
+            <div class="input-row">
+              <label class="input-label">Setup inicial</label>
+              <div class="input-wrap"><span class="input-prefix">$</span>
+                <input type="number" id="h-setup-sweetspot" value="599000" step="10000"></div>
+            </div>
+            <div class="input-row">
+              <label class="input-label">Mensualidad</label>
+              <div class="input-wrap"><span class="input-prefix">$</span>
+                <input type="number" id="h-month-sweetspot" value="99000" step="5000"></div>
+            </div>
+            <div class="input-row">
+              <label class="input-label">Horas setup (una vez)</label>
+              <input type="number" class="no-prefix" id="h-hsetup-sweetspot" value="32" step="2">
+            </div>
+            <div class="input-row">
+              <label class="input-label">Horas/mes ongoing</label>
+              <input type="number" class="no-prefix" id="h-hmonth-sweetspot" value="2.5" step="0.5" min="0.5">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Adquisición y operación</div>
+            <div class="panel-number">03</div>
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-name"><span class="plan-dot dot-sitio"></span>Sitios nuevos/mes</span>
+              <span class="slider-value" id="h-val-sitio">1</span>
+            </div>
+            <input type="range" id="h-acq-sitio" min="0" max="10" value="1" step="0.5">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-name"><span class="plan-dot dot-sweetspot"></span>Sweet Spots nuevos/mes</span>
+              <span class="slider-value" id="h-val-sweetspot">2</span>
+            </div>
+            <input type="range" id="h-acq-sweetspot" min="0" max="10" value="2" step="0.5">
+          </div>
+          <div class="input-row" style="margin-top:16px;">
+            <label class="input-label">Churn mensual <small>%</small></label>
+            <input type="number" class="no-prefix" id="h-churn" value="3" step="0.5" min="0" max="20">
+          </div>
+          <div class="input-row">
+            <label class="input-label">Capacidad horas/mes</label>
+            <input type="number" class="no-prefix" id="h-capacity" value="60" step="5" min="10">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="results-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Cashflow mes 1</div>
+            <div class="kpi-value"><span class="currency">$</span><span id="h-kpi-m1">1.49M</span></div>
+            <div class="kpi-sub">Setups del mes</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">MRR estabilizado mes 12</div>
+            <div class="kpi-value"><span class="currency">$</span><span id="h-kpi-mrr">2.34M</span></div>
+            <div class="kpi-sub" id="h-kpi-mrr-detail">Después churn</div>
+          </div>
+          <div class="kpi-card featured">
+            <div class="kpi-label">Profit año 1</div>
+            <div class="kpi-value"><span class="currency">$</span><span id="h-kpi-profit" class="kpi-positive">27.5M</span></div>
+            <div class="kpi-sub" id="h-kpi-profit-usd">≈ $6.87K USD/año</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">LTV cliente promedio</div>
+            <div class="kpi-value"><span class="currency">$</span><span id="h-kpi-ltv">3.18M</span></div>
+            <div class="kpi-sub" id="h-kpi-ltv-detail">Setup + Care vida total</div>
+          </div>
+        </div>
+
+        <div class="results-section">
+          <div class="results-section-title">Proyección año 1 mes a mes</div>
+          <div class="results-section-sub">CASHFLOW MENSUAL · INCLUYE SETUPS + MRR ACUMULADO</div>
+          <div class="chart-canvas-wrap"><canvas id="h-monthChart"></canvas></div>
+        </div>
+
+        <div class="results-section">
+          <div class="results-section-title">Desglose año 1</div>
+          <div class="results-section-sub">DE DÓNDE VIENE EL DINERO · MILLONES COP</div>
+          <div class="breakeven-row">
+            <div class="be-plan">Ingreso por setups año</div>
+            <div class="be-detail" id="h-detail-setups">—</div>
+            <div class="be-result"><span id="h-anim-setups">$10.8M</span></div>
+          </div>
+          <div class="breakeven-row">
+            <div class="be-plan">Ingreso mensualidades año</div>
+            <div class="be-detail" id="h-detail-monthly">Crece cada mes</div>
+            <div class="be-result"><span id="h-anim-monthly">$22.3M</span></div>
+          </div>
+          <div class="breakeven-row">
+            <div class="be-plan">Costos fijos año (×12)</div>
+            <div class="be-detail" id="h-detail-fixed">—</div>
+            <div class="be-result" style="color: var(--ink-soft);"><span id="h-anim-fixed">-$5.76M</span></div>
+          </div>
+          <div class="breakeven-row" style="border-top: 2px solid var(--ink); padding-top: 14px; margin-top: 4px;">
+            <div class="be-plan" style="font-size: 16px;">Profit año 1 estimado</div>
+            <div class="be-detail">Antes de impuestos</div>
+            <div class="be-result" style="font-size: 26px;"><span id="h-anim-profit">$27.3M</span></div>
+          </div>
+        </div>
+
+        <div class="results-section">
+          <div class="results-section-title">LTV cliente · setup + recurrente</div>
+          <div class="results-section-sub">VALOR TOTAL POR CLIENTE EN SU VIDA</div>
+          <div class="chart-canvas-wrap"><canvas id="h-ltvChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>Cuándo te conviene el Híbrido</h4>
+      <p><strong style="color: var(--ochre);">✓ Te conviene si:</strong> Apuntas a Colombia o LATAM tradicional (cultura "comprar" más que "rentar"). Necesitas cashflow desde el mes 1. Quieres filtrar clientes serios con un compromiso inicial. La objeción "no quiero alquilar mi sitio" es real en tu audiencia.</p>
+      <p><strong style="color: var(--red-negative);">✗ No te conviene si:</strong> Quieres simplificar la venta al máximo (un solo cobro). Tu audiencia ya entiende SaaS y suscripción (USA hispano joven, emprendedores digital-natives).</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 3: COMPARACIÓN                            -->
+  <!-- ============================================ -->
+  <div class="tab-content" id="tab-comparacion">
+
+    <div class="section-intro">
+      <h2>Comparación directa · Ambos modelos</h2>
+      <p>Simulación idéntica: <strong>3 clientes nuevos por mes</strong> (1 Sitio + 2 Sweet Spot), churn 3-4%, 12 meses de operación. Aquí ves cómo se comportan los dos modelos lado a lado en cashflow, profit y MRR.</p>
+    </div>
+
+    <div class="model-comparison">
+      <div class="model-card">
+        <div class="subtitle">Modelo A</div>
+        <h3>Suscripción Pura</h3>
+        <div class="stat-row"><span class="label">Setup inicial</span><span class="value">$0</span></div>
+        <div class="stat-row"><span class="label">Sitio mensual</span><span class="value">$79.000</span></div>
+        <div class="stat-row"><span class="label">Sweet Spot mensual</span><span class="value">$159.000</span></div>
+        <div class="stat-row"><span class="label">Cashflow mes 1</span><span class="value" id="c-sub-m1">$397K</span></div>
+        <div class="stat-row"><span class="label">Cashflow mes 12 acum</span><span class="value" id="c-sub-m12">$23.0M</span></div>
+        <div class="stat-row"><span class="label">MRR mes 12</span><span class="value" id="c-sub-mrr12">$4.0M</span></div>
+        <div class="stat-row"><span class="label">LTV/cliente</span><span class="value" id="c-sub-ltv">$3.31M</span></div>
+        <div class="stat-row" style="border:none; padding-top:14px;">
+          <span class="label" style="font-size: 14px;">Profit año 1</span>
+          <span class="value" style="color: var(--terracotta); font-size: 18px;" id="c-sub-profit">$17.2M</span>
+        </div>
+      </div>
+
+      <div class="model-card featured">
+        <div class="subtitle">Modelo B</div>
+        <h3>Híbrido</h3>
+        <div class="stat-row"><span class="label">Setup Sitio</span><span class="value">$299.000</span></div>
+        <div class="stat-row"><span class="label">Setup Sweet Spot</span><span class="value">$599.000</span></div>
+        <div class="stat-row"><span class="label">Sitio mensual</span><span class="value">$59.000</span></div>
+        <div class="stat-row"><span class="label">Sweet Spot mensual</span><span class="value">$99.000</span></div>
+        <div class="stat-row"><span class="label">Cashflow mes 1</span><span class="value" id="c-hib-m1">$1.75M</span></div>
+        <div class="stat-row"><span class="label">Cashflow mes 12 acum</span><span class="value" id="c-hib-m12">$27.3M</span></div>
+        <div class="stat-row"><span class="label">MRR mes 12</span><span class="value" id="c-hib-mrr12">$2.5M</span></div>
+        <div class="stat-row"><span class="label">LTV/cliente</span><span class="value" id="c-hib-ltv">$3.18M</span></div>
+        <div class="stat-row" style="border:none; padding-top:14px;">
+          <span class="label" style="font-size: 14px;">Profit año 1</span>
+          <span class="value" style="color: var(--ochre); font-size: 18px;" id="c-hib-profit">$21.5M</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-section">
+      <div class="results-section-title">Cashflow acumulado · Ambos modelos</div>
+      <div class="results-section-sub">12 MESES · 3 CLIENTES NUEVOS/MES (1 SITIO + 2 SWEET SPOT) · CHURN 4%</div>
+      <div class="chart-canvas-wrap" style="height: 360px;"><canvas id="c-cashflowChart"></canvas></div>
+    </div>
+
+    <div class="results-section">
+      <div class="results-section-title">MRR (Monthly Recurring Revenue) · Ambos modelos</div>
+      <div class="results-section-sub">EL HÍBRIDO TIENE MRR MENOR PERO COMPENSADO POR SETUPS</div>
+      <div class="chart-canvas-wrap"><canvas id="c-mrrChart"></canvas></div>
+    </div>
+
+    <div class="results-section">
+      <div class="results-section-title">Proyección a 24 meses</div>
+      <div class="results-section-sub">DÓNDE LA SUSCRIPCIÓN PURA EMPIEZA A GANAR · CRUCE TÍPICO MES 18-22</div>
+      <div class="chart-canvas-wrap"><canvas id="c-rev24Chart"></canvas></div>
+    </div>
+
+    <div class="recommendation">
+      <h3>Lectura honesta para tu decisión</h3>
+      <p><strong>El híbrido gana en cashflow año 1 (~$27M vs ~$23M)</strong>, lo cual te da plata para reinvertir y validar el modelo más rápido. Si estás empezando y tienes pocos ahorros para "aguantar" mientras crece el MRR, el híbrido es más seguro.</p>
+      <p><strong>La suscripción pura gana en simplicidad y a partir del mes 18-22</strong>, cuando el MRR acumulado supera lo que generaría el modelo de setups. Si tu visión es construir un SaaS "vendible" a 3-5 años, MRR puro es lo que vale para una eventual venta.</p>
+      <p><strong>Mi recomendación para ti específicamente:</strong> empieza con <span style="color: var(--ochre); font-weight: 700;">modelo híbrido</span>. Tu audiencia (hispanos restaurantes/barberías + PYMEs Colombia) responde mejor a "compro y mantengo" que a "alquilo". Te da cashflow desde el día 1 (puedes reinvertir en pauta para conseguir más clientes). Y elimina la objeción cultural más fuerte que vas a enfrentar. Si en 12 meses ves que tus clientes USA hispanos prefieren claramente suscripción pura, migras esos clientes a ese modelo.</p>
+      <p style="margin-top: 14px; font-style: italic; opacity: 0.85;">Pero tú decides. Esta herramienta ahora te deja jugar con todos los números y ver qué te dice tu instinto cuando los precios y volúmenes se acerquen a la realidad que estés viviendo.</p>
+    </div>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 4: ANÁLISIS DE MERCADO                    -->
+  <!-- ============================================ -->
+  <div class="tab-content" id="tab-mercado">
+
+    <div class="section-intro">
+      <h2>Análisis de Mercado Colombiano</h2>
+      <p>Validación en vivo de tus precios contra el mercado real colombiano 2026. Cuando ajustes precios en los Tabs 01 y 02, esta sección actualiza la comparativa automáticamente. Datos consolidados de +15 agencias colombianas (BigRedes, Cangrejo Digital, Workitd, Macgráficas, Wompea, Sigma Studios, Panela Web, ELSASTO, Labweb).</p>
+    </div>
+
+    <!-- VEREDICTO RÁPIDO -->
+    <div class="results-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Sitio (Suscripción)</div>
+        <div class="kpi-value"><span class="currency">$</span><span id="m-vsitio-sub">79K</span></div>
+        <div class="kpi-sub" id="m-vsitio-sub-status"><span style="color: var(--green-positive);">★ Imbatible</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sitio (Híbrido año 1)</div>
+        <div class="kpi-value"><span class="currency">$</span><span id="m-vsitio-hib">1.0M</span></div>
+        <div class="kpi-sub" id="m-vsitio-hib-status"><span style="color: var(--green-positive);">★ Competitivo</span></div>
+      </div>
+      <div class="kpi-card featured">
+        <div class="kpi-label">Sweet Spot (Susc)</div>
+        <div class="kpi-value"><span class="currency">$</span><span id="m-vsweet-sub">159K</span></div>
+        <div class="kpi-sub" id="m-vsweet-sub-status"><span style="color: #7eb87e;">★★ Killer</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sweet Spot (Híbrido año 1)</div>
+        <div class="kpi-value"><span class="currency">$</span><span id="m-vsweet-hib">1.79M</span></div>
+        <div class="kpi-sub" id="m-vsweet-hib-status"><span style="color: var(--green-positive);">★★ Killer</span></div>
+      </div>
+    </div>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin: 32px 0 16px; font-weight: 600;">Comparativa visual · Tu precio mensual vs mantenimiento mercado</h3>
+    <div class="results-section">
+      <div class="results-section-title">Precio mensual COP</div>
+      <div class="results-section-sub">TUS PLANES VS LO QUE COBRA EL MERCADO POR MANTENIMIENTO/SERVICIO MENSUAL</div>
+      <div class="chart-canvas-wrap" style="height: 360px;"><canvas id="m-mensualChart"></canvas></div>
+    </div>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin: 32px 0 16px; font-weight: 600;">Comparativa año 1 · Lo que paga el cliente contigo vs alternativas</h3>
+    <div class="results-section">
+      <div class="results-section-title">Inversión total año 1 del cliente</div>
+      <div class="results-section-sub">DESDE LA PERSPECTIVA DEL CLIENTE · LO QUE GASTA EN 12 MESES</div>
+      <div class="chart-canvas-wrap" style="height: 360px;"><canvas id="m-anualChart"></canvas></div>
+    </div>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin: 32px 0 16px; font-weight: 600;">Tabla comparativa detallada · Mantenimiento mensual</h3>
+    <div class="feature-matrix">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 25%">Servicio mensual</th>
+            <th>Rango mercado COL</th>
+            <th>Tu Brisa Sitio</th>
+            <th>Tu Brisa Sweet Spot</th>
+            <th>Veredicto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature-name">Mantenimiento básico/reactivo</td>
+            <td class="has">$80K – $200K/mes</td>
+            <td class="has" id="m-tbl-sitio1">$79K (sub) · $59K (híbr)</td>
+            <td class="has" id="m-tbl-sweet1">$159K (sub) · $99K (híbr)</td>
+            <td class="upgraded">Tú: por debajo o en banda baja</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Mantenimiento preventivo + SEO básico</td>
+            <td class="has">$150K – $300K/mes</td>
+            <td class="has" id="m-tbl-sitio2">—</td>
+            <td class="has" id="m-tbl-sweet2">$159K en banda baja</td>
+            <td class="upgraded">Sweet Spot bien posicionado</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Profesional PYME completo</td>
+            <td class="has">$300K – $600K/mes</td>
+            <td class="no">—</td>
+            <td class="no">—</td>
+            <td class="has">Fuera de tu rango (intencional)</td>
+          </tr>
+          <tr>
+            <td class="feature-name">E-commerce premium agencia</td>
+            <td class="has">$600K – $1.5M/mes</td>
+            <td class="no">—</td>
+            <td class="no">—</td>
+            <td class="has">Fuera de tu rango (intencional)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin: 32px 0 16px; font-weight: 600;">Tabla comparativa detallada · One-shot del mercado</h3>
+    <p style="color: var(--ink-soft); margin-bottom: 16px;">Lo que el cliente pagaría a un freelancer o agencia tradicional por hacer su sitio una sola vez (sin soporte continuo).</p>
+    <div class="feature-matrix">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 25%">Servicio one-shot</th>
+            <th>Freelancer típico COL</th>
+            <th>Agencia pequeña/mediana COL</th>
+            <th>Tu equivalente Brisa</th>
+            <th>Tu ventaja</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature-name">Landing/sitio presencia (3-5 páginas)</td>
+            <td class="has">$1.8M one-shot</td>
+            <td class="has">$3.5M one-shot</td>
+            <td class="upgraded" id="m-os-sitio">Año 1: $948K (sub) · $1.0M (híbr)</td>
+            <td class="has">Sin hosting/soporte vs tú con todo incluido</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Tienda básica (≤50 productos)</td>
+            <td class="has">$2.5M one-shot</td>
+            <td class="has">$5M one-shot</td>
+            <td class="upgraded" id="m-os-sweet">Año 1: $1.91M (sub) · $1.79M (híbr)</td>
+            <td class="star">Tu Sweet Spot año 1 cuesta MENOS que tienda agencia + tiene soporte</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Hosting profesional anual</td>
+            <td class="has">$400K – $800K/año</td>
+            <td class="has">Incluido en mantenimiento</td>
+            <td class="has">Incluido en cualquier plan</td>
+            <td class="upgraded">El cliente ahorra $400K-$800K/año en hosting solo</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Dominio + SSL</td>
+            <td class="has">$60K – $150K/año + extra SSL</td>
+            <td class="has">Incluido</td>
+            <td class="has">Incluido</td>
+            <td class="has">Sin sorpresas anuales</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Cambios menores (4-6/año)</td>
+            <td class="has">$50K – $150K cada uno = $300K-$900K/año extra</td>
+            <td class="has">Incluido si paga mensualidad</td>
+            <td class="has">Incluidos en tu plan</td>
+            <td class="star">Cliente evita facturas sorpresa</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin: 32px 0 16px; font-weight: 600;">Competencia directa identificada</h3>
+    <div class="feature-matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Competidor</th>
+            <th>Ubicación</th>
+            <th>Rango precios</th>
+            <th>Modelo</th>
+            <th>Tu ventaja</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature-name">Wix / Squarespace</td>
+            <td class="has">Internacional</td>
+            <td class="has">$300-$750 USD/año = $1.2M-$3M COP</td>
+            <td class="has">DIY suscripción</td>
+            <td class="upgraded">Cliente arma su propia web vs tú haces todo</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Shopify Basic</td>
+            <td class="has">Internacional</td>
+            <td class="has">$29 USD/mes + comisiones</td>
+            <td class="has">DIY ecommerce</td>
+            <td class="upgraded">Sin español + cliente arma todo + comisión por venta</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Sigma Studios</td>
+            <td class="has">Medellín</td>
+            <td class="has">$5M – $20M one-shot</td>
+            <td class="has">Agencia tradicional</td>
+            <td class="upgraded">Cliente PYME pequeño no llega a su rango</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Wompea</td>
+            <td class="has">Medellín</td>
+            <td class="has">$2.5M – $8M one-shot</td>
+            <td class="has">Agencia</td>
+            <td class="upgraded">Tu Sweet Spot año 1 cuesta menos + tienes soporte continuo</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Tu Negocio WB</td>
+            <td class="has">Online COL</td>
+            <td class="has">$650K – $2M one-shot</td>
+            <td class="has">One-shot bajo (plantillas)</td>
+            <td class="upgraded">Calidad técnica + soporte real + bilingüe ES/EN</td>
+          </tr>
+          <tr>
+            <td class="feature-name">BytechHub</td>
+            <td class="has">Online COL</td>
+            <td class="has">$500K – $5M one-shot</td>
+            <td class="has">One-shot moderno</td>
+            <td class="upgraded">Tu foco USA hispano + datos + integraciones</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Panela Web</td>
+            <td class="has">Online COL</td>
+            <td class="has">$300K – $15M one-shot + soporte opcional</td>
+            <td class="has">One-shot + mantenimiento</td>
+            <td class="upgraded">Tu modelo híbrido es más estructurado que su soporte opcional</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Freelancer Workana/Fiverr</td>
+            <td class="has">LATAM remoto</td>
+            <td class="has">$300K – $1.5M one-shot</td>
+            <td class="has">One-shot bajo</td>
+            <td class="upgraded">Soporte real + bilingüe + dashboards data</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <h4>Donde NO compites (estratégicamente bueno)</h4>
+      <p><strong style="color: var(--ochre);">No compites con Wix/Squarespace:</strong> ellos son DIY internacional. Tu cliente no quiere armar su propia web. Esa es tu ventaja, no tu debilidad.</p>
+      <p><strong style="color: var(--ochre);">No compites con agencias grandes (Sigma, Cangrejo Digital):</strong> sus clientes son PYMEs ya consolidadas con presupuestos de $5M+. Tu nicho es la microempresa y PYME pequeña que no llega allá.</p>
+      <p><strong style="color: var(--ochre);">No compites con freelancers $300K one-shot:</strong> ellos entregan y desaparecen. Tu propuesta es continuidad + soporte humano + bilingüe + dashboard data. Liga diferente.</p>
+    </div>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin: 32px 0 16px; font-weight: 600;">Veredicto final por plan</h3>
+    <div class="model-comparison">
+      <div class="model-card">
+        <div class="subtitle">Brisa Sitio</div>
+        <h3>Posicionamiento de mercado</h3>
+        <div class="stat-row"><span class="label">Suscripción pura</span><span class="value" id="m-final-sitio-sub">$79K/mes</span></div>
+        <div class="stat-row"><span class="label">Híbrido total año 1</span><span class="value" id="m-final-sitio-hib">$1.0M</span></div>
+        <div class="stat-row"><span class="label">vs Freelancer one-shot</span><span class="value">$1.8M (sin soporte)</span></div>
+        <div class="stat-row"><span class="label">vs Agencia one-shot</span><span class="value">$3.5M</span></div>
+        <div class="stat-row"><span class="label">vs Mantenimiento básico mercado</span><span class="value">$80K-$200K/mes</span></div>
+        <div class="stat-row" style="border:none; padding-top:14px;">
+          <span class="label" style="font-size: 14px;">Veredicto BBB</span>
+          <span class="value" style="color: var(--terracotta); font-size: 16px;">★ Imbatible en su nicho</span>
+        </div>
+      </div>
+
+      <div class="model-card featured">
+        <div class="subtitle">Brisa Sweet Spot</div>
+        <h3>Posicionamiento de mercado</h3>
+        <div class="stat-row"><span class="label">Suscripción pura</span><span class="value" id="m-final-sweet-sub">$159K/mes</span></div>
+        <div class="stat-row"><span class="label">Híbrido total año 1</span><span class="value" id="m-final-sweet-hib">$1.79M</span></div>
+        <div class="stat-row"><span class="label">vs Freelancer ecommerce</span><span class="value">$2.5M (sin soporte)</span></div>
+        <div class="stat-row"><span class="label">vs Agencia ecommerce</span><span class="value">$5M</span></div>
+        <div class="stat-row"><span class="label">vs Mantenimiento ecommerce mercado</span><span class="value">$300K-$1.5M/mes</span></div>
+        <div class="stat-row" style="border:none; padding-top:14px;">
+          <span class="label" style="font-size: 14px;">Veredicto BBB</span>
+          <span class="value" style="color: var(--ochre); font-size: 16px;">★★ Killer del mercado</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="recommendation">
+      <h3>Lo que cuenta la matemática del mercado</h3>
+      <p>Tu <strong>Sweet Spot</strong> es el plan que más rompe el mercado. Un cliente que quiere tienda virtual en Colombia paga típicamente $2.5M-$5M a una agencia, o $800K-$2.5M a un freelancer "y se va". Contigo paga $1.79M (híbrido) o $1.91M (suscripción) en TODO el año 1, e incluye soporte, hosting, cambios, Google Business, reseñas, reportes. Eso es 30-65% menos costoso que la alternativa con muchísimo más valor por dentro.</p>
+      <p>Tu <strong>Sitio</strong> está bien posicionado para captura de mercado: por debajo del mantenimiento básico que cobra cualquier agencia, lo cual te hace difícil de rechazar para el cliente que apenas está validando si necesita estar online.</p>
+      <p>El mensaje de venta correcto es: <em>"compara lo que vas a pagar conmigo en un año vs lo que te pide un freelancer hoy de una. Yo te sale igual o más barato, pero te sigo respondiendo en 6 meses cuando necesites cambiar algo."</em></p>
+    </div>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TAB 5: CALCULADORAS                           -->
+  <!-- ============================================ -->
+  <div class="tab-content" id="tab-calculadoras">
+
+    <div class="section-intro">
+      <h2>Calculadoras Operativas</h2>
+      <p>Tres herramientas conectadas a tus precios actuales: cuánto invertir en pauta para conseguir clientes, conversor USD/COP en vivo para clientes USA, y simulador de cuándo llegas a tus metas personales (ahorro, EB-2, dejar trabajo principal).</p>
+    </div>
+
+    <!-- ============== CALCULADORA 1: CAC ============== -->
+    <div class="calc-block">
+      <div class="calc-block-header">
+        <div>
+          <div class="calc-block-title">CAC · Inversión en pauta</div>
+        </div>
+        <div class="calc-block-num">01 / Customer Acquisition Cost</div>
+      </div>
+      <p class="calc-block-desc">Cuánto puedes invertir en Meta/Google Ads para conseguir cada cliente, sin que la pauta se coma tu margen. La regla saludable: <strong>CAC debe ser menor que 1/3 del LTV (Lifetime Value).</strong></p>
+
+      <div class="calc-grid">
+        <div class="calc-inputs">
+          <div class="calc-inputs-title">Configuración del funnel</div>
+
+          <div class="input-row">
+            <label class="input-label">Presupuesto pauta/mes <small>COP</small></label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="c5-cac-budget" value="800000" step="50000"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Costo por lead <small>WhatsApp/form</small></label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="c5-cac-cpl" value="15000" step="1000"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Tasa cierre lead→cliente <small>%</small></label>
+            <input type="number" class="no-prefix" id="c5-cac-close" value="15" step="1" min="1" max="100">
+          </div>
+          <div class="input-row">
+            <label class="input-label">Mix Sitio vs Sweet Spot <small>% Sitios</small></label>
+            <input type="number" class="no-prefix" id="c5-cac-mix" value="30" step="5" min="0" max="100">
+          </div>
+          <div class="input-row">
+            <label class="input-label">Modelo (sub o hibr)</label>
+            <select id="c5-cac-model" style="padding: 8px 10px; border: 1px solid var(--rule); background: var(--bg-input); font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); border-radius: 3px;">
+              <option value="sub">Suscripción</option>
+              <option value="hib">Híbrido</option>
+            </select>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Churn esperado mensual <small>%</small></label>
+            <input type="number" class="no-prefix" id="c5-cac-churn" value="4" step="0.5" min="0" max="20">
+          </div>
+        </div>
+
+        <div>
+          <div class="calc-kpi-row">
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Leads / mes</div>
+              <div class="calc-kpi-value"><span id="c5-cac-leads">53</span></div>
+              <div class="calc-kpi-sub">Presupuesto / CPL</div>
+            </div>
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Clientes nuevos / mes</div>
+              <div class="calc-kpi-value"><span id="c5-cac-clients">8</span></div>
+              <div class="calc-kpi-sub">Leads × % cierre</div>
+            </div>
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">CAC por cliente</div>
+              <div class="calc-kpi-value"><span class="currency">$</span><span id="c5-cac-cac">100K</span></div>
+              <div class="calc-kpi-sub">Pauta ÷ clientes</div>
+            </div>
+          </div>
+
+          <div class="calc-kpi-row">
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">LTV cliente promedio</div>
+              <div class="calc-kpi-value"><span class="currency">$</span><span id="c5-cac-ltv">2.85M</span></div>
+              <div class="calc-kpi-sub" id="c5-cac-ltv-detail">Mix × vida cliente</div>
+            </div>
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Ratio LTV / CAC</div>
+              <div class="calc-kpi-value"><span id="c5-cac-ratio">28×</span></div>
+              <div class="calc-kpi-sub">Saludable si &gt; 3×</div>
+            </div>
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Payback CAC</div>
+              <div class="calc-kpi-value"><span id="c5-cac-payback">0.9</span> meses</div>
+              <div class="calc-kpi-sub">Tiempo recuperar CAC</div>
+            </div>
+          </div>
+
+          <div class="verdict-strip" id="c5-cac-verdict">
+            <div class="v-icon">✓</div>
+            <div>
+              <div class="v-text" id="c5-cac-verdict-text">CAC saludable</div>
+              <div class="v-detail" id="c5-cac-verdict-detail">Tu pauta se justifica con holgura.</div>
+            </div>
+          </div>
+
+          <div class="results-section" style="margin-top: 20px;">
+            <div class="results-section-title">Proyección 12 meses · Clientes acumulados con esta pauta</div>
+            <div class="results-section-sub">CONSIDERA CHURN MENSUAL · CLIENTES ACTIVOS NETOS</div>
+            <div class="chart-canvas-wrap"><canvas id="c5-cac-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============== CALCULADORA 2: USD/COP ============== -->
+    <div class="calc-block">
+      <div class="calc-block-header">
+        <div>
+          <div class="calc-block-title">Conversor USD/COP · Tus precios</div>
+        </div>
+        <div class="calc-block-num">02 / Tipo de cambio en vivo</div>
+      </div>
+      <p class="calc-block-desc">Ajusta la TRM (tasa USD/COP) para ver todos tus precios en dólares. Útil para conversaciones con clientes hispanos en USA. Incluye comparativa contra tus precios USA actuales ($29/$59/$99) de tu landing josedavidgt.com.</p>
+
+      <div class="calc-grid">
+        <div class="calc-inputs">
+          <div class="calc-inputs-title">Tipo de cambio</div>
+          <div class="input-row">
+            <label class="input-label">TRM USD → COP <small>1 USD = ? COP</small></label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="c5-usd-rate" value="4000" step="50" min="3000" max="6000"></div>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <div class="calc-inputs-title">Precios USA actuales (tu landing)</div>
+            <div class="input-row">
+              <label class="input-label">Plan Sitio USA</label>
+              <div class="input-wrap"><span class="input-prefix">$</span>
+                <input type="number" id="c5-usd-usa-sitio" value="29" step="1"></div>
+            </div>
+            <div class="input-row">
+              <label class="input-label">Plan Sweet Spot USA</label>
+              <div class="input-wrap"><span class="input-prefix">$</span>
+                <input type="number" id="c5-usd-usa-sweet" value="59" step="1"></div>
+            </div>
+          </div>
+
+          <div class="verdict-strip" id="c5-usd-verdict" style="margin-top: 20px;">
+            <div class="v-icon">$</div>
+            <div>
+              <div class="v-text" id="c5-usd-verdict-text">Tu Sitio Colombia ≈ $20 USD</div>
+              <div class="v-detail" id="c5-usd-verdict-detail">31% más barato que tu plan USA</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <table class="usd-conversion-table">
+            <thead>
+              <tr>
+                <th style="width: 22%">Plan / Concepto</th>
+                <th style="width: 17%; text-align: right;">COP</th>
+                <th style="width: 17%; text-align: right;">USD equivalente</th>
+                <th style="width: 22%; text-align: right;">Tu precio USA</th>
+                <th style="width: 22%; text-align: right;">Diferencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="plan-cell">Sitio · Suscripción</td>
+                <td class="num-cell" id="c5-usd-sitio-sub-cop">$79.000</td>
+                <td class="num-cell" id="c5-usd-sitio-sub-usd">$20</td>
+                <td class="num-cell" id="c5-usd-sitio-usa">$29</td>
+                <td class="num-cell" id="c5-usd-sitio-diff">-31%</td>
+              </tr>
+              <tr>
+                <td class="plan-cell">Sweet Spot · Suscripción</td>
+                <td class="num-cell" id="c5-usd-sweet-sub-cop">$159.000</td>
+                <td class="num-cell" id="c5-usd-sweet-sub-usd">$40</td>
+                <td class="num-cell" id="c5-usd-sweet-usa">$59</td>
+                <td class="num-cell" id="c5-usd-sweet-diff">-33%</td>
+              </tr>
+              <tr style="background: rgba(212, 147, 58, 0.08);">
+                <td class="plan-cell">Sitio · Híbrido setup</td>
+                <td class="num-cell" id="c5-usd-sitio-hibsetup-cop">$299.000</td>
+                <td class="num-cell" id="c5-usd-sitio-hibsetup-usd">$75</td>
+                <td class="num-cell">—</td>
+                <td class="num-cell">Una vez</td>
+              </tr>
+              <tr style="background: rgba(212, 147, 58, 0.08);">
+                <td class="plan-cell">Sitio · Híbrido mes</td>
+                <td class="num-cell" id="c5-usd-sitio-hibmes-cop">$59.000</td>
+                <td class="num-cell" id="c5-usd-sitio-hibmes-usd">$15</td>
+                <td class="num-cell">—</td>
+                <td class="num-cell">Recurrente</td>
+              </tr>
+              <tr style="background: rgba(212, 147, 58, 0.08);">
+                <td class="plan-cell">Sweet Spot · Híbrido setup</td>
+                <td class="num-cell" id="c5-usd-sweet-hibsetup-cop">$599.000</td>
+                <td class="num-cell" id="c5-usd-sweet-hibsetup-usd">$150</td>
+                <td class="num-cell">—</td>
+                <td class="num-cell">Una vez</td>
+              </tr>
+              <tr style="background: rgba(212, 147, 58, 0.08);">
+                <td class="plan-cell">Sweet Spot · Híbrido mes</td>
+                <td class="num-cell" id="c5-usd-sweet-hibmes-cop">$99.000</td>
+                <td class="num-cell" id="c5-usd-sweet-hibmes-usd">$25</td>
+                <td class="num-cell">—</td>
+                <td class="num-cell">Recurrente</td>
+              </tr>
+              <tr style="border-top: 2px solid var(--ink);">
+                <td class="plan-cell">Sitio · Año 1 total Híbrido</td>
+                <td class="num-cell" id="c5-usd-sitio-hibyear-cop">$1.007.000</td>
+                <td class="num-cell" id="c5-usd-sitio-hibyear-usd">$252</td>
+                <td class="num-cell" id="c5-usd-sitio-usa-year">$348</td>
+                <td class="num-cell" id="c5-usd-sitio-year-diff">-28%</td>
+              </tr>
+              <tr>
+                <td class="plan-cell">Sweet Spot · Año 1 total Híbrido</td>
+                <td class="num-cell" id="c5-usd-sweet-hibyear-cop">$1.787.000</td>
+                <td class="num-cell" id="c5-usd-sweet-hibyear-usd">$447</td>
+                <td class="num-cell" id="c5-usd-sweet-usa-year">$708</td>
+                <td class="num-cell" id="c5-usd-sweet-year-diff">-37%</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="helper" style="margin-top: 16px;">
+            <strong>Lectura:</strong> Tu precio Colombia es ~30% más barato que tu precio USA en dólares equivalentes. Esto está bien — el poder adquisitivo en Colombia es menor. Pero <strong>si un cliente en Miami te pide precio Colombia argumentando que es hispano</strong>, ese argumento no aplica: ellos ganan en dólares y deben pagar precio USA.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============== CALCULADORA 3: METAS ============== -->
+    <div class="calc-block">
+      <div class="calc-block-header">
+        <div>
+          <div class="calc-block-title">Metas personales · Path to Goal</div>
+        </div>
+        <div class="calc-block-num">03 / Cuándo lo logras</div>
+      </div>
+      <p class="calc-block-desc">Define tus metas financieras y la herramienta calcula cuánto MRR necesitas, cuántos clientes, y en cuántos meses con tu velocidad actual de adquisición.</p>
+
+      <div class="calc-grid">
+        <div class="calc-inputs">
+          <div class="calc-inputs-title">Tus metas y costos personales</div>
+
+          <div class="input-row">
+            <label class="input-label">Tipo de meta</label>
+            <select id="c5-meta-type" style="padding: 8px 10px; border: 1px solid var(--rule); background: var(--bg-input); font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); border-radius: 3px;">
+              <option value="ahorro">Ahorro mensual</option>
+              <option value="eb2">EB-2 NIW (abogado + USCIS)</option>
+              <option value="reemplazar">Reemplazar salario actual</option>
+              <option value="emergencia">Fondo de emergencia (6 meses)</option>
+              <option value="custom">Meta custom</option>
+            </select>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Monto meta total <small>COP</small></label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="c5-meta-total" value="60000000" step="1000000"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Plazo objetivo <small>meses</small></label>
+            <input type="number" class="no-prefix" id="c5-meta-months" value="24" step="1" min="1" max="120">
+          </div>
+
+          <div style="margin-top: 20px;" class="calc-inputs-title">Costos personales mensuales</div>
+          <div class="input-row">
+            <label class="input-label">Renta apartamento <small>Revv Hollywood</small></label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="c5-meta-rent" value="9000000" step="100000"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Vida (comida, transporte, etc)</label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="c5-meta-life" value="4000000" step="100000"></div>
+          </div>
+          <div class="input-row">
+            <label class="input-label">Otros (carro, MBID, etc)</label>
+            <div class="input-wrap"><span class="input-prefix">$</span>
+              <input type="number" id="c5-meta-other" value="2500000" step="100000"></div>
+          </div>
+
+          <div style="margin-top: 20px;" class="calc-inputs-title">Velocidad Brisa Sites</div>
+          <div class="input-row">
+            <label class="input-label">Nuevos clientes/mes promedio</label>
+            <input type="number" class="no-prefix" id="c5-meta-velocity" value="3" step="0.5" min="0">
+          </div>
+          <div class="input-row">
+            <label class="input-label">Modelo de cobro</label>
+            <select id="c5-meta-model" style="padding: 8px 10px; border: 1px solid var(--rule); background: var(--bg-input); font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); border-radius: 3px;">
+              <option value="sub">Suscripción</option>
+              <option value="hib" selected>Híbrido</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <div class="calc-kpi-row">
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Meta mensual a ahorrar</div>
+              <div class="calc-kpi-value"><span class="currency">$</span><span id="c5-meta-monthly">2.5M</span></div>
+              <div class="calc-kpi-sub">Total / meses</div>
+            </div>
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">MRR Brisa necesario</div>
+              <div class="calc-kpi-value"><span class="currency">$</span><span id="c5-meta-mrr-needed">2.98M</span></div>
+              <div class="calc-kpi-sub">+ impuestos estimados</div>
+            </div>
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Clientes activos requeridos</div>
+              <div class="calc-kpi-value"><span id="c5-meta-clients-needed">24</span></div>
+              <div class="calc-kpi-sub" id="c5-meta-mix-detail">Mix proporcional</div>
+            </div>
+          </div>
+
+          <div class="calc-kpi-row">
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Meses para llegar</div>
+              <div class="calc-kpi-value"><span id="c5-meta-months-to-goal">10</span> meses</div>
+              <div class="calc-kpi-sub">Con velocidad actual</div>
+            </div>
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Salario en Brisa equivalente</div>
+              <div class="calc-kpi-value"><span class="currency">$</span><span id="c5-meta-salary">2.5M</span></div>
+              <div class="calc-kpi-sub" id="c5-meta-salary-usd">≈ $625 USD/mes</div>
+            </div>
+            <div class="calc-kpi">
+              <div class="calc-kpi-label">Total Brisa a 24 meses</div>
+              <div class="calc-kpi-value"><span class="currency">$</span><span id="c5-meta-total-24">85M</span></div>
+              <div class="calc-kpi-sub">Si mantienes velocidad</div>
+            </div>
+          </div>
+
+          <div class="verdict-strip" id="c5-meta-verdict">
+            <div class="v-icon">✓</div>
+            <div>
+              <div class="v-text" id="c5-meta-verdict-text">Tu meta es viable</div>
+              <div class="v-detail" id="c5-meta-verdict-detail">Llegarás en 10 meses, antes de tu plazo de 24.</div>
+            </div>
+          </div>
+
+          <div class="meta-progress">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <span style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px;">Progreso proyectado al plazo objetivo</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-muted);" id="c5-meta-progress-label">142% de meta</span>
+            </div>
+            <div class="meta-progress-bar">
+              <div class="meta-progress-fill" id="c5-meta-progress-fill" style="width: 100%;" >
+                <span id="c5-meta-progress-pct">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="results-section" style="margin-top: 20px;">
+            <div class="results-section-title">Path to Goal · Hitos del camino</div>
+            <div class="results-section-sub">CUÁNDO ALCANZAS CADA % DE TU META</div>
+            <div id="c5-meta-path"></div>
+          </div>
+
+          <div class="results-section">
+            <div class="results-section-title">Proyección mensual hasta meta</div>
+            <div class="results-section-sub">CASHFLOW MENSUAL · ACUMULADO VS META OBJETIVO</div>
+            <div class="chart-canvas-wrap" style="height: 320px;"><canvas id="c5-meta-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  const USD_RATE = 4000;
+  const fmt = n => Math.round(n).toLocaleString('es-CO');
+  const fmtK = n => {
+    const v = Math.round(n);
+    if (Math.abs(v) >= 1000000) return (v/1000000).toFixed(2) + 'M';
+    if (Math.abs(v) >= 1000) return Math.round(v/1000) + 'K';
+    return v.toString();
+  };
+  const fmtUSD = n => Math.round(n / USD_RATE).toLocaleString('en-US');
+
+  Chart.defaults.font.family = "'Manrope', sans-serif";
+  Chart.defaults.color = '#4a4a44';
+  Chart.defaults.font.size = 12;
+
+  const palette = {
+    terracotta: '#b04a2a', terracottaLight: 'rgba(176, 74, 42, 0.7)',
+    olive: '#4f5b2e', oliveLight: 'rgba(79, 91, 46, 0.7)',
+    ochre: '#d4933a', ochreLight: 'rgba(212, 147, 58, 0.7)',
+    ink: '#1c1c1a', teal: '#2d5a5a', rule: '#ebe6d7'
+  };
+
+  const charts = {};
+
+  // TABS
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + target).classList.add('active');
+      setTimeout(() => Object.values(charts).forEach(c => c && c.resize && c.resize()), 100);
+    });
+  });
+
+  // ============================================
+  // SUSCRIPCIÓN PURA
+  // ============================================
+  function sRead() {
+    return {
+      claude: +document.getElementById('s-cost-claude').value || 0,
+      vercel: +document.getElementById('s-cost-vercel').value || 0,
+      other: +document.getElementById('s-cost-other').value || 0,
+      varDomain: +document.getElementById('s-var-domain').value || 0,
+      varHosting: +document.getElementById('s-var-hosting').value || 0,
+      varStripe: +document.getElementById('s-var-stripe').value || 0,
+      priceSitio: +document.getElementById('s-price-sitio').value || 0,
+      hoursSitio: +document.getElementById('s-hours-sitio').value || 0,
+      priceSweetspot: +document.getElementById('s-price-sweetspot').value || 0,
+      hoursSweetspot: +document.getElementById('s-hours-sweetspot').value || 0,
+      clientsSitio: +document.getElementById('s-clients-sitio').value || 0,
+      clientsSweetspot: +document.getElementById('s-clients-sweetspot').value || 0,
+      churn: +document.getElementById('s-churn').value || 0,
+      capacity: +document.getElementById('s-capacity').value || 60
+    };
+  }
+
+  function sCompute(s) {
+    const fixed = s.claude + s.vercel + s.other;
+    const variablePer = s.varDomain + s.varHosting + s.varStripe;
+    const totalClients = s.clientsSitio + s.clientsSweetspot;
+    const mrr = s.priceSitio * s.clientsSitio + s.priceSweetspot * s.clientsSweetspot;
+    const arr = mrr * 12;
+    const variableTotal = variablePer * totalClients;
+    const totalCosts = fixed + variableTotal;
+    const profit = mrr - totalCosts;
+    const margin = mrr > 0 ? (profit / mrr * 100) : 0;
+    const hoursUsed = s.hoursSitio * s.clientsSitio + s.hoursSweetspot * s.clientsSweetspot;
+
+    // LTV: avg ARPU * lifetime (1/churn months)
+    const arpu = totalClients > 0 ? mrr / totalClients : 0;
+    const lifetimeMonths = s.churn > 0 ? 100 / s.churn : 100;
+    const avgVar = variablePer;
+    const ltv = (arpu - avgVar) * lifetimeMonths;
+
+    const beSitioContrib = s.priceSitio - variablePer;
+    const beSweetContrib = s.priceSweetspot - variablePer;
+    const beSitio = beSitioContrib > 0 ? Math.ceil(fixed / beSitioContrib) : Infinity;
+    const beSweet = beSweetContrib > 0 ? Math.ceil(fixed / beSweetContrib) : Infinity;
+
+    return {
+      fixed, variablePer, variableTotal, totalCosts,
+      mrr, arr, profit, margin, hoursUsed, ltv, arpu, lifetimeMonths,
+      beSitioContrib, beSweetContrib, beSitio, beSweet,
+      totalClients
+    };
+  }
+
+  function sRender() {
+    const s = sRead();
+    const r = sCompute(s);
+
+    document.getElementById('s-val-sitio').textContent = s.clientsSitio;
+    document.getElementById('s-val-sweetspot').textContent = s.clientsSweetspot;
+    document.getElementById('s-fixed-total').textContent = '$' + fmt(r.fixed);
+    document.getElementById('s-fixed-usd').textContent = '$' + fmtUSD(r.fixed);
+    document.getElementById('s-var-total').textContent = '$' + fmt(r.variablePer);
+
+    document.getElementById('s-kpi-mrr').textContent = fmtK(r.mrr);
+    document.getElementById('s-kpi-mrr-usd').textContent = '≈ $' + fmtUSD(r.mrr) + ' USD/mes';
+    document.getElementById('s-kpi-arr').textContent = fmtK(r.arr);
+    document.getElementById('s-kpi-arr-usd').textContent = '≈ $' + fmtUSD(r.arr) + ' USD/año';
+
+    const profitEl = document.getElementById('s-kpi-profit');
+    profitEl.textContent = fmtK(r.profit);
+    profitEl.className = r.profit >= 0 ? 'kpi-positive' : 'kpi-negative';
+    document.getElementById('s-kpi-margin').textContent = 'Margen: ' + r.margin.toFixed(1) + '%';
+
+    document.getElementById('s-kpi-ltv').textContent = fmtK(r.ltv);
+    document.getElementById('s-kpi-ltv-detail').textContent = 'Vida ~' + r.lifetimeMonths.toFixed(0) + ' meses (1/churn)';
+
+    document.getElementById('s-be-sitio').textContent = isFinite(r.beSitio) ? r.beSitio : '—';
+    document.getElementById('s-be-sitio-detail').textContent = 'Margen unit: $' + fmtK(r.beSitioContrib);
+    document.getElementById('s-be-sweetspot').textContent = isFinite(r.beSweet) ? r.beSweet : '—';
+    document.getElementById('s-be-sweetspot-detail').textContent = 'Margen unit: $' + fmtK(r.beSweetContrib);
+
+    const mixStatus = document.getElementById('s-be-mix-status');
+    const mixDetail = document.getElementById('s-be-mix-detail');
+    if (r.profit >= 0) {
+      mixStatus.innerHTML = '<span style="color: var(--green-positive);">✓ +$' + fmtK(r.profit) + '</span>';
+      mixDetail.textContent = 'Por encima del punto de equilibrio';
+    } else {
+      mixStatus.innerHTML = '<span style="color: var(--red-negative);">✗ -$' + fmtK(Math.abs(r.profit)) + '</span>';
+      mixDetail.textContent = 'Falta para cubrir costos';
+    }
+
+    const pct = (r.hoursUsed / s.capacity) * 100;
+    document.getElementById('s-hours-used').textContent = r.hoursUsed.toFixed(1) + ' / ' + s.capacity + ' h';
+    document.getElementById('s-capacity-pct').textContent = Math.round(pct) + '%';
+    const fill = document.getElementById('s-capacity-fill');
+    fill.style.width = Math.min(pct, 100) + '%';
+    fill.className = 'capacity-fill';
+    if (pct >= 90) fill.classList.add('danger');
+    else if (pct >= 70) fill.classList.add('warning');
+
+    sUpdateCharts(s, r);
+  }
+
+  function sBuildCharts() {
+    charts.sScale = new Chart(document.getElementById('s-scaleChart'), {
+      type: 'line',
+      data: {
+        labels: Array.from({length: 51}, (_,i) => i),
+        datasets: [
+          { label: 'MRR', data: [], borderColor: palette.terracotta, backgroundColor: 'rgba(176, 74, 42, 0.08)', borderWidth: 2.5, fill: true, tension: 0.2, pointRadius: 0 },
+          { label: 'Costos totales', data: [], borderColor: palette.ink, borderWidth: 2, borderDash: [6,4], fill: false, pointRadius: 0 },
+          { label: 'Costos fijos', data: [], borderColor: '#8a8780', borderWidth: 1.5, borderDash: [2,2], fill: false, pointRadius: 0 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } } },
+        scales: {
+          x: { grid: { display: false }, title: { display: true, text: 'Total clientes' } },
+          y: { grid: { color: palette.rule }, ticks: { callback: v => '$' + fmtK(v) }, beginAtZero: true }
+        },
+        interaction: { mode: 'index', intersect: false }
+      }
+    });
+
+    charts.sMix = new Chart(document.getElementById('s-mixChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Brisa Sitio', 'Brisa Sweet Spot'],
+        datasets: [{ data: [0,0], backgroundColor: [palette.olive, palette.terracotta], borderColor: '#fbf8f2', borderWidth: 3 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '60%',
+        plugins: {
+          legend: { position: 'right', labels: { padding: 16, boxWidth: 14 } },
+          tooltip: { callbacks: { label: (ctx) => {
+            const v = ctx.parsed; const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
+            const pct = total > 0 ? (v/total*100).toFixed(1) : 0;
+            return ctx.label + ': $' + fmt(v) + ' (' + pct + '%)';
+          }}}
+        }
+      }
+    });
+  }
+
+  function sUpdateCharts(s, r) {
+    const total = r.totalClients;
+    let mix = { sitio: 0.4, sweetspot: 0.6 };
+    if (total > 0) mix = { sitio: s.clientsSitio / total, sweetspot: s.clientsSweetspot / total };
+    const arpu = s.priceSitio * mix.sitio + s.priceSweetspot * mix.sweetspot;
+    const revData = [], costData = [], fixedData = [];
+    for (let n = 0; n <= 50; n++) {
+      revData.push(n * arpu);
+      costData.push(r.fixed + n * r.variablePer);
+      fixedData.push(r.fixed);
+    }
+    charts.sScale.data.datasets[0].data = revData;
+    charts.sScale.data.datasets[1].data = costData;
+    charts.sScale.data.datasets[2].data = fixedData;
+    charts.sScale.update('none');
+
+    charts.sMix.data.datasets[0].data = [s.priceSitio * s.clientsSitio, s.priceSweetspot * s.clientsSweetspot];
+    charts.sMix.update('none');
+  }
+
+  // ============================================
+  // HÍBRIDO
+  // ============================================
+  function hRead() {
+    return {
+      fixed: +document.getElementById('h-fixed').value || 0,
+      setupSitio: +document.getElementById('h-setup-sitio').value || 0,
+      monthSitio: +document.getElementById('h-month-sitio').value || 0,
+      hsetupSitio: +document.getElementById('h-hsetup-sitio').value || 0,
+      hmonthSitio: +document.getElementById('h-hmonth-sitio').value || 0,
+      setupSweetspot: +document.getElementById('h-setup-sweetspot').value || 0,
+      monthSweetspot: +document.getElementById('h-month-sweetspot').value || 0,
+      hsetupSweetspot: +document.getElementById('h-hsetup-sweetspot').value || 0,
+      hmonthSweetspot: +document.getElementById('h-hmonth-sweetspot').value || 0,
+      acqSitio: +document.getElementById('h-acq-sitio').value || 0,
+      acqSweetspot: +document.getElementById('h-acq-sweetspot').value || 0,
+      churn: +document.getElementById('h-churn').value || 0,
+      capacity: +document.getElementById('h-capacity').value || 60
+    };
+  }
+
+  function hCompute(h) {
+    // Simulate 12 months: accumulate clients with churn, calculate cashflow per month
+    const months = [];
+    let activeSitio = 0, activeSweetspot = 0;
+    let cumulativeCashflow = 0;
+    const churnDec = h.churn / 100;
+
+    let totalSetups = 0;
+    let totalMonthlyRev = 0;
+
+    for (let m = 1; m <= 12; m++) {
+      // Apply churn to active clients
+      const churnedSitio = activeSitio * churnDec;
+      const churnedSweet = activeSweetspot * churnDec;
+      activeSitio = Math.max(0, activeSitio - churnedSitio);
+      activeSweetspot = Math.max(0, activeSweetspot - churnedSweet);
+
+      // Add new clients this month
+      activeSitio += h.acqSitio;
+      activeSweetspot += h.acqSweetspot;
+
+      // Revenue this month: setups (new) + monthly (all active)
+      const setupRev = h.acqSitio * h.setupSitio + h.acqSweetspot * h.setupSweetspot;
+      const monthlyRev = activeSitio * h.monthSitio + activeSweetspot * h.monthSweetspot;
+      const monthRev = setupRev + monthlyRev;
+      const monthCost = h.fixed;
+      const monthProfit = monthRev - monthCost;
+      cumulativeCashflow += monthProfit;
+
+      totalSetups += setupRev;
+      totalMonthlyRev += monthlyRev;
+
+      months.push({
+        m, setupRev, monthlyRev, monthRev, monthCost, monthProfit, cumulativeCashflow,
+        activeSitio, activeSweetspot, totalActive: activeSitio + activeSweetspot
+      });
+    }
+
+    const lastMonth = months[11];
+    const fixedYear = h.fixed * 12;
+    const profitYear = totalSetups + totalMonthlyRev - fixedYear;
+
+    // LTV calculation
+    const lifetimeMonths = h.churn > 0 ? 100 / h.churn : 100;
+    const avgSetup = (h.acqSitio * h.setupSitio + h.acqSweetspot * h.setupSweetspot) / Math.max(h.acqSitio + h.acqSweetspot, 1);
+    const avgMonthly = (h.acqSitio * h.monthSitio + h.acqSweetspot * h.monthSweetspot) / Math.max(h.acqSitio + h.acqSweetspot, 1);
+    const ltv = avgSetup + (avgMonthly * lifetimeMonths);
+
+    const ltvSitio = h.setupSitio + h.monthSitio * lifetimeMonths;
+    const ltvSweetspot = h.setupSweetspot + h.monthSweetspot * lifetimeMonths;
+
+    return {
+      months, totalSetups, totalMonthlyRev, fixedYear, profitYear,
+      mrrM12: lastMonth.monthlyRev, cashflowM1: months[0].monthProfit,
+      cashflowM12: lastMonth.cumulativeCashflow,
+      ltv, ltvSitio, ltvSweetspot, lifetimeMonths,
+      totalActiveM12: lastMonth.totalActive
+    };
+  }
+
+  function hRender() {
+    const h = hRead();
+    const r = hCompute(h);
+
+    document.getElementById('h-val-sitio').textContent = h.acqSitio;
+    document.getElementById('h-val-sweetspot').textContent = h.acqSweetspot;
+
+    document.getElementById('h-kpi-m1').textContent = fmtK(r.cashflowM1);
+    document.getElementById('h-kpi-mrr').textContent = fmtK(r.mrrM12);
+    document.getElementById('h-kpi-mrr-detail').textContent = r.totalActiveM12.toFixed(0) + ' clientes activos';
+
+    const profEl = document.getElementById('h-kpi-profit');
+    profEl.textContent = fmtK(r.profitYear);
+    profEl.className = r.profitYear >= 0 ? 'kpi-positive' : 'kpi-negative';
+    document.getElementById('h-kpi-profit-usd').textContent = '≈ $' + fmtUSD(r.profitYear) + ' USD/año';
+
+    document.getElementById('h-kpi-ltv').textContent = fmtK(r.ltv);
+    document.getElementById('h-kpi-ltv-detail').textContent = 'Vida ~' + r.lifetimeMonths.toFixed(0) + ' meses';
+
+    document.getElementById('h-anim-setups').textContent = '$' + fmtK(r.totalSetups);
+    document.getElementById('h-anim-monthly').textContent = '$' + fmtK(r.totalMonthlyRev);
+    document.getElementById('h-anim-fixed').textContent = '-$' + fmtK(r.fixedYear);
+    const anim = document.getElementById('h-anim-profit');
+    anim.textContent = '$' + fmtK(r.profitYear);
+    anim.style.color = r.profitYear >= 0 ? 'var(--terracotta)' : 'var(--red-negative)';
+
+    document.getElementById('h-detail-setups').textContent = ((h.acqSitio + h.acqSweetspot) * 12).toFixed(0) + ' setups · ARPU $' + fmtK(r.totalSetups / Math.max((h.acqSitio + h.acqSweetspot) * 12, 1));
+    document.getElementById('h-detail-fixed').textContent = '$' + fmtK(h.fixed) + '/mes × 12';
+
+    hUpdateCharts(r, h);
+  }
+
+  function hBuildCharts() {
+    charts.hMonth = new Chart(document.getElementById('h-monthChart'), {
+      type: 'bar',
+      data: {
+        labels: Array.from({length: 12}, (_,i) => 'M' + (i+1)),
+        datasets: [
+          { label: 'Setups del mes', data: [], backgroundColor: palette.terracotta, stack: 'rev', borderRadius: 2 },
+          { label: 'Mensualidades', data: [], backgroundColor: palette.ochre, stack: 'rev', borderRadius: 2 },
+          { label: 'Costos fijos', data: [], backgroundColor: palette.olive, stack: 'cost', borderRadius: 2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } },
+          tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': $' + fmt(ctx.raw) } }
+        },
+        scales: {
+          x: { stacked: true, grid: { display: false } },
+          y: { stacked: false, grid: { color: palette.rule }, ticks: { callback: v => '$' + fmtK(v) } }
+        }
+      }
+    });
+
+    charts.hLtv = new Chart(document.getElementById('h-ltvChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Brisa Sitio', 'Brisa Sweet Spot'],
+        datasets: [
+          { label: 'Setup (1 vez)', data: [0,0], backgroundColor: palette.terracotta, borderRadius: 2 },
+          { label: 'Mensualidades acumuladas', data: [0,0], backgroundColor: palette.ochre, borderRadius: 2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: {
+          legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } },
+          tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': $' + fmt(ctx.raw) } }
+        },
+        scales: {
+          x: { stacked: true, grid: { color: palette.rule }, ticks: { callback: v => '$' + fmtK(v) } },
+          y: { stacked: true, grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  function hUpdateCharts(r, h) {
+    charts.hMonth.data.datasets[0].data = r.months.map(m => m.setupRev);
+    charts.hMonth.data.datasets[1].data = r.months.map(m => m.monthlyRev);
+    charts.hMonth.data.datasets[2].data = r.months.map(m => -m.monthCost);
+    charts.hMonth.update('none');
+
+    charts.hLtv.data.datasets[0].data = [h.setupSitio, h.setupSweetspot];
+    charts.hLtv.data.datasets[1].data = [h.monthSitio * r.lifetimeMonths, h.monthSweetspot * r.lifetimeMonths];
+    charts.hLtv.update('none');
+  }
+
+  // ============================================
+  // COMPARISON
+  // ============================================
+  function buildComparison() {
+    // Fixed assumptions for comparison: 1 Sitio + 2 Sweet Spot acquired per month, churn 4%
+    const acqSitio = 1, acqSweet = 2;
+    const churn = 0.04;
+    const fixedMonthly = 480000;
+
+    // SUSCRIPCIÓN PURA
+    const subSitio = 79000, subSweet = 159000;
+    // HÍBRIDO
+    const hibSetupSitio = 299000, hibMonthSitio = 59000;
+    const hibSetupSweet = 599000, hibMonthSweet = 99000;
+
+    const months = ['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
+    const subCumCashflow = [0];
+    const hibCumCashflow = [0];
+    const subMRR = [0];
+    const hibMRR = [0];
+    let subCum = 0, hibCum = 0;
+    let activeS = 0, activeSW = 0;
+    let activeHS = 0, activeHSW = 0;
+
+    for (let m = 1; m <= 12; m++) {
+      // Churn
+      activeS *= (1 - churn); activeSW *= (1 - churn);
+      activeHS *= (1 - churn); activeHSW *= (1 - churn);
+      // New clients
+      activeS += acqSitio; activeSW += acqSweet;
+      activeHS += acqSitio; activeHSW += acqSweet;
+
+      // Sub revenue this month
+      const subRev = activeS * subSitio + activeSW * subSweet;
+      subCum += subRev - fixedMonthly;
+      subCumCashflow.push(subCum);
+      subMRR.push(subRev);
+
+      // Hib revenue this month: new setups + ongoing monthly
+      const hibSetupRev = acqSitio * hibSetupSitio + acqSweet * hibSetupSweet;
+      const hibMonthRev = activeHS * hibMonthSitio + activeHSW * hibMonthSweet;
+      hibCum += (hibSetupRev + hibMonthRev) - fixedMonthly;
+      hibCumCashflow.push(hibCum);
+      hibMRR.push(hibMonthRev);
+    }
+
+    // Update cards
+    document.getElementById('c-sub-m1').textContent = '$' + fmtK(subCumCashflow[1]);
+    document.getElementById('c-sub-m12').textContent = '$' + fmtK(subCumCashflow[12]);
+    document.getElementById('c-sub-mrr12').textContent = '$' + fmtK(subMRR[12]);
+    const subLifetime = 1/churn;
+    const subARPU = (subSitio * acqSitio + subSweet * acqSweet) / (acqSitio + acqSweet);
+    document.getElementById('c-sub-ltv').textContent = '$' + fmtK(subARPU * subLifetime);
+    document.getElementById('c-sub-profit').textContent = '$' + fmtK(subCumCashflow[12]);
+
+    document.getElementById('c-hib-m1').textContent = '$' + fmtK(hibCumCashflow[1]);
+    document.getElementById('c-hib-m12').textContent = '$' + fmtK(hibCumCashflow[12]);
+    document.getElementById('c-hib-mrr12').textContent = '$' + fmtK(hibMRR[12]);
+    const hibSetupARPU = (hibSetupSitio * acqSitio + hibSetupSweet * acqSweet) / (acqSitio + acqSweet);
+    const hibMonthARPU = (hibMonthSitio * acqSitio + hibMonthSweet * acqSweet) / (acqSitio + acqSweet);
+    document.getElementById('c-hib-ltv').textContent = '$' + fmtK(hibSetupARPU + hibMonthARPU * subLifetime);
+    document.getElementById('c-hib-profit').textContent = '$' + fmtK(hibCumCashflow[12]);
+
+    // Cashflow chart
+    charts.cCashflow = new Chart(document.getElementById('c-cashflowChart'), {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          { label: 'Suscripción Pura', data: subCumCashflow, borderColor: palette.terracotta, backgroundColor: 'rgba(176, 74, 42, 0.08)', borderWidth: 2.5, fill: true, tension: 0.2 },
+          { label: 'Híbrido', data: hibCumCashflow, borderColor: palette.ochre, backgroundColor: 'rgba(212, 147, 58, 0.1)', borderWidth: 2.5, fill: true, tension: 0.2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } },
+          tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': $' + fmt(ctx.raw) + ' COP' } }
+        },
+        scales: { x: { grid: { display: false } }, y: { grid: { color: palette.rule }, ticks: { callback: v => '$' + fmtK(v) } } },
+        interaction: { mode: 'index', intersect: false }
+      }
+    });
+
+    // MRR chart
+    charts.cMrr = new Chart(document.getElementById('c-mrrChart'), {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          { label: 'MRR Suscripción', data: subMRR, borderColor: palette.terracotta, backgroundColor: 'rgba(176, 74, 42, 0.05)', borderWidth: 2.5, fill: true, tension: 0.2 },
+          { label: 'MRR Híbrido', data: hibMRR, borderColor: palette.ochre, backgroundColor: 'rgba(212, 147, 58, 0.05)', borderWidth: 2.5, fill: true, tension: 0.2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } } },
+        scales: { x: { grid: { display: false } }, y: { grid: { color: palette.rule }, ticks: { callback: v => '$' + fmtK(v) } } },
+        interaction: { mode: 'index', intersect: false }
+      }
+    });
+
+    // 24-month projection
+    const months24 = Array.from({length: 25}, (_,i) => 'M' + i);
+    const subCum24 = [0], hibCum24 = [0];
+    let s24 = 0, h24 = 0;
+    let aS = 0, aSW = 0, aHS = 0, aHSW = 0;
+    for (let m = 1; m <= 24; m++) {
+      aS *= (1-churn); aSW *= (1-churn);
+      aHS *= (1-churn); aHSW *= (1-churn);
+      aS += acqSitio; aSW += acqSweet;
+      aHS += acqSitio; aHSW += acqSweet;
+      s24 += (aS * subSitio + aSW * subSweet) - fixedMonthly;
+      h24 += (acqSitio * hibSetupSitio + acqSweet * hibSetupSweet + aHS * hibMonthSitio + aHSW * hibMonthSweet) - fixedMonthly;
+      subCum24.push(s24); hibCum24.push(h24);
+    }
+
+    charts.cRev24 = new Chart(document.getElementById('c-rev24Chart'), {
+      type: 'line',
+      data: {
+        labels: months24,
+        datasets: [
+          { label: 'Suscripción acumulado', data: subCum24, borderColor: palette.terracotta, backgroundColor: 'rgba(176, 74, 42, 0.05)', borderWidth: 2.5, fill: true, tension: 0.2 },
+          { label: 'Híbrido acumulado', data: hibCum24, borderColor: palette.ochre, backgroundColor: 'rgba(212, 147, 58, 0.05)', borderWidth: 2.5, fill: true, tension: 0.2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } } },
+        scales: { x: { grid: { display: false } }, y: { grid: { color: palette.rule }, ticks: { callback: v => '$' + fmtK(v) } } },
+        interaction: { mode: 'index', intersect: false }
+      }
+    });
+  }
+
+  // INIT
+  sBuildCharts();
+  hBuildCharts();
+  sRender();
+  hRender();
+  buildComparison();
+  buildMarket();
+
+  // ============================================
+  // MARKET ANALYSIS (Tab 4)
+  // ============================================
+  function buildMarket() {
+    // Mensual comparison chart
+    charts.mMensual = new Chart(document.getElementById('m-mensualChart'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'Mantenimiento básico mercado',
+          'Brisa Sitio (Suscripción)',
+          'Brisa Sitio (Híbrido mensual)',
+          'Mantenimiento preventivo+SEO',
+          'Brisa Sweet Spot (Suscripción)',
+          'Brisa Sweet Spot (Híbrido mensual)',
+          'Profesional PYME mercado',
+          'E-commerce premium mercado'
+        ],
+        datasets: [
+          {
+            label: 'Mínimo',
+            data: [80, 0, 0, 150, 0, 0, 300, 600],
+            backgroundColor: palette.oliveLight,
+            borderRadius: 2
+          },
+          {
+            label: 'Máximo',
+            data: [120, 0, 0, 150, 0, 0, 300, 900],
+            backgroundColor: palette.olive,
+            borderRadius: 2
+          },
+          {
+            label: 'Tu precio',
+            data: [0, 79, 59, 0, 159, 99, 0, 0],
+            backgroundColor: palette.terracotta,
+            borderRadius: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } },
+          tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': $' + ctx.raw + 'K COP/mes' } }
+        },
+        scales: {
+          x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 30 } },
+          y: { stacked: false, grid: { color: palette.rule }, ticks: { callback: v => '$' + v + 'K' }, title: { display: true, text: 'COP/mes (miles)' } }
+        }
+      }
+    });
+
+    charts.mAnual = new Chart(document.getElementById('m-anualChart'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'Wix/Squarespace año',
+          'Freelancer sitio (sin soporte)',
+          'Brisa Sitio (Susc año 1)',
+          'Brisa Sitio (Híbrido año 1)',
+          'Agencia sitio one-shot',
+          'Freelancer ecommerce',
+          'Brisa Sweet Spot (Susc año 1)',
+          'Brisa Sweet Spot (Híbrido año 1)',
+          'Agencia ecommerce one-shot'
+        ],
+        datasets: [
+          {
+            label: 'Costo año 1 cliente (mín)',
+            data: [1.2, 0.3, 0, 0, 1.2, 0.8, 0, 0, 2.5],
+            backgroundColor: palette.oliveLight,
+            borderRadius: 2
+          },
+          {
+            label: 'Costo año 1 cliente (máx)',
+            data: [1.8, 1.5, 0, 0, 2.3, 1.7, 0, 0, 2.5],
+            backgroundColor: palette.olive,
+            borderRadius: 2
+          },
+          {
+            label: 'Brisa (fijo)',
+            data: [0, 0, 0.948, 1.007, 0, 0, 1.908, 1.787, 0],
+            backgroundColor: palette.terracotta,
+            borderRadius: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } },
+          tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': $' + ctx.raw.toFixed(2) + 'M COP año 1' } }
+        },
+        scales: {
+          x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } },
+          y: { stacked: false, grid: { color: palette.rule }, ticks: { callback: v => '$' + v + 'M' }, title: { display: true, text: 'COP año 1 (millones)' } }
+        }
+      }
+    });
+
+    updateMarketTab();
+  }
+
+  function updateMarketTab() {
+    // Read current prices from both tabs
+    const s = sRead();
+    const h = hRead();
+
+    // Update KPI cards
+    document.getElementById('m-vsitio-sub').textContent = fmtK(s.priceSitio);
+    document.getElementById('m-vsitio-hib').textContent = fmtK(h.setupSitio + h.monthSitio * 12);
+    document.getElementById('m-vsweet-sub').textContent = fmtK(s.priceSweetspot);
+    document.getElementById('m-vsweet-hib').textContent = fmtK(h.setupSweetspot + h.monthSweetspot * 12);
+
+    // Status badges based on market positioning
+    const sitioSubStatus = document.getElementById('m-vsitio-sub-status');
+    if (s.priceSitio < 100000) sitioSubStatus.innerHTML = '<span style="color: var(--green-positive);">★ Imbatible</span>';
+    else if (s.priceSitio < 200000) sitioSubStatus.innerHTML = '<span style="color: var(--green-positive);">★ Muy competitivo</span>';
+    else if (s.priceSitio < 300000) sitioSubStatus.innerHTML = '<span style="color: var(--ochre);">Competitivo</span>';
+    else sitioSubStatus.innerHTML = '<span style="color: var(--red-negative);">Caro vs mercado</span>';
+
+    const sitioHibTotal = h.setupSitio + h.monthSitio * 12;
+    const sitioHibStatus = document.getElementById('m-vsitio-hib-status');
+    if (sitioHibTotal < 1200000) sitioHibStatus.innerHTML = '<span style="color: var(--green-positive);">★ Competitivo</span>';
+    else if (sitioHibTotal < 1800000) sitioHibStatus.innerHTML = '<span style="color: var(--ochre);">Banda media</span>';
+    else sitioHibStatus.innerHTML = '<span style="color: var(--red-negative);">Caro vs freelancer</span>';
+
+    const sweetSubStatus = document.getElementById('m-vsweet-sub-status');
+    if (s.priceSweetspot < 200000) sweetSubStatus.innerHTML = '<span style="color: #7eb87e;">★★ Killer</span>';
+    else if (s.priceSweetspot < 350000) sweetSubStatus.innerHTML = '<span style="color: #7eb87e;">★ Muy competitivo</span>';
+    else if (s.priceSweetspot < 600000) sweetSubStatus.innerHTML = '<span style="color: var(--ochre);">Banda media</span>';
+    else sweetSubStatus.innerHTML = '<span style="color: var(--red-negative);">Caro vs mercado</span>';
+
+    const sweetHibTotal = h.setupSweetspot + h.monthSweetspot * 12;
+    const sweetHibStatus = document.getElementById('m-vsweet-hib-status');
+    if (sweetHibTotal < 2000000) sweetHibStatus.innerHTML = '<span style="color: #7eb87e;">★★ Killer</span>';
+    else if (sweetHibTotal < 3000000) sweetHibStatus.innerHTML = '<span style="color: var(--green-positive);">★ Competitivo</span>';
+    else if (sweetHibTotal < 5000000) sweetHibStatus.innerHTML = '<span style="color: var(--ochre);">Banda agencia</span>';
+    else sweetHibStatus.innerHTML = '<span style="color: var(--red-negative);">Caro vs agencia</span>';
+
+    // Update table cells
+    document.getElementById('m-tbl-sitio1').textContent = '$' + fmtK(s.priceSitio) + ' (sub) · $' + fmtK(h.monthSitio) + ' (híbr)';
+    document.getElementById('m-tbl-sweet1').textContent = '$' + fmtK(s.priceSweetspot) + ' (sub) · $' + fmtK(h.monthSweetspot) + ' (híbr)';
+    document.getElementById('m-tbl-sweet2').textContent = '$' + fmtK(s.priceSweetspot) + ' en banda baja';
+
+    document.getElementById('m-os-sitio').textContent = 'Año 1: $' + fmtK(s.priceSitio * 12) + ' (sub) · $' + fmtK(sitioHibTotal) + ' (híbr)';
+    document.getElementById('m-os-sweet').textContent = 'Año 1: $' + fmtK(s.priceSweetspot * 12) + ' (sub) · $' + fmtK(sweetHibTotal) + ' (híbr)';
+
+    document.getElementById('m-final-sitio-sub').textContent = '$' + fmtK(s.priceSitio) + '/mes';
+    document.getElementById('m-final-sitio-hib').textContent = '$' + fmtK(sitioHibTotal);
+    document.getElementById('m-final-sweet-sub').textContent = '$' + fmtK(s.priceSweetspot) + '/mes';
+    document.getElementById('m-final-sweet-hib').textContent = '$' + fmtK(sweetHibTotal);
+
+    // Update charts
+    if (charts.mMensual) {
+      charts.mMensual.data.datasets[2].data = [0, s.priceSitio/1000, h.monthSitio/1000, 0, s.priceSweetspot/1000, h.monthSweetspot/1000, 0, 0];
+      charts.mMensual.update('none');
+    }
+    if (charts.mAnual) {
+      charts.mAnual.data.datasets[2].data = [0, 0, (s.priceSitio*12)/1000000, sitioHibTotal/1000000, 0, 0, (s.priceSweetspot*12)/1000000, sweetHibTotal/1000000, 0];
+      charts.mAnual.update('none');
+    }
+  }
+
+  // Bind events
+  document.querySelectorAll('#tab-suscripcion input').forEach(el => el.addEventListener('input', () => { sRender(); updateMarketTab(); c5Render(); }));
+  document.querySelectorAll('#tab-hibrido input').forEach(el => el.addEventListener('input', () => { hRender(); updateMarketTab(); c5Render(); }));
+
+  // ============================================
+  // TAB 5: CALCULADORAS
+  // ============================================
+
+  function c5BuildCharts() {
+    // CAC Chart: clientes acumulados 12 meses
+    charts.c5CAC = new Chart(document.getElementById('c5-cac-chart'), {
+      type: 'line',
+      data: {
+        labels: Array.from({length: 13}, (_,i) => 'M' + i),
+        datasets: [
+          { label: 'Clientes activos netos', data: [], borderColor: palette.terracotta, backgroundColor: 'rgba(176, 74, 42, 0.08)', borderWidth: 2.5, fill: true, tension: 0.2, pointRadius: 3 },
+          { label: 'MRR proyectado', data: [], borderColor: palette.ochre, borderWidth: 2, borderDash: [4,4], fill: false, tension: 0.2, pointRadius: 0, yAxisID: 'y1' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } },
+          tooltip: { callbacks: { label: (ctx) => {
+            if (ctx.dataset.label === 'MRR proyectado') return ctx.dataset.label + ': $' + fmt(ctx.raw) + ' COP';
+            return ctx.dataset.label + ': ' + ctx.raw.toFixed(0);
+          }}}
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: palette.rule }, ticks: { precision: 0 }, title: { display: true, text: 'Clientes activos' }, beginAtZero: true },
+          y1: { position: 'right', grid: { display: false }, ticks: { callback: v => '$' + fmtK(v) }, title: { display: true, text: 'MRR COP' }, beginAtZero: true }
+        },
+        interaction: { mode: 'index', intersect: false }
+      }
+    });
+
+    // Meta chart: progreso mensual
+    charts.c5Meta = new Chart(document.getElementById('c5-meta-chart'), {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          { label: 'Acumulado Brisa', data: [], borderColor: palette.terracotta, backgroundColor: 'rgba(176, 74, 42, 0.1)', borderWidth: 2.5, fill: true, tension: 0.1, pointRadius: 0 },
+          { label: 'Meta objetivo', data: [], borderColor: palette.ink, borderWidth: 2, borderDash: [6,4], fill: false, pointRadius: 0 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 14, padding: 14 } } },
+        scales: { x: { grid: { display: false } }, y: { grid: { color: palette.rule }, ticks: { callback: v => '$' + fmtK(v) }, beginAtZero: true } },
+        interaction: { mode: 'index', intersect: false }
+      }
+    });
+  }
+
+  function c5Render() {
+    c5RenderCAC();
+    c5RenderUSD();
+    c5RenderMeta();
+  }
+
+  // ----- CALCULADORA 1: CAC -----
+  function c5RenderCAC() {
+    const budget = +document.getElementById('c5-cac-budget').value || 0;
+    const cpl = +document.getElementById('c5-cac-cpl').value || 1;
+    const closeRate = (+document.getElementById('c5-cac-close').value || 0) / 100;
+    const mixSitio = (+document.getElementById('c5-cac-mix').value || 0) / 100;
+    const model = document.getElementById('c5-cac-model').value;
+    const churn = (+document.getElementById('c5-cac-churn').value || 0) / 100;
+
+    const s = sRead();
+    const h = hRead();
+
+    const leads = budget / cpl;
+    const clients = leads * closeRate;
+    const cac = clients > 0 ? budget / clients : 0;
+
+    // Calculate avg LTV based on mix and model
+    const mixSweet = 1 - mixSitio;
+    const lifetimeMonths = churn > 0 ? 1 / churn : 60;
+
+    let ltv;
+    if (model === 'sub') {
+      const arpu = s.priceSitio * mixSitio + s.priceSweetspot * mixSweet;
+      const variablePer = s.varDomain + s.varHosting + s.varStripe;
+      ltv = (arpu - variablePer) * lifetimeMonths;
+    } else {
+      const avgSetup = h.setupSitio * mixSitio + h.setupSweetspot * mixSweet;
+      const avgMonth = h.monthSitio * mixSitio + h.monthSweetspot * mixSweet;
+      ltv = avgSetup + avgMonth * lifetimeMonths;
+    }
+
+    const ratio = cac > 0 ? ltv / cac : 0;
+    const arpuMonthly = model === 'sub'
+      ? (s.priceSitio * mixSitio + s.priceSweetspot * mixSweet)
+      : (h.monthSitio * mixSitio + h.monthSweetspot * mixSweet);
+    const payback = arpuMonthly > 0 ? cac / arpuMonthly : 0;
+
+    document.getElementById('c5-cac-leads').textContent = leads.toFixed(0);
+    document.getElementById('c5-cac-clients').textContent = clients.toFixed(1);
+    document.getElementById('c5-cac-cac').textContent = fmtK(cac);
+    document.getElementById('c5-cac-ltv').textContent = fmtK(ltv);
+    document.getElementById('c5-cac-ltv-detail').textContent = lifetimeMonths.toFixed(0) + ' meses vida cliente';
+    document.getElementById('c5-cac-ratio').textContent = ratio.toFixed(1) + '×';
+    document.getElementById('c5-cac-payback').textContent = payback.toFixed(1);
+
+    // Verdict
+    const verdictStrip = document.getElementById('c5-cac-verdict');
+    const verdictText = document.getElementById('c5-cac-verdict-text');
+    const verdictDetail = document.getElementById('c5-cac-verdict-detail');
+    verdictStrip.className = 'verdict-strip';
+    if (ratio >= 3 && payback <= 6) {
+      verdictStrip.classList.add('healthy');
+      verdictStrip.querySelector('.v-icon').textContent = '✓';
+      verdictText.textContent = 'CAC saludable';
+      verdictDetail.textContent = 'Ratio LTV/CAC = ' + ratio.toFixed(1) + '× (saludable ≥3×). Payback ' + payback.toFixed(1) + ' meses. Tu pauta se justifica con holgura.';
+    } else if (ratio >= 2) {
+      verdictStrip.classList.add('warning');
+      verdictStrip.querySelector('.v-icon').textContent = '!';
+      verdictText.textContent = 'CAC en zona límite';
+      verdictDetail.textContent = 'Ratio LTV/CAC = ' + ratio.toFixed(1) + '×. Bajo el ideal (3×) pero viable. Vigila el churn y mejora el cierre.';
+    } else {
+      verdictStrip.classList.add('danger');
+      verdictStrip.querySelector('.v-icon').textContent = '✗';
+      verdictText.textContent = 'CAC muy alto';
+      verdictDetail.textContent = 'Ratio LTV/CAC = ' + ratio.toFixed(1) + '×. La pauta se come tu margen. Baja CPL, sube cierre, o reconsidera presupuesto.';
+    }
+
+    // Chart: 12 months projection
+    const monthsLabels = Array.from({length: 13}, (_,i) => 'M' + i);
+    const activeClients = [0];
+    const mrrProj = [0];
+    let active = 0;
+    for (let m = 1; m <= 12; m++) {
+      active = active * (1 - churn) + clients;
+      activeClients.push(active);
+      mrrProj.push(active * arpuMonthly);
+    }
+    charts.c5CAC.data.datasets[0].data = activeClients;
+    charts.c5CAC.data.datasets[1].data = mrrProj;
+    charts.c5CAC.update('none');
+  }
+
+  // ----- CALCULADORA 2: USD/COP -----
+  function c5RenderUSD() {
+    const rate = +document.getElementById('c5-usd-rate').value || 4000;
+    const usaSitio = +document.getElementById('c5-usd-usa-sitio').value || 0;
+    const usaSweet = +document.getElementById('c5-usd-usa-sweet').value || 0;
+
+    const s = sRead();
+    const h = hRead();
+
+    const toUSD = cop => cop / rate;
+    const usdFmt = v => '$' + (v >= 100 ? Math.round(v) : v.toFixed(2));
+
+    // Suscripción
+    document.getElementById('c5-usd-sitio-sub-cop').textContent = '$' + fmt(s.priceSitio);
+    document.getElementById('c5-usd-sitio-sub-usd').textContent = usdFmt(toUSD(s.priceSitio));
+    document.getElementById('c5-usd-sitio-usa').textContent = '$' + usaSitio;
+    const sitioDiff = usaSitio > 0 ? ((toUSD(s.priceSitio) - usaSitio) / usaSitio * 100) : 0;
+    const sitioDiffEl = document.getElementById('c5-usd-sitio-diff');
+    sitioDiffEl.textContent = (sitioDiff > 0 ? '+' : '') + sitioDiff.toFixed(0) + '%';
+    sitioDiffEl.style.color = sitioDiff < 0 ? 'var(--green-positive)' : 'var(--red-negative)';
+
+    document.getElementById('c5-usd-sweet-sub-cop').textContent = '$' + fmt(s.priceSweetspot);
+    document.getElementById('c5-usd-sweet-sub-usd').textContent = usdFmt(toUSD(s.priceSweetspot));
+    document.getElementById('c5-usd-sweet-usa').textContent = '$' + usaSweet;
+    const sweetDiff = usaSweet > 0 ? ((toUSD(s.priceSweetspot) - usaSweet) / usaSweet * 100) : 0;
+    const sweetDiffEl = document.getElementById('c5-usd-sweet-diff');
+    sweetDiffEl.textContent = (sweetDiff > 0 ? '+' : '') + sweetDiff.toFixed(0) + '%';
+    sweetDiffEl.style.color = sweetDiff < 0 ? 'var(--green-positive)' : 'var(--red-negative)';
+
+    // Híbrido
+    document.getElementById('c5-usd-sitio-hibsetup-cop').textContent = '$' + fmt(h.setupSitio);
+    document.getElementById('c5-usd-sitio-hibsetup-usd').textContent = usdFmt(toUSD(h.setupSitio));
+    document.getElementById('c5-usd-sitio-hibmes-cop').textContent = '$' + fmt(h.monthSitio);
+    document.getElementById('c5-usd-sitio-hibmes-usd').textContent = usdFmt(toUSD(h.monthSitio));
+    document.getElementById('c5-usd-sweet-hibsetup-cop').textContent = '$' + fmt(h.setupSweetspot);
+    document.getElementById('c5-usd-sweet-hibsetup-usd').textContent = usdFmt(toUSD(h.setupSweetspot));
+    document.getElementById('c5-usd-sweet-hibmes-cop').textContent = '$' + fmt(h.monthSweetspot);
+    document.getElementById('c5-usd-sweet-hibmes-usd').textContent = usdFmt(toUSD(h.monthSweetspot));
+
+    // Año 1 híbrido
+    const sitioHibYear = h.setupSitio + h.monthSitio * 12;
+    const sweetHibYear = h.setupSweetspot + h.monthSweetspot * 12;
+    document.getElementById('c5-usd-sitio-hibyear-cop').textContent = '$' + fmt(sitioHibYear);
+    document.getElementById('c5-usd-sitio-hibyear-usd').textContent = usdFmt(toUSD(sitioHibYear));
+    const usaSitioYear = usaSitio * 12;
+    document.getElementById('c5-usd-sitio-usa-year').textContent = '$' + usaSitioYear;
+    const sitioYearDiff = usaSitioYear > 0 ? ((toUSD(sitioHibYear) - usaSitioYear) / usaSitioYear * 100) : 0;
+    const sitioYDEl = document.getElementById('c5-usd-sitio-year-diff');
+    sitioYDEl.textContent = (sitioYearDiff > 0 ? '+' : '') + sitioYearDiff.toFixed(0) + '%';
+    sitioYDEl.style.color = sitioYearDiff < 0 ? 'var(--green-positive)' : 'var(--red-negative)';
+
+    document.getElementById('c5-usd-sweet-hibyear-cop').textContent = '$' + fmt(sweetHibYear);
+    document.getElementById('c5-usd-sweet-hibyear-usd').textContent = usdFmt(toUSD(sweetHibYear));
+    const usaSweetYear = usaSweet * 12;
+    document.getElementById('c5-usd-sweet-usa-year').textContent = '$' + usaSweetYear;
+    const sweetYearDiff = usaSweetYear > 0 ? ((toUSD(sweetHibYear) - usaSweetYear) / usaSweetYear * 100) : 0;
+    const sweetYDEl = document.getElementById('c5-usd-sweet-year-diff');
+    sweetYDEl.textContent = (sweetYearDiff > 0 ? '+' : '') + sweetYearDiff.toFixed(0) + '%';
+    sweetYDEl.style.color = sweetYearDiff < 0 ? 'var(--green-positive)' : 'var(--red-negative)';
+
+    // Verdict
+    const sitioUsd = toUSD(s.priceSitio);
+    const diffAvg = ((Math.abs(sitioDiff) + Math.abs(sweetDiff)) / 2);
+    document.getElementById('c5-usd-verdict-text').textContent = 'Tu Sitio Colombia ≈ ' + usdFmt(sitioUsd) + ' USD';
+    document.getElementById('c5-usd-verdict-detail').textContent = diffAvg.toFixed(0) + '% más barato que tu plan USA · TRM ' + rate.toLocaleString('es-CO');
+  }
+
+  // ----- CALCULADORA 3: METAS -----
+  function c5RenderMeta() {
+    const metaTotal = +document.getElementById('c5-meta-total').value || 0;
+    const months = +document.getElementById('c5-meta-months').value || 1;
+    const rent = +document.getElementById('c5-meta-rent').value || 0;
+    const life = +document.getElementById('c5-meta-life').value || 0;
+    const other = +document.getElementById('c5-meta-other').value || 0;
+    const velocity = +document.getElementById('c5-meta-velocity').value || 0;
+    const model = document.getElementById('c5-meta-model').value;
+    const metaType = document.getElementById('c5-meta-type').value;
+
+    const s = sRead();
+    const h = hRead();
+
+    // Mensual savings goal
+    const monthlySavings = metaTotal / months;
+
+    // Personal costs total
+    const personalCosts = rent + life + other;
+
+    // MRR needed = monthly savings + personal costs OR just savings depending on goal type
+    let mrrNeeded;
+    if (metaType === 'reemplazar') {
+      mrrNeeded = personalCosts * 1.3; // includes some buffer for taxes
+    } else if (metaType === 'emergencia') {
+      mrrNeeded = monthlySavings + personalCosts * 0.3;
+    } else {
+      mrrNeeded = monthlySavings * 1.2; // 20% tax/buffer
+    }
+
+    // Use proportional mix 30/70 Sitio/SweetSpot
+    const mixSitio = 0.3;
+    const mixSweet = 0.7;
+
+    let arpuMonthly, avgSetup;
+    if (model === 'sub') {
+      arpuMonthly = s.priceSitio * mixSitio + s.priceSweetspot * mixSweet;
+      avgSetup = 0;
+    } else {
+      arpuMonthly = h.monthSitio * mixSitio + h.monthSweetspot * mixSweet;
+      avgSetup = h.setupSitio * mixSitio + h.setupSweetspot * mixSweet;
+    }
+
+    const clientsNeeded = arpuMonthly > 0 ? Math.ceil(mrrNeeded / arpuMonthly) : 0;
+    const monthsToGoal = velocity > 0 ? Math.ceil(clientsNeeded / velocity) : 999;
+
+    // Simulation: 24 months
+    const fixed = 480000;
+    const simMonths = Math.min(Math.max(months + 6, 24), 48);
+    const labels = [];
+    const acumData = [];
+    const metaData = [];
+    let acumProfit = 0;
+    let activeClients = 0;
+    let metaPctAtTarget = 0;
+    let achievedAtMonth = -1;
+
+    for (let m = 0; m <= simMonths; m++) {
+      labels.push('M' + m);
+      if (m === 0) {
+        acumData.push(0);
+        metaData.push(0);
+      } else {
+        // Acquire new clients
+        activeClients += velocity;
+        // Calculate revenue this month
+        const setupRev = velocity * avgSetup;
+        const monthRev = activeClients * arpuMonthly;
+        const monthCost = fixed + activeClients * (s.varDomain + s.varHosting + s.varStripe);
+        const monthProfitAfterPersonal = setupRev + monthRev - monthCost - personalCosts;
+        acumProfit += Math.max(0, monthProfitAfterPersonal);
+        acumData.push(acumProfit);
+        metaData.push(metaTotal * (m / months));
+
+        if (achievedAtMonth === -1 && acumProfit >= metaTotal) {
+          achievedAtMonth = m;
+        }
+        if (m === months) {
+          metaPctAtTarget = (acumProfit / metaTotal) * 100;
+        }
+      }
+    }
+
+    document.getElementById('c5-meta-monthly').textContent = fmtK(monthlySavings);
+    document.getElementById('c5-meta-mrr-needed').textContent = fmtK(mrrNeeded);
+    document.getElementById('c5-meta-clients-needed').textContent = clientsNeeded;
+    document.getElementById('c5-meta-mix-detail').textContent = Math.ceil(clientsNeeded * mixSitio) + ' Sitio · ' + Math.ceil(clientsNeeded * mixSweet) + ' Sweet Spot';
+    document.getElementById('c5-meta-months-to-goal').textContent = achievedAtMonth > 0 ? achievedAtMonth : '+' + simMonths;
+    document.getElementById('c5-meta-salary').textContent = fmtK(personalCosts);
+    document.getElementById('c5-meta-salary-usd').textContent = '≈ $' + fmtUSD(personalCosts) + ' USD/mes';
+    document.getElementById('c5-meta-total-24').textContent = fmtK(acumData[Math.min(24, simMonths)] || 0);
+
+    // Progress bar
+    const progressPct = Math.min(metaPctAtTarget, 200);
+    document.getElementById('c5-meta-progress-fill').style.width = Math.min(progressPct, 100) + '%';
+    document.getElementById('c5-meta-progress-pct').textContent = progressPct.toFixed(0) + '%';
+    document.getElementById('c5-meta-progress-label').textContent = metaPctAtTarget.toFixed(0) + '% de meta al plazo';
+
+    // Verdict
+    const verdict = document.getElementById('c5-meta-verdict');
+    const vText = document.getElementById('c5-meta-verdict-text');
+    const vDetail = document.getElementById('c5-meta-verdict-detail');
+    verdict.className = 'verdict-strip';
+    if (achievedAtMonth > 0 && achievedAtMonth <= months) {
+      verdict.classList.add('healthy');
+      verdict.querySelector('.v-icon').textContent = '✓';
+      vText.textContent = 'Tu meta es viable';
+      vDetail.textContent = 'Llegarás en ' + achievedAtMonth + ' meses, antes de tu plazo de ' + months + '. Margen de ' + (months - achievedAtMonth) + ' meses.';
+    } else if (metaPctAtTarget >= 70) {
+      verdict.classList.add('warning');
+      verdict.querySelector('.v-icon').textContent = '!';
+      vText.textContent = 'Meta cerca pero apretada';
+      vDetail.textContent = 'Llegarás al ' + metaPctAtTarget.toFixed(0) + '% en el plazo. Necesitas acelerar adquisición o reducir costos.';
+    } else {
+      verdict.classList.add('danger');
+      verdict.querySelector('.v-icon').textContent = '✗';
+      vText.textContent = 'Meta no alcanzable a velocidad actual';
+      vDetail.textContent = 'Solo llegarás al ' + metaPctAtTarget.toFixed(0) + '% en el plazo. Sube velocidad o ajusta meta.';
+    }
+
+    // Path to goal
+    const pathContainer = document.getElementById('c5-meta-path');
+    pathContainer.innerHTML = '';
+    const milestones = [0.25, 0.50, 0.75, 1.00];
+    milestones.forEach((pct, idx) => {
+      const targetAmount = metaTotal * pct;
+      let monthReached = -1;
+      for (let i = 1; i < acumData.length; i++) {
+        if (acumData[i] >= targetAmount) { monthReached = i; break; }
+      }
+      const step = document.createElement('div');
+      step.className = 'path-step';
+      const isDone = monthReached > 0 && monthReached <= months;
+      step.innerHTML =
+        '<div class="path-step-num ' + (isDone ? 'done' : '') + '">' + (idx + 1) + '</div>' +
+        '<div class="path-step-text">' +
+          '<strong>' + (pct * 100).toFixed(0) + '%</strong> de la meta · $' + fmtK(targetAmount) + ' COP' +
+        '</div>' +
+        '<div class="path-step-val">' + (monthReached > 0 ? 'Mes ' + monthReached : 'No alcanzado') + '</div>';
+      pathContainer.appendChild(step);
+    });
+
+    // Update chart
+    charts.c5Meta.data.labels = labels;
+    charts.c5Meta.data.datasets[0].data = acumData;
+    charts.c5Meta.data.datasets[1].data = metaData;
+    charts.c5Meta.update('none');
+  }
+
+  // Bind events Tab 5
+  c5BuildCharts();
+  c5Render();
+  document.querySelectorAll('#tab-calculadoras input, #tab-calculadoras select').forEach(el => {
+    el.addEventListener('input', c5Render);
+    el.addEventListener('change', c5Render);
+  });
+
+</script>
+
+</body>
+</html>
