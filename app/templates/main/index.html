@@ -1,12 +1,34 @@
 <!-- app/templates/index.html -->
 {% extends "base.html" %}
 
-{% block titulo %}Inicio - Mi Portafolio{% endblock %}
+{% block titulo %}Jose David GT — Data Engineer & Web Developer · Hollywood, FL{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Jose David GT",
+  "jobTitle": "Data Engineer",
+  "description": "Data Engineer especializado en analytics, business intelligence, desarrollo web y creador de Brisa Sites.",
+  "url": "https://www.josedavidgt.com/",
+  "image": "https://www.josedavidgt.com/static/images/PP.webp",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Hollywood",
+    "addressRegion": "FL",
+    "addressCountry": "US"
+  },
+  "knowsAbout": ["Data Engineering", "Business Intelligence", "Web Development", "Python", "SQL", "Analytics"],
+  "sameAs": []
+}
+</script>
+{% endblock %}
 
 {% block contenido %}
 <div class="jumbotron">
     <div class="introduction container">
-        <h1 class="display-4">Hello! I am Jose</h1>
+        <h1 class="display-4">Hello! I am Jose David</h1>
         <div class="subtitle">
             <img class="invertible-image avatar-image" 
                 src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO-BLACK@4x.webp') }}" 

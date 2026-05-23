@@ -1,12 +1,88 @@
 # app/routes/main.py
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify, Response
 
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/ping')
 def ping():
-    """Keep-alive endpoint — Vercel cron hits this every 5 min to prevent cold starts."""
     return jsonify({"status": "ok"}), 200
+
+@main_bp.route('/robots.txt')
+def robots():
+    txt = """User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /logout
+Disallow: /brisa-sites/admin
+Disallow: /curso/admin
+Disallow: /dashboard_index
+Disallow: /meper
+
+Sitemap: https://www.josedavidgt.com/sitemap.xml
+"""
+    return Response(txt, mimetype='text/plain')
+
+@main_bp.route('/sitemap.xml')
+def sitemap():
+    xml = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.josedavidgt.com/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/brisa-sites/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/articles/ia-mercado-laboral</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/brisa-sites/restaurantes/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/brisa-sites/barberias/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/brisa-sites/botanicas/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/brisa-sites/tabaquerias/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/brisa-sites/tiendas/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/brisa-sites/galerias/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/curso</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>"""
+    return Response(xml, mimetype='application/xml')
 
 @main_bp.route('/')
 def index():

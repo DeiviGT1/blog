@@ -4,22 +4,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block titulo %}JoseDavidGT Portafolio{% endblock %}</title>
-    <meta name="description" content="Explore the portfolio of Jose David GT, a Data Engineer specializing in analytics and business intelligence. Discover projects, insights, and ways to connect.">
-    <!-- Font Awesome -->
-    <!-- CSS Personalizado -->
+    <title>{% block titulo %}Jose David GT — Data Engineer & Web Developer{% endblock %}</title>
+    {% block meta_description %}
+    <meta name="description" content="Jose David GT — Data Engineer en Hollywood, FL. Especializado en analytics, business intelligence, desarrollo web y Brisa Sites. Portafolio, proyectos y artículos.">
+    {% endblock %}
+
+    <meta name="author" content="Jose David GT">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:site_name" content="Jose David GT">
+    {% block og_tags %}
+    <meta property="og:title" content="Jose David GT — Data Engineer & Web Developer">
+    <meta property="og:description" content="Data Engineer en Hollywood, FL. Analytics, BI, desarrollo web y Brisa Sites.">
+    <meta property="og:url" content="https://www.josedavidgt.com/">
+    <meta property="og:image" content="{{ url_for('static', filename='images/PP.webp', _external=True) }}">
+    {% endblock %}
+
+    <link rel="canonical" href="{% block canonical %}https://www.josedavidgt.com/{% endblock %}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO@4x.webp') }}">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main/styles.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main/navbar.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main/toogle-mode.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main/rotating-image.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main/contact.css') }}"/>
 
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO@4x.webp') }}">
-    <link rel="canonical" href="https://www.josedavidgt.com/">
-
-    <!-- Bloque para estilos adicionales -->
     {% block head %}
     {% endblock %}
+
+    {% block structured_data %}{% endblock %}
   </head>
   <body>
     <div class="d-flex">
@@ -102,7 +118,7 @@
 
         <!-- Pie de Página -->
         <footer class="footer">
-          <span class="text-muted">© 2024 Jose David GT. All rights reserved.</span>
+          <span class="text-muted">© 2025 Jose David GT. All rights reserved.</span>
         </footer>
       </div>
     </div>
