@@ -295,6 +295,14 @@ input:not(:checked) + .slider .moon-icon {
     margin-bottom: 20px;
   }
   .sidebar-bottom {
-    display: none;
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    padding: 8px 12px 12px;
+  }
+  .sidebar-bottom a {
+    font-size: 13px;
+    padding: 8px 0;
+    flex: 1;
   }
 }
