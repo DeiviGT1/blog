@@ -1,34 +1,52 @@
-<h1 align="center"> Personal Blog </h1>
+# josedavidgt.com
 
-<p align="center">
-  <img src="./assets/fondo (1).png" alt="Custom background image"/>
-</p>
+Personal portfolio and business platform built with Flask, deployed on Vercel.
 
-<br>
-<br>
+**Live:** [josedavidgt.com](https://www.josedavidgt.com)
 
-<h2 align="center">🏁 The project is completed 🏁 </h2>
+## What's Inside
 
-<h4> 🔨 Welcome to my blog! My name is Jose David Gonzalez, and I'm 23 years old. I am a professional in administrative engineering, and I also consider myself passionate about technology and advanced programming tools like Python and Javascript. 🔨 </h4>
+| Section | Route | Description |
+|---|---|---|
+| Portfolio | `/` | Projects, articles, and professional profile |
+| Brisa Sites | `/brisa-sites/` | Web design service for small Hispanic businesses (USA + Colombia) |
+| Excel Course | `/curso` | Online Excel course with Supabase auth and Stripe payments |
+| Articles | `/articles/*` | Tech articles about AI, data, and the job market |
+| Project Explain | `/blogpost` | Technical breakdowns of personal projects |
 
-<br>
+## Brisa Sites
 
-## 📁 Project Access
+Hybrid pricing model — clients pay a one-time setup fee + low monthly maintenance.
 
-**This project can be downloaded as a ZIP file or by connecting via HTTP using git**
+| Plan | USA | Colombia |
+|---|---|---|
+| **Sitio** | $149 setup + $29/mo | $299K setup + $59K/mo |
+| **Sweet Spot** | $299 setup + $59/mo | $599K setup + $99K/mo |
 
-<br>
+6 vertical landing pages: restaurantes, barberias, botanicas, tabaquerias, tiendas, galerias.
 
-## 🛠️ Open and Run the Project
+## Tech Stack
 
-**This blog can be viewed using the link [Blog David](https://jdavidgonzalez.netlify.app/)** <br>
-**The project can be run from the terminal on any operating system**
+- **Backend:** Python / Flask
+- **Frontend:** HTML, CSS, vanilla JS (portfolio) · Next.js 15 (client sites via [site-builder](https://github.com/DeiviGT1))
+- **Auth:** Supabase (curso) · session-based (admin)
+- **Payments:** Stripe (curso) · Wompi (Colombia clients)
+- **Hosting:** Vercel
+- **Analytics:** GA4
+- **SEO:** robots.txt, sitemap.xml, JSON-LD schema, Open Graph
 
-<br>
-<br>
+## Local Development
 
-## ✅ Technologies Used
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python run.py
+# → http://localhost:5005
+```
 
-- **CSS**<br>
-- **HTML**<br>
-<br>
+## Author
+
+**Jose David GT** — Data Engineer, Hollywood FL
+
+[LinkedIn](https://www.linkedin.com/in/davidgt1/) · [GitHub](https://github.com/DeiviGT1) · [Instagram](https://www.instagram.com/davidgt1163/)
