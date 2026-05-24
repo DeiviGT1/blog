@@ -346,7 +346,7 @@ function initClients() {
 // ═══════════════════════════════════════════════
 
 var PRICING = {
-  usa: { sitioSetup: 99, sitioMonth: 29, sweetSetup: 199, sweetMonth: 59 },
+  usa: { sitioSetup: 149, sitioMonth: 29, sweetSetup: 299, sweetMonth: 59 },
   co:  { sitioSetup: 75, sitioMonth: 15, sweetSetup: 150, sweetMonth: 25 }
 };
 
