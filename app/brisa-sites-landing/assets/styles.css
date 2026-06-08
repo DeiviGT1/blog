@@ -226,13 +226,13 @@ h1, h2, h3, h4 {
   gap: 32px;
   align-items: center;
 }
-.nav-links > a {
+.nav-links > a:not(.btn) {
   color: var(--warm-grey);
   font-size: 14px;
   font-weight: 500;
   transition: color var(--t-fast);
 }
-.nav-links > a:hover {
+.nav-links > a:not(.btn):hover {
   color: var(--terracotta);
 }
 @media (max-width: 768px) {
