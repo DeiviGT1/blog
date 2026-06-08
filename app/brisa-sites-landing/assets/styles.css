@@ -151,7 +151,7 @@ h1, h2, h3, h4 {
 
 .btn-primary {
   background: var(--terracotta);
-  color: var(--cream);
+  color: #fff;
 }
 .btn-primary:hover {
   background: var(--terracotta-dark);
