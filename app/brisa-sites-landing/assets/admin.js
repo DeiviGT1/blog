@@ -345,9 +345,10 @@ function initClients() {
 // CALCULATOR
 // ═══════════════════════════════════════════════
 
+// Precios actuales. CO en USD-equivalente (~4.000 COP/USD) para que el MRR salga en USD.
 var PRICING = {
-  usa: { sitioSetup: 149, sitioMonth: 29, sweetSetup: 299, sweetMonth: 59 },
-  co:  { sitioSetup: 75, sitioMonth: 15, sweetSetup: 150, sweetMonth: 25 }
+  usa: { sitioSetup: 499, sitioMonth: 49, sweetSetup: 999, sweetMonth: 99 },
+  co:  { sitioSetup: 225, sitioMonth: 30, sweetSetup: 425, sweetMonth: 45 }
 };
 
 function calcRender() {
