@@ -47,6 +47,6 @@ python run.py
 
 ## Author
 
-**Jose David GT** — Data Engineer, Hollywood FL · josedago1163@gmail.com
+**Jose David GT** — Data Engineer at Southern Glazer's Wine & Spirits, Hollywood FL · josedago1163@gmail.com
 
 [LinkedIn](https://www.linkedin.com/in/davidgt1/) · [GitHub](https://github.com/DeiviGT1) · [Instagram](https://www.instagram.com/davidgt1163/)
