@@ -1,0 +1,79 @@
+<!-- app/templates/blogpost/projects/data-science/sonic-surprise.html -->
+{% extends "blogpost/base_case_study.html" %}
+
+{% block body %}
+<p>
+  Two of the first things I built on this site were small apps on top of the
+  <strong>Spotify Web API</strong>. They are simple, but they taught me more about
+  depending on third-party APIs than any larger project.
+</p>
+
+<h2>Sonic Surprise</h2>
+<p>
+  You type one song and one artist. <strong>GPT-4o</strong> proposes ten similar
+  tracks; the app cleans the list (accents, punctuation, numbering) and looks each one
+  up on Spotify to return real tracks with album art and a link.
+</p>
+
+<figure>
+  <img src="{{ url_for('static', filename='images/projects/sonic_surprise.webp') }}" alt="Sonic Surprise recommendations" />
+  <figcaption>Recommendations for a song, each linked to Spotify.</figcaption>
+</figure>
+
+<h2>Playlists Qualifier</h2>
+<p>
+  After logging in with Spotify, the app pulls every playlist of the user, every song
+  in them, and averages the <em>popularity</em> score Spotify assigns to each track
+  (0–100, driven by recent plays). Each playlist gets a score, a progress bar and a
+  slightly cheeky comment. It uses pandas for the aggregation — over-engineered for the
+  size of the data, but it was the point of the exercise.
+</p>
+
+<figure>
+  <img src="{{ url_for('static', filename='images/projects/playlists_qualifier.webp') }}" alt="Playlists Qualifier results" />
+  <figcaption>Popularity scores per playlist.</figcaption>
+</figure>
+
+<h2>When the provider changes the rules</h2>
+<p>
+  Both apps originally required the user to log in with Spotify through OAuth. In
+  2025 Spotify restricted Web API access for apps in development mode to accounts
+  with a Premium subscription, which silently broke both flows for visitors. Rebuilding
+  them taught me three things I now apply by default:
+</p>
+<ol>
+  <li>
+    <strong>Ask for the least access possible.</strong> Sonic Surprise only needs
+    <code>/search</code>, which works with the Client Credentials grant — no user login
+    at all. The OAuth dance was never necessary.
+  </li>
+  <li>
+    <strong>Degrade gracefully.</strong> Each dependency is optional: without the AI
+    key you get a sample list, without Spotify credentials each track links to a Spotify
+    search, and Playlists Qualifier offers a sample analysis instead of a login button
+    that cannot work. The page always renders; a visible note says what is in demo mode.
+  </li>
+  <li>
+    <strong>Fail loudly in logs, quietly in the UI.</strong> Token and search errors
+    are logged with context and turned into empty results, never into a 500.
+  </li>
+</ol>
+
+<pre><code>def get_app_token():
+    """Authorization header for Spotify, or None when not configured."""
+    if not CLIENT_SECRET:
+        return None
+    creds = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
+    resp = requests.post(TOKEN_URL, data={"grant_type": "client_credentials"},
+                         headers={"Authorization": f"Basic {creds}"}, timeout=10)
+    resp.raise_for_status()
+    return {"Authorization": f"Bearer {resp.json()['access_token']}"}
+</code></pre>
+
+<h2>Takeaways</h2>
+<p>
+  Small projects are where API habits form. These two made me default to minimal
+  scopes, explicit fallbacks and honest demo states — patterns that show up in
+  everything I have built since.
+</p>
+{% endblock %}

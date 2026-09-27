@@ -206,3 +206,14 @@
       font-size: 1rem;
     }
   }
+  /* Enlace al case study dentro de la tarjeta de proyecto */
+  .sub-project-item.case-link {
+    border-style: dashed;
+    white-space: nowrap;
+  }
+  .sub-project-item.case-link a {
+    color: inherit;
+  }
+  .sub-project-item.case-link:hover a {
+    color: var(--hover-text-color);
+  }
