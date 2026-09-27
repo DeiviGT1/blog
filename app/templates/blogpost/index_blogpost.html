@@ -1,17 +1,82 @@
-{% extends "blogpost/base_blogpost.html" %}
+<!-- app/templates/blogpost/index_blogpost.html -->
+{% extends "base.html" %}
 
-{% block content %}
-<div class="jumbotron">
-    <div class="introduction container">
-        <h1 class="display-4">Hello! I am Jose</h1>
-        <div class="subtitle">
-            <img class="invertible-image avatar-image"
-                src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO-BLACK@4x.webp') }}"
-                data-default-src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO-BLACK@4x.webp') }}"
-                data-inverted-src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO@4x.webp') }}"
-                alt="Avatar">
-                <p class="lead">I engage in data mining, analyze data, create websites, and write about technology.</p>
+{% block titulo %}Case Studies — Jose David GT{% endblock %}
+
+{% block meta_description %}
+<meta name="description" content="Case studies of Jose David GT's data science, web and mobile projects: the problem, the approach and what came out of it.">
+{% endblock %}
+
+{% block og_tags %}
+<meta property="og:title" content="Case Studies — Jose David GT">
+<meta property="og:description" content="Data science, web and mobile projects explained: the problem, the approach and the result.">
+<meta property="og:url" content="https://www.josedavidgt.com/blogpost">
+<meta property="og:image" content="{{ url_for('static', filename='images/PP.webp', _external=True) }}">
+{% endblock %}
+
+{% block canonical %}https://www.josedavidgt.com/blogpost{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost/case-study.css') }}" />
+{% endblock %}
+
+{% block contenido %}
+<section class="cs-index">
+  <h1>Case Studies</h1>
+  <p class="section-lead">
+    The story behind each project: what the problem was, how I approached it,
+    and what came out of it.
+  </p>
+
+  <div class="cs-filters" role="group" aria-label="Filter by category">
+    <button type="button" data-filter="all" aria-pressed="true">All</button>
+    {% for cat in categories %}
+    <button type="button" data-filter="{{ cat }}" aria-pressed="false">{{ cat }}</button>
+    {% endfor %}
+  </div>
+
+  <ul class="cs-grid">
+    {% for cs in case_studies %}
+    <li class="cs-card" data-category="{{ cs.category }}">
+      <a href="{{ url_for('blogpost.case_study', slug=cs.slug) }}">
+        {% if cs.image %}
+        <div class="cs-card-media">
+          <img src="{{ url_for('static', filename=cs.image) }}" alt="{{ cs.title }}" loading="lazy" />
         </div>
-    </div>
-</div>
+        {% else %}
+        <div class="cs-card-media placeholder" aria-hidden="true">
+          <span>data_preparation.py → data_processing.py → model.py</span>
+        </div>
+        {% endif %}
+        <div class="cs-card-body">
+          <div class="article-category">{{ cs.category }}</div>
+          <h2>{{ cs.title }}</h2>
+          <p>{{ cs.excerpt }}</p>
+          <ul class="cs-stack">
+            {% for tech in cs.stack[:3] %}<li>{{ tech }}</li>{% endfor %}
+          </ul>
+        </div>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var buttons = document.querySelectorAll('.cs-filters button');
+    var cards = document.querySelectorAll('.cs-card');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var filter = btn.getAttribute('data-filter');
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+        cards.forEach(function (card) {
+          card.hidden = filter !== 'all' && card.getAttribute('data-category') !== filter;
+        });
+      });
+    });
+  });
+</script>
 {% endblock %}

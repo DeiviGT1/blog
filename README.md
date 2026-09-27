@@ -12,7 +12,7 @@ Personal portfolio and business platform built with Flask, deployed on Vercel.
 | Brisa Sites | `/brisa-sites/` | Web design service for small Hispanic businesses (USA + Colombia) |
 | Excel Course | `/curso` | Online Excel course with Supabase auth and Stripe payments |
 | Articles | `/articles/*` | Tech articles about AI, data, and the job market |
-| Project Explain | `/blogpost` | Technical breakdowns of personal projects |
+| Case Studies | `/blogpost` | Editorial write-ups of personal projects (problem, approach, result) |
 
 ## Brisa Sites
 

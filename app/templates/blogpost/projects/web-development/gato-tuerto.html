@@ -1,139 +1,89 @@
-<!-- app/templates/blogpost/projects/data-science/gato-tuerto.html -->
-{% extends "blogpost/base_blogpost.html" %}
+<!-- app/templates/blogpost/projects/web-development/gato-tuerto.html -->
+{% extends "blogpost/base_case_study.html" %}
 
-{% block extra_head %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/blogpost/projects.css') }}"
-/>
-{% endblock %}
+{% block body %}
+<p>
+  <strong>El Gato Tuerto</strong> is an online liquor store built to give customers a
+  seamless eCommerce experience across a wide selection of spirits. From day one the
+  project was shaped by continuous collaboration with the owner, weekly milestone
+  reviews and a clear focus on user-centric design.
+</p>
 
-{% block content %}
-<div class="jumbotron">
-  <div class="project-title">
-    <h1 class="display-4">El Gato Tuerto - Liquor Store</h1>
-    <h3 class="lead">Website Creation & Deployment</h3>
-  </div>
+<h2>Starting from an online menu</h2>
+<p>
+  I began by meeting the store's manager and owner to outline the high-level
+  requirements: product categorization, an intuitive browsing interface and
+  integration with a delivery service. We agreed on a first prototype that worked more
+  like an online menu than a full shopping cart. As weekly demos showed what the system
+  could do, both of them started to see the value of a complete checkout flow — letting
+  customers order directly turned the site from a product display into a real store.
+</p>
 
-  <div class="project-summary">
-    <div class="project-intro">
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/gato-tuerto-1.webp') }}" alt="El Gato Tuerto home page with the store's navigation and featured photos" />
+  <figcaption>The home page after the redesign: navigation, search and the store's own photography.</figcaption>
+</figure>
 
-      <!-- Introduction / Overview -->
-      <p>
-        <strong>El Gato Tuerto</strong> is an online liquor store project aiming to provide a
-        seamless eCommerce experience for customers seeking a wide selection of spirits.
-        From the very beginning, the development process was guided by continuous
-        stakeholder collaboration, weekly milestone reviews, and a clear focus
-        on user-centric design. 
-      </p>
-      
-      <!-- Meetings and Initial Requirements -->
-      <p>
-        I started by meeting with the store’s manager and the owner to outline the
-        high-level requirements: product categorization, an intuitive browsing
-        interface, and integration with a delivery service. We agreed on an initial
-        prototype that served more as an online menu rather than a full shopping
-        cart experience. However, as the project took shape and weekly demos
-        showcased the system’s potential, both the manager and the owner
-        began to see the advantages of a complete checkout process. This meant
-        customers could place orders directly, transforming the site from a simple
-        product display into a fully functional eCommerce platform.
-      </p>
-      <div class="project-image-text">
-      <div class='project-image'>
-        <img
-          src="{{ url_for('static', filename='images/blogpost/gato-tuerto-1.webp') }}"
-          alt="Procesamiento de datos en Excel"
-        />
-      </div>
-      </div>
-      <!-- Mid-Project Redesign -->
-      <p>
-        Midway through development, new feedback from the owner significantly 
-        shifted our plans for the <em>Home</em> and <em>Catalog</em> pages. Initially,
-        I had arranged these sections to emphasize product images and brief
-        descriptions, following a minimalistic design. However, the owner desired 
-        a more dynamic, content-rich layout to highlight ongoing deals and 
-        emphasize certain premium products. Consequently, I rebuilt much of 
-        the <em>Catalog</em> interface to accommodate additional filtering options,
-        eye-catching banners, and bold promotional elements on the homepage. 
-        This iteration demanded thorough refactoring of the UI but ultimately
-        aligned the website more closely with the owner’s vision.
-      </p>
-      <div class="project-image-text">
-      <div class='project-image'>
-        <img
-          src="{{ url_for('static', filename='images/blogpost/gato-tuerto-2.webp') }}"
-          alt="Procesamiento de datos en Excel"
-        />
-      </div>
-      </div>
+<h2>A mid-project redesign</h2>
+<p>
+  Halfway through development, new feedback shifted the plan for the <em>Home</em> and
+  <em>Catalog</em> pages. My first layout emphasized product images and short
+  descriptions in a minimalist style; the owner wanted something more dynamic and
+  content-rich that highlighted ongoing deals and premium products. I rebuilt most of
+  the catalog interface to add filtering options, banners and bold promotional
+  elements on the homepage. It meant a thorough refactor of the UI, but it brought the
+  site much closer to the owner's vision.
+</p>
 
-      <!-- Checkout Implementation -->
-      <p>
-        Another major addition was the <strong>checkout section</strong>. Once the 
-        realization set in that El Gato Tuerto should handle actual online orders,
-        I integrated a complete checkout workflow—cart, address details,
-        payment steps, and order confirmation emails. This not only required
-        redesigning the overall user flow (from browsing to purchase) but 
-        also balancing constraints like inventory management and real-time
-        pricing updates for certain high-demand items. We settled on a 
-        staging environment to test each checkout feature before bringing it
-        fully into production, ensuring the transition from a menu-like 
-        structure to a robust eCommerce system went smoothly.
-      </p>
-      <div class="project-image-text">
-      <div class='project-image'>
-        <img
-          src="{{ url_for('static', filename='images/blogpost/gato-tuerto-3.webp') }}"
-          alt="Procesamiento de datos en Excel"
-        />
-      </div>
-      </div>
-      <!-- Deployment with Vercel & GoDaddy -->
-      <p>
-        In parallel with these interface changes, the deployment strategy
-        combined <em>Vercel</em> for hosting the front-end React application
-        and <em>GoDaddy</em> for domain registration. Vercel’s serverless architecture
-        enabled quick rollouts of new front-end releases, while GoDaddy provided
-        a straightforward way to point the custom domain to Vercel’s infrastructure.
-        This structure offered minimal downtime, a rapid feedback loop, and an
-        easily maintainable environment that could adapt to evolving requirements.
-      </p>
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/gato-tuerto-2.webp') }}" alt="Catalog page with category filters and product cards" />
+  <figcaption>The catalog with the additional filters and promotional elements requested by the owner.</figcaption>
+</figure>
 
-      <!-- Ongoing Marketing & Visibility -->
-      <p>
-        As the site went live, we initiated a multi-pronged <strong>marketing strategy</strong>
-        to build visibility. First, we focused on <em>SEO</em>, optimizing page titles,
-        meta descriptions, and relevant keywords around popular liquor brands
-        and promotions. Over time, these efforts help improve ranking on search
-        engines, ensuring interested customers can find El Gato Tuerto quickly.
-        Additionally, the store’s staff started handing out simple promo cards
-        during in-person visits, each featuring a link and QR code to the
-        eCommerce site. This blend of digital and physical marketing not only
-        boosted online traffic but also bridged the gap between traditional
-        in-store shopping and modern online convenience.
-      </p>
-      <div class="project-image-text">
-      <div class='project-image'>
-        <img
-          src="{{ url_for('static', filename='images/blogpost/gato-tuerto-4.webp') }}"
-          alt="Procesamiento de datos en Excel"
-        />
-      </div>
-      </div>
+<h2>Adding checkout</h2>
+<p>
+  Once it was clear the store should handle real online orders, I integrated a complete
+  checkout workflow: cart, address details, payment steps and order confirmation
+  emails. That required redesigning the flow from browsing to purchase, and balancing
+  constraints such as inventory management and real-time pricing for high-demand
+  items. We used a staging environment to test every checkout feature before moving it
+  to production, so the transition from a menu-like structure to a working eCommerce
+  system went smoothly.
+</p>
 
-      <!-- Conclusion -->
-      <p>
-        By fostering continuous communication with the owner and manager,
-        embracing design flexibility mid-project, and deploying iterative
-        releases every week, El Gato Tuerto progressed from a concept to 
-        a professional, engaging eCommerce platform. Looking ahead,
-        ongoing adjustments to the catalog, checkout interface, and 
-        marketing campaigns will drive growth and ensure that 
-        El Gato Tuerto maintains its competitive edge in the liquor retail market.
-      </p>
-    </div>
-  </div>
-</div>
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/gato-tuerto-3.webp') }}" alt="Checkout flow with cart, address and payment steps" />
+  <figcaption>Checkout: cart, delivery details and payment.</figcaption>
+</figure>
+
+<h2>Deployment</h2>
+<p>
+  The front-end React application is hosted on <strong>Vercel</strong>, with the
+  custom domain registered on <strong>GoDaddy</strong>. Vercel's serverless
+  architecture allows quick rollouts of new releases with minimal downtime, and the
+  setup is simple enough to maintain as requirements keep evolving.
+</p>
+
+<h2>Marketing and visibility</h2>
+<p>
+  When the site went live we started a two-pronged marketing strategy. Online, we
+  worked on <strong>SEO</strong>: page titles, meta descriptions and keywords around
+  popular liquor brands and promotions. Offline, the staff handed out promo cards with
+  a link and QR code during in-store visits. Blending digital and physical channels
+  boosted traffic and bridged the gap between traditional shopping and online
+  convenience.
+</p>
+
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/gato-tuerto-4.webp') }}" alt="Promotional section of the website" />
+  <figcaption>Promotions and gift boxes, the sections that drive most of the in-store referrals.</figcaption>
+</figure>
+
+<h2>Takeaways</h2>
+<p>
+  Continuous communication with the owner and manager, flexibility to redesign
+  mid-project and iterative weekly releases took El Gato Tuerto from a concept to a
+  professional eCommerce platform. Ongoing adjustments to the catalog, checkout and
+  marketing campaigns keep it competitive in the local liquor retail market.
+</p>
 {% endblock %}

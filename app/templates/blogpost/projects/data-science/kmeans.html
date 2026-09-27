@@ -1,114 +1,74 @@
-<!-- kmeans.html -->
-{% extends "blogpost/base_blogpost.html" %}
+<!-- app/templates/blogpost/projects/data-science/kmeans.html -->
+{% extends "blogpost/base_case_study.html" %}
 
-{% block title %}
-  Kmeans Project - JoseDavidGT
-{% endblock %}
+{% block body %}
+<p>
+  The company rated every item as a <em>winner</em>, <em>regular</em> or
+  <em>loser</em> — internally AAA, A and B. The rating was done by hand: each analyst
+  reviewed items one by one, weighing sales and rotation per store together with their
+  own knowledge of colors and current best sellers. It was slow, inconsistent between
+  analysts, and impossible to scale, so the company asked me to automate it.
+</p>
 
-{% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost/projects.css') }}">
-{% endblock %}
+<h2>Understanding the data</h2>
+<p>
+  I started by pulling together everything analysts used to make the decision. The data
+  was far from clean, with many missing values to fill. Once it was usable, a second
+  problem appeared: raw sales were not a fair signal, because store sizes vary
+  enormously. An item selling well in a small store looked like a poor performer next
+  to a large one. I switched to <strong>rotation per store</strong> as the core metric,
+  which normalizes performance regardless of store size.
+</p>
 
-{% block content %}
-<div class="jumbotron">
-  <div class="project-title">
-    <h1 class="display-4">Kmeans</h1>
-    <h3 class="lead">Data Science project</h3>
-  </div>
+<p>With the dataset organized I compared several candidate models:</p>
+<ul>
+  <li>Logistic Regression</li>
+  <li>Random Forest</li>
+  <li>Gradient Boosting</li>
+  <li>K-Means</li>
+</ul>
 
-  <div class="project-summary">
-    <p>
-      For this project I was asked to improve the algorithm used to qualify each
-      item of the company on winner, looser or regular. From now AAA, A and B
-      respectively. The company used to qualify each item manually, so each
-      analyst must review item per item, evaluating the sales and rotation of
-      the item in each store, also with the knowledge of each analyst on the
-      colors and the best sellers to the date. That process was very time
-      consuming and inefficient, so the company decided to automate it using a new algorithm.
-    </p>
+<figure class="pair">
+  <img src="{{ url_for('static', filename='images/blogpost/kmeans-1.webp') }}" alt="Elbow method chart used to choose the number of clusters" />
+  <img src="{{ url_for('static', filename='images/blogpost/kmeans-2.webp') }}" alt="Cluster scatter plot of the items" />
+  <figcaption>Left: the elbow method pointing to three clusters. Right: the resulting groups.</figcaption>
+</figure>
 
-    <p>
-      Firstable I started by analyzing all the data that analysts used to make the
-      decision. I found that the data was not very clean and that there were
-      many missing values, so I had to clean the data and fill in the
-      missing values. When the data was clean I found that the sales of the
-      item weren't enough data to know if it is a good seller in that store
-      or a regular item because of the size of each store—some stores are
-      very big and others are very small—so I decided to use the rotation of
-      the item in each store as a metric to know if the item is a good
-      seller or not. After having all the info organized I started finding out the best
-      models to use. I have different choices such as:
-    </p>
-      <ul>
-          <li>Logistic Regression</li>
-          <li>Random Forest</li>
-          <li>Gradient Boosting</li>
-          <li>Kmeans</li>
-      </ul>
-    
+<h2>Choosing K-Means — and three categories instead of five</h2>
+<p>
+  I used a test set to compare the models against each other and against the current
+  manual ratings, which also let me check whether the analysts' decisions were
+  consistent. K-Means came out on top.
+</p>
+<p>
+  The elbow method, however, showed that the natural number of clusters was
+  <strong>three</strong>, not the five categories the company had used for years. That
+  led to a conversation about inventory management and sales strategy: the business
+  agreed to restructure its item categories around what the data actually supported.
+</p>
 
+<h2>Fixing the accuracy</h2>
+<p>
+  The first trained model performed poorly. Digging into the data, I found two causes:
+  each product category has its own average sales and rotation, so the model had to be
+  trained <strong>per category</strong>; and franchise stores lacked enough data to
+  classify reliably and were blinding the model, so they were filtered out.
+</p>
 
-    <div class="steps-project">
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/kmeans-3.webp') }}" alt="Power BI dashboard showing the classification results" />
+  <figcaption>The Power BI dashboard built to share the model's results with the business.</figcaption>
+</figure>
 
-        <div class="project-image-text">
-            <div>
-                <img
-                  src="{{ url_for('static', filename='images/blogpost/kmeans-1.webp') }}"
-                  alt="Kmeans"
-                />
-                
-                <img
-                    src="{{ url_for('static', filename='images/blogpost/kmeans-2.webp') }}"
-                    alt="Kmeans"
-                />
+<div class="result-callout">
+  <div><strong>85%</strong><span>accuracy after splitting by category</span></div>
+  <div><strong>3</strong><span>clusters instead of 5 manual categories</span></div>
+  <div><strong>0</strong><span>items rated by hand afterwards</span></div>
+</div>
 
-            </div>
-            <div>
-
-              <p>
-                I used a test set to compare the models between each other and also with the current 
-                classification of each item to check if it was really wrong or the analyst were doing 
-                a sense decitions after that I found that Kmeans was the best model to use.
-              </p>
-
-                <p>
-                    Then I started to implement the model, I used the elbow method to find the best number of clusters
-                    so the company was used to classify the items in 5 categories, but the elbow method showed me that
-                    the best number of clusters was 3. I had to explain to the company that the best number of clusters
-                    was 3 and not 5, so for terms of inventory management and sales strategy, the company had to change
-                    the categories of the items.
-                </p>
-
-
-
-
-            </div>
-        </div>
-
-        <div class="project-image-text">
- 
-            <div>
-
-                <p>
-                    After that I trained the model and I used the test set to check the accuracy of the model, I found that
-                    the model had a bad accuracy, so I started to analyze the data and I found that the data must be separated
-                    by category because each category has its own average of sales and rotation and also I must filter the Franquises because we didn't have enough data to classify them and it blinded the model.
-                </p>
-
-            </div>
-            <div>
-                <img
-                style="width: 100%;"
-                src="{{ url_for('static', filename='images/blogpost/kmeans-3.webp') }}"
-                alt="Kmeans"
-                />
-            </div>
-            
-        </div>
-        <p>
-          The new results were very good, the model had an accuracy of 85%, so the company decided to use the model to classify the items. The company also asked me to create a dashboard to show the results of the model, so I used Power BI to create the dashboard.
-        </p>
-      </div>
-    </div>
-  </div>
+<p>
+  With those changes the model reached 85% accuracy and the company adopted it to
+  classify its items. They also asked for a dashboard to explore the results, which I
+  built in Power BI.
+</p>
 {% endblock %}

@@ -1,112 +1,82 @@
 <!-- app/templates/blogpost/projects/data-science/distribucion-sobrantes.html -->
+{% extends "blogpost/base_case_study.html" %}
 
-{% extends "blogpost/base_blogpost.html" %} 
-{% block extra_head%}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/blogpost/projects.css') }}"
-/>
-{% endblock %} 
-{% block content %}
-<div class="jumbotron">
-  <div class="project-title">
-    <h1 class="display-4">distribution of surpluses</h1>
-    <h3 class="lead">Data Science Project</h3>
-  </div>
+{% block body %}
+<p>
+  The company had many items with plenty of stock overall but scattered one unit per
+  store. The goal was to consolidate each item into the minimum number of stores while
+  respecting how well it sold in each of them. The process was manual and split between
+  four analysts, who reviewed items one by one, evaluating sales and rotation per store
+  to pick the best destination for the surplus. It was slow and inefficient, so the
+  company decided to automate it.
+</p>
 
-  </div class="project-summary">
+<h2>From sales to rotation</h2>
+<p>
+  I began by analyzing all the data the analysts relied on. It was not clean and had
+  many missing values, so cleaning and imputation came first. Once usable, sales alone
+  turned out to be a misleading signal: store sizes differ so much that a modest seller
+  in a small store can outperform a "good" seller in a large one. I used the
+  <strong>rotation</strong> of each item per store instead:
+</p>
 
-    <p>
-      For this project I was asked to improve the distribution of those items
-      that the company had a lot of them but each unit in different stores so
-      the main objective is to group them in the minimum number of stores
-      possible but also taking into account the number of units sold in each
-      store. This process used to be done manually and divided between 4
-      analysts, so each analyst must review item per item, evaluating the sales
-      and rotation of the item in each store to choose the best store to send
-      the surplus. This process was very time consuming and inefficient, so the
-      company decided to automate it.
-    </p>
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/distribucion-sobrantes-1.webp') }}" alt="Data exploration of stock and sales per store" />
+  <figcaption>Exploring stock and sales per store before defining the metric.</figcaption>
+</figure>
 
-    <div class="project-image-text">
-      <div>
-        <img
-          src="{{ url_for('static', filename='images/blogpost/distribucion-sobrantes-1.webp') }}"
-          alt="Distribución de Sobrantes"
-        />
-      </div>
-      <div>
-        <p>
-          The first step was to analyze the data and understand the problem, so
-          I started by analyzing all the data that analysts used to make the
-          decision. I found that the data was not very clean and that there were
-          many missing values, so I had to clean the data and fill in the
-          missing values. When the data was clean I found that the sales of the
-          item weren't enough data to know if it is a good seller in that store
-          or a regular item because of the size of each store—some stores are
-          very big and others are very small—so I decided to use the rotation of
-          the item in each store as a metric to know if the item is a good
-          seller or not. To calculate the rotation of the item in each store, I
-          used the following formula:
-        </p>
-
-        <p>
-          $$ \text{Rotation}_{\text{store}} = \frac{\text{Units
-          Sold}_{\text{store}}}{\text{Units in Stock}_{\text{store}}} $$
-        </p>
-      </div>
-    </div>
-
-    <p>
-      Once I had the rotation of the item in each store, I pondered the rotation
-      of the item in each store with the number of units in stock to get a
-      metric that tells me if the store is a good place to send the surplus or
-      not. To calculate this metric, I used the following formula:
-    </p>
-
-    <p>
-      $$ \text{Metric}_{\text{store}} = \text{Rotation}_{\text{store}} \times
-      \text{Units in Stock}_{\text{store}} $$
-    </p>
-
-    <p>
-      With this metric, I was able to know which store was the best place to
-      send the surplus, so I grouped the items by the store that had the highest
-      metric. This process was very efficient and reduced the time that analysts
-      spent on this task by 80%. I also added some filters to follow the
-      business rules, for example, if the store is in a different city, the item
-      can't be sent to that store. Or that Franquise stores can't receive items
-      from other stores.
-    </p>
-
-    <p>
-      Finally the company needed the data as a matrix to be easier to separate
-      the items by store, so I created a matrix with the items per size in the
-      rows and the stores in the columns, and the value of each cell is the
-      number of units of that item in that store. This matrix was very useful
-      for the logistics team to separate the items by store and send them to the
-      correct store.
-    </p>
-    <div class="project-image-text">
-      <div>
-        <p >
-          This project was very interesting because I had to analyze the data and
-          understand the problem to find the best solution. I also had to work with
-          the logistics team to understand how they work and what they need to make
-          their job easier. I learned a lot about the business and how to improve
-          the processes to make the company more efficient.
-        </p>
-    </div>
-      <div>
-        <img
-          style="width: 100%;"
-          class="project-image"
-          src="{{ url_for('static', filename='images/blogpost/distribucion-sobrantes-2.webp') }}"
-          alt="Distribución de Sobrantes"
-        />
-      </div>
-    </div>
-  </div>
+<div class="formula">
+  $$ \text{Rotation}_{\text{store}} = \frac{\text{Units Sold}_{\text{store}}}{\text{Units in Stock}_{\text{store}}} $$
 </div>
+
+<h2>A metric to rank destinations</h2>
+<p>
+  Rotation alone favors stores with almost no stock, so I weighted it by the units
+  currently in stock to get a score that tells whether a store is a good place to send
+  the surplus:
+</p>
+
+<div class="formula">
+  $$ \text{Score}_{\text{store}} = \text{Rotation}_{\text{store}} \times \text{Units in Stock}_{\text{store}} $$
+</div>
+
+<p>
+  Items were then grouped into the store with the highest score. On top of that I
+  encoded the business rules the analysts applied implicitly: items cannot move to a
+  store in a different city, and franchise stores cannot receive stock from other
+  stores.
+</p>
+
+<h2>Output for the logistics team</h2>
+<p>
+  Logistics needed the result as a matrix to physically separate the items, so the
+  script produces a table with items per size in the rows, stores in the columns and
+  the number of units to send in each cell.
+</p>
+
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/distribucion-sobrantes-2.webp') }}" alt="Item by store matrix with units to transfer" />
+  <figcaption>The item × store matrix handed to logistics.</figcaption>
+</figure>
+
+<div class="result-callout">
+  <div><strong>80%</strong><span>less analyst time on the task</span></div>
+  <div><strong>4 → 0</strong><span>analysts doing it by hand</span></div>
+</div>
+
+<p>
+  Beyond the numbers, the project meant working closely with the logistics team to
+  understand how they operate and what they needed to make their job easier. It taught
+  me a lot about the business and about turning an informal process into one that runs
+  automatically.
+</p>
 {% endblock %}
 
+{% block scripts %}
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]], displayMath: [["$$", "$$"], ["\\[", "\\]"]] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+{% endblock %}

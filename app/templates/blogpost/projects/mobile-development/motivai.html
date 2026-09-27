@@ -1,152 +1,67 @@
-<!-- app/templates/blogpost/projects/app-development/motivai.html -->
-{% extends "blogpost/base_blogpost.html" %}
+<!-- app/templates/blogpost/projects/mobile-development/motivai.html -->
+{% extends "blogpost/base_case_study.html" %}
 
-{% block extra_head %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/blogpost/projects.css') }}"
-/>
-{% endblock %}
+{% block body %}
+<p>
+  <strong>MotivAI</strong> is an iOS application that provides personalized motivation
+  and habit-building routines. I built it with two colleagues, taking on both
+  application development and UI/UX design. Written in <strong>Swift</strong> and backed
+  by <strong>Firebase</strong>, it connects users with a specialized chatbot that offers
+  daily encouragement and lifestyle tips.
+</p>
 
-{% block content %}
-<div class="jumbotron">
-  <div class="project-title">
-    <h1 class="display-4">MotivAI</h1>
-    <h3 class="lead">Swift-based iOS App with OpenAI-Powered Chatbot</h3>
-  </div>
+<h2>Onboarding</h2>
+<p>
+  Our first focus was a smooth onboarding flow. MotivAI offers Google, Apple or email
+  sign-in through <strong>Firebase Authentication</strong>, which keeps the login
+  simple and secure while giving users a choice. After logging in, users share their
+  main goals, preferred motivational style and current habits — the input that tailors
+  the rest of the experience. The screens follow a minimalist look with step-by-step
+  prompts so newcomers are never faced with a wall of forms.
+</p>
 
-  <div class="project-summary">
-    <!-- Intro / Overview -->
-    <p>
-      <strong>MotivAI</strong> is an iOS application designed to provide
-      personalized motivation and habit-building routines. I collaborated
-      on this project with two colleagues, taking on both <em>application
-      development</em> and <em>UI/UX design</em> responsibilities. Built in
-      <strong>Swift</strong> and powered by <strong>Firebase</strong> for data
-      management, MotivAI aims to seamlessly connect users with a specialized
-      chatbot that offers daily encouragement and lifestyle tips.
-    </p>
+<figure class="phones">
+  <img src="{{ url_for('static', filename='images/blogpost/motivai-1.webp') }}" alt="MotivAI landing screen" />
+  <img src="{{ url_for('static', filename='images/blogpost/motivai-2.webp') }}" alt="MotivAI profile setup" />
+  <img src="{{ url_for('static', filename='images/blogpost/motivai-4.webp') }}" alt="MotivAI goals selection" />
+  <figcaption>Landing, profile setup and goal selection.</figcaption>
+</figure>
 
-    <!-- First Image -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-          src="{{ url_for('static', filename='images/blogpost/motivai-1.webp') }}"
-          alt="MotivAI Landing Screen"
-          style="max-height: 600px;"
-        />
-      </div>
-    <div>
-      <p>
-        Our initial focus was on creating a smooth <strong>onboarding flow</strong>. 
-        MotivAI offers multiple sign-in options—Google, Apple, or email—handled via 
-        <strong>Firebase Authentication</strong>. This approach simplifies the login 
-        process while maintaining robust security and giving users the flexibility 
-        to choose their preferred login method. With Firebase handling the heavy 
-        lifting, we kept the mobile UI clean and user-friendly.
-      </p>
-    </div>
-    </div>
+<h2>The chatbot</h2>
+<p>
+  The heart of MotivAI is an <strong>OpenAI-powered chatbot</strong> customized to
+  deliver daily motivational messages, goal reminders and positive reinforcement. It can
+  adapt its "mood" — energetic, calm or empathetic — to the user's preference. This was
+  the main technical challenge: managing token limits and asynchronous responses so that
+  conversations stay snappy and reliable.
+</p>
 
-    <!-- Second Image -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-          src="{{ url_for('static', filename='images/blogpost/motivai-2.webp') }}"
-          alt="MotivAI User Profile Setup"
-          style="max-height: 600px;"
-        />
+<h2>Habit tracking</h2>
+<p>
+  Habit building is the other core principle. Using <strong>SwiftUI</strong> and
+  <strong>Firestore</strong>, the app tracks daily progress on the habits each user
+  selects, which lets the chatbot send timely nudges and reminders. The integration
+  between tracking and conversation is what keeps people engaged over time.
+</p>
 
-        <img
-        src="{{ url_for('static', filename='images/blogpost/motivai-4.webp') }}"
-        alt="MotivAI Habit Tracking"
-        style="max-height: 600px;"
-      />
-      </div>
-    <div>
-      <p>
-        After logging in, users are prompted to provide basic profile information: 
-        their primary goals, preferred motivational style, and current habits. 
-        This step plays a crucial role in tailoring the overall app experience. 
-        We designed the onboarding screens with a <strong>minimalist look</strong> 
-        and <strong>step-by-step prompts</strong> to avoid overwhelming new users 
-        with too many forms at once.
-      </p>
-    </div>
-    </div>
+<figure class="phones">
+  <img src="{{ url_for('static', filename='images/blogpost/motivai-3.webp') }}" alt="MotivAI habit tracking screen" />
+  <img src="{{ url_for('static', filename='images/blogpost/motivai-5.webp') }}" alt="MotivAI settings screen" />
+  <figcaption>Habit tracking and settings.</figcaption>
+</figure>
 
-    <!-- Third Image (Phone-sized 16:9) + Chatbot Explanation -->
-    <div class="project-image-text">
-      <div class="project-image">
+<h2>Settings</h2>
+<p>The settings screen centralizes account management and personalization:</p>
+<ul>
+  <li>Link or unlink a Google profile for data syncing.</li>
+  <li>Adjust the chatbot's mood and notification frequency.</li>
+  <li>Log out quickly, keeping data private and under the user's control.</li>
+</ul>
 
-        </div>
-      <p>
-        The heart of MotivAI is our <strong>OpenAI-powered chatbot</strong>. We’ve 
-        customized the bot to deliver daily motivational messages, goal reminders, 
-        and positive reinforcement. It can even adapt its “mood”—energetic, calm, 
-        or empathetic—to suit the user’s preferences. This feature was a significant 
-        technical challenge, as we had to manage token limits and asynchronous 
-        response handling to keep chat interactions <em>snappy</em> and <em>reliable</em>.
-      </p>
-    </div>
-
-    <!-- Fourth Image (Phone-sized 16:9) + Further Explanation -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-            src="{{ url_for('static', filename='images/blogpost/motivai-3.webp') }}"
-            alt="MotivAI Habit Tracking"
-            style="max-height: 600px;"
-        />
-      </div>
-    <div>
-      <p>
-        One of the core principles behind MotivAI is habit-building. Using <strong>SwiftUI</strong> 
-        and <strong>Firebase Realtime Database</strong> (or Firestore), we track daily 
-        progress on user-selected habits, allowing the chatbot to offer timely 
-        nudges and reminders. This seamless integration between the chatbot and 
-        habit-tracking feature provides a comprehensive motivational environment, 
-        which we believe is crucial to sustaining user engagement over time.
-      </p>
-    </div>
-    </div>
-
-    <!-- Fifth Image (Phone-sized 16:9) + Settings Explanation -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-          src="{{ url_for('static', filename='images/blogpost/motivai-5.webp') }}"
-          alt="MotivAI Settings Screen"
-          style="max-height: 600px;"
-        />
-      </div>
-      <div>
-        <p>
-            Lastly, the <strong>Settings Screen</strong> offers easy access to account 
-            management and personalization options. Users can:
-        </p>
-        <ul style="">
-            <li>Link or unlink their Google profile for data syncing.</li>
-            <li>Adjust the chatbot’s mood or notification frequency.</li>
-            <li>Log out quickly, ensuring their data remains private and under control.</li>
-        </ul>
-        <p>
-            By centralizing these controls, we’ve aimed to keep the user experience 
-            straightforward while still offering meaningful customization choices.
-        </p>
-        </div>
-    </div>
-
-    <!-- Conclusion -->
-    <p>
-      Throughout development, our main focus was blending a <strong>clean, intuitive UI</strong> 
-      with <strong>AI-driven motivational content</strong>. Whether users are looking 
-      for quick daily inspiration or more in-depth goal-setting assistance, 
-      <strong>MotivAI</strong> strives to deliver personalized support every step of the way. 
-      Looking ahead, we plan to expand the app’s capabilities by integrating wearable 
-      device data and introducing more granular habit metrics to further enhance 
-      the motivational experience.
-    </p>
-  </div>
-</div>
+<h2>Takeaways</h2>
+<p>
+  Throughout development the goal was to blend a clean, intuitive UI with AI-driven
+  motivational content. Next steps include integrating wearable data and adding more
+  granular habit metrics to deepen the experience.
+</p>
 {% endblock %}

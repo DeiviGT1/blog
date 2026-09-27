@@ -1,165 +1,81 @@
-<!-- app/templates/blogpost/projects/data-science/prediction.html -->
+<!-- app/templates/blogpost/projects/data-science/predict-calification.html -->
+{% extends "blogpost/base_case_study.html" %}
 
-{% extends "blogpost/base_blogpost.html" %}
+{% block body %}
+<p>
+  This project predicts item ratings in a retail environment where
+  <strong>product shipments</strong> and a comprehensive <strong>master dataset</strong>
+  come together. Integrating inventory details, dispatch records and item attributes
+  gives a unified view of each product's lifecycle; once the data is prepared, machine
+  learning models classify the final rating of new items, which helps decide inventory
+  distribution, promotions and product line management.
+</p>
 
-{% block extra_head %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/blogpost/projects.css') }}"
-/>
-{% endblock %}
+<p>The workflow is split into three scripts:</p>
+<ol>
+  <li><code>data_preparation.py</code> — gathers, cleans and merges raw data from multiple sources.</li>
+  <li><code>data_processing.py</code> — feature selection, train/test split and preprocessing pipelines.</li>
+  <li><code>model.py</code> — trains several algorithms (neural network, decision tree, KNN) and generates predictions.</li>
+</ol>
 
-{% block content %}
-<div class="jumbotron">
-  <div class="project-title">
-    <h1 class="display-4">Rating Prediction Project</h1>
-    <h3 class="lead">Data Processing, Model Training, and Prediction</h3>
-  </div>
-
-  <div class="project-summary">
-        <p>
-          This project tackles the challenge of predicting item ratings within a complex retail environment, 
-          where <strong>product shipments</strong> and a comprehensive <strong>master dataset</strong> 
-          are combined to form a rich foundation for analysis. By seamlessly integrating disparate data sources—spanning 
-          inventory details, dispatch records, and item attributes—this system provides a unified view of each product’s lifecycle.
-        </p>
-      
-        <p>
-          Once the data is properly prepared, cleaned, and consolidated, the project leverages 
-          <strong>Machine Learning</strong> models to classify or predict the final ratings of these items. 
-          This predictive capacity offers insights into product performance, helping stakeholders make strategic decisions 
-          about inventory distribution, promotional activities, and overall product line management.
-        </p>
-      
-        <p>
-          The workflow is structured into three core scripts:
-        </p>
-        <ol>
-          <li><code>data_preparation.py</code> – Gathers, cleans, and merges raw data from multiple sources.</li>
-          <li><code>data_processing.py</code> – Focuses on feature selection, splitting data into training/testing sets, and building preprocessing pipelines.</li>
-          <li><code>model.py</code> – Utilizes different algorithms (e.g., Neural Networks, Decision Trees, KNN) to train predictive models and generate item rating predictions.</li>
-        </ol>
-      
-        <p>
-          Through this integrated process, the project aims to streamline data handling 
-          while uncovering patterns that guide business actions more effectively.
-        </p>
-
-    <!-- 1. data_preparation.py -->
-    <h2>1. <code>data_preparation.py</code></h2>
-    <pre><code>
-# data_preparation.py
-
-# Libraries and Warnings
+<h2>1. Data preparation</h2>
+<p>
+  A small <code>SQL</code> helper queries shipment data from the warehouse,
+  <code>process_table</code> normalizes text and cleans prices, and <code>load_data</code>
+  reads the item master. <code>main()</code> merges everything with historical ratings
+  and returns a single DataFrame the other scripts can use.
+</p>
+<pre><code># data_preparation.py
 from sqlalchemy import create_engine
 import pandas as pd
-import numpy as np
-import warnings
-from unidecode import unidecode
 
-warnings.filterwarnings("ignore")
-
-# SQL Class for Database Queries
-class SQL():
-    def __init__(self, cnn_str) -> None:
+class SQL:
+    def __init__(self, cnn_str):
         self.engine = create_engine(cnn_str)
 
-    def tabla_des(self):
-        """
-        Query shipping (despachos) data from the database.
-        """
-        query = """
-            SELECT * 
-            FROM shipments_table
-            WHERE ...;
-        """
+    def shipments(self):
+        query = "SELECT * FROM shipments_table WHERE ...;"
         return pd.read_sql(query, self.engine)
 
 def process_table(df):
-    """
-    Cleans and standardizes columns like 'precio', 'color', 'estetica', etc.
-    Converts string prices to numeric, normalizes text, etc.
-    """
-    df['precio'] = df['precio'].str.replace('$', '', regex=True)
-    df['precio'] = df['precio'].str.replace(',', '', regex=True).astype(float)
-    # Additional transformations: unify text, categories, colors, silhouettes...
+    df['precio'] = (df['precio'].str.replace('$', '', regex=True)
+                                .str.replace(',', '', regex=True)
+                                .astype(float))
+    # unify text, categories, colors, silhouettes...
     return df
 
 def load_data(mes_exh=False, columns_to_remove=None):
-    """
-    Loads the items master data from a CSV, applies 'process_table',
-    and optionally adds a 'fecha_exhibicion' column. 
-    Removes specific columns if 'columns_to_remove' is given.
-    """
-    items_df = pd.read_csv(r"items_master.csv", sep='\t', encoding='UTF-8')
-    items_df = process_table(items_df)
-
+    items_df = process_table(pd.read_csv("items_master.csv", sep='\t'))
     if mes_exh:
         items_df['fecha_exhibicion'] = mes_exh
-
-    if columns_to_remove:
-        for col in columns_to_remove:
-            if col in items_df.columns:
-                items_df.drop(col, axis=1, inplace=True)
+    for col in columns_to_remove or []:
+        items_df.drop(col, axis=1, inplace=True, errors='ignore')
     return items_df
 
 def main():
-    """
-    1) Creates a database connection and fetches shipping data.
-    2) Loads and processes the master items data.
-    3) Merges both DataFrames on 'item' and sorts by 'fecha_exhibicion'.
-    4) Adds item rating info from an Excel file, then returns the final DataFrame.
-    """
-    # Example connection string (replace with your actual credentials)
-    cnn_str_dw = 'postgresql://username:password@host:port/database'
-    sql_conn = SQL(cnn_str_dw)
-    
-    # Get shipping data
-    shipments_df = sql_conn.tabla_des()
-
-    # Master items
+    shipments_df = SQL('postgresql://user:password@host:port/db').shipments()
     items_df = load_data()
-    
-    # Merge shipping + items
-    merged_df = items_df.merge(
-        shipments_df, 
-        on='item', 
-        how='inner'
-    ).sort_values(by=['item', 'fecha_exhibicion'])
+    merged = items_df.merge(shipments_df, on='item', how='inner')
 
-    # Read rating data from an Excel file
     rating_df = pd.read_excel("item_rating.xlsx").iloc[:, :2]
     rating_df.columns = ['item', 'calificacion']
+    final = merged.merge(rating_df, on='item', how='inner')
 
-    # Merge rating info
-    final_df = merged_df.merge(rating_df, on='item', how='inner')
+    final['fecha_exhibicion'] = pd.to_datetime(final['fecha_exhibicion'])
+    final = final[final['fecha_exhibicion'] > '2020-01-01']
+    final['fecha_exhibicion'] = final['fecha_exhibicion'].dt.month.astype(object)
+    return final.set_index('item')
+</code></pre>
 
-    # Convert 'fecha_exhibicion' to month
-    final_df['fecha_exhibicion'] = pd.to_datetime(final_df['fecha_exhibicion'])
-    final_df = final_df[final_df['fecha_exhibicion'] > '2020-01-01']
-    final_df['fecha_exhibicion'] = final_df['fecha_exhibicion'].dt.month.astype(object)
-
-    # Set 'item' as index
-    final_df.set_index('item', inplace=True)
-    
-    return final_df
-    </code></pre>
-    <p>
-      <strong>Explanation:</strong> 
-      <ul>
-        <li><code>SQL</code> runs queries to fetch shipping data.</li>
-        <li><code>process_table</code> normalizes text and cleans prices.</li>
-        <li><code>load_data</code> loads a CSV of item master data and optionally applies extra transformations.</li>
-        <li><code>main</code> merges the processed items with shipping info and their respective ratings.</li>
-      </ul>
-      The result is a fully prepared <em>DataFrame</em> that other scripts can use.
-    </p>
-
-    <!-- 2. data_processing.py -->
-    <h2>2. <code>data_processing.py</code></h2>
-    <pre><code>
-# data_processing.py
-
+<h2>2. Data processing</h2>
+<p>
+  <code>DataProcessor.data_final</code> fetches the prepared data, optionally filters by
+  gender and category, and splits it into training and test sets.
+  <code>create_pipeline</code> chains categorical encoding, numerical scaling, feature
+  selection with <code>chi2</code> and the classifier itself, so every model is trained
+  under exactly the same preprocessing.
+</p>
+<pre><code># data_processing.py
 from sklearn.model_selection import train_test_split
 from sklearn.compose import make_column_selector, ColumnTransformer
 from sklearn.feature_selection import SelectKBest, chi2
@@ -169,201 +85,83 @@ from data_preparation import main
 class DataProcessor:
     @staticmethod
     def data_final(gender=None, category=None, rs=10):
-        """
-        1) Calls 'main()' from data_preparation to get the merged DataFrame.
-        2) Optionally filters by 'gender' and/or 'category'.
-        3) Splits data into training and test sets.
-        4) Returns X_train, X_test, y_train, y_test, plus the complete X and y.
-        """
         df = main()
-
         if gender:
             df = df[df['genero'] == gender]
         if category:
             df = df[df['categoria'] == category]
-
-        # Features & target
         X = df.drop(['calificacion', 'genero', 'categoria'], axis=1)
         y = df['calificacion']
-
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.3, random_state=rs
-        )
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=rs)
         return X_train, X_test, y_train, y_test, X, y
 
     @staticmethod
     def create_pipeline(cat_encoder, model, num_encoder):
-        """
-        1) Uses ColumnTransformer to encode categorical & scale numerical columns.
-        2) Applies SelectKBest for feature selection.
-        3) Finally, uses the chosen 'model' for classification.
-        """
-        pipeline = Pipeline([
-            ('preprocessing', ColumnTransformer(
-                transformers=[
-                    ('cat_encoding', cat_encoder, make_column_selector(dtype_include='object')),
-                    ('num_scaling', num_encoder, make_column_selector(dtype_include='number'))
-                ],
-                remainder='passthrough'
-            )),
+        return Pipeline([
+            ('preprocessing', ColumnTransformer([
+                ('cat', cat_encoder, make_column_selector(dtype_include='object')),
+                ('num', num_encoder, make_column_selector(dtype_include='number')),
+            ], remainder='passthrough')),
             ('feature_selection', SelectKBest(score_func=chi2)),
-            ('classification', model)
+            ('classification', model),
         ])
-        return pipeline
+</code></pre>
 
-    @staticmethod
-    def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None, normalize=False):
-        """
-        Plots a confusion matrix, optionally normalized, showing accuracy & misclassification rates.
-        Useful to interpret model performance on each class.
-        """
-        # Full code for plotting the matrix, setting labels, titles, etc.
-        pass
-    </code></pre>
-    <p>
-      <strong>Explanation:</strong>
-      <ul>
-        <li><code>data_final</code> fetches the prepared data from <code>data_preparation.py</code>, 
-            optionally filters it, and splits it into training and test sets.</li>
-        <li><code>create_pipeline</code> builds a pipeline that includes:
-          <em>categorical encoding</em>, <em>numerical scaling</em>, feature selection 
-          (using <code>chi2</code>), and a final <em>classification step</em>.</li>
-        <li><code>plot_confusion_matrix</code> is a helper function to visualize the matrix of errors.</li>
-      </ul>
-    </p>
-
-    <!-- 3. model.py -->
-    <h2>3. <code>model.py</code></h2>
-    <pre><code>
-# model.py
-
+<h2>3. Model training</h2>
+<p>
+  <code>ModelTrainer</code> manages three classifiers — a neural network (MLP), a
+  decision tree and K-Nearest Neighbors — trains each through the shared pipeline and
+  can predict on a specific list of items, saving the results for review.
+</p>
+<pre><code># model.py
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
-import pandas as pd
-import time
-
 from data_processing import DataProcessor
 
 class ModelTrainer:
     def __init__(self, gender, exhibition_month):
-        """
-        Initializes three ML classifiers: 
-          1) Neural Network (MLP)
-          2) Decision Tree
-          3) K-Nearest Neighbors
-        Receives 'gender' and 'exhibition_month' for data filtering & labeling.
-        """
         self.classifiers = [
             MLPClassifier(max_iter=1000, random_state=5),
             DecisionTreeClassifier(random_state=5),
-            KNeighborsClassifier(n_neighbors=40)
+            KNeighborsClassifier(n_neighbors=40),
         ]
         self.gender = gender
         self.exhibition_month = exhibition_month
-        self.dict_pred = {}
+        self.predictions = {}
 
     def train_models(self, X, y, item_list=None, test_mode=False):
-        """
-        1) Creates pipelines for each classifier using DataProcessor.create_pipeline.
-        2) Trains each model on X, y.
-        3) Predicts on a subset of items if 'item_list' is provided.
-        4) Saves results to CSV.
-        """
         for clf in self.classifiers:
-            pipeline = DataProcessor.create_pipeline(
-                cat_encoder=OneHotEncoder(),
-                model=clf,
-                num_encoder=MinMaxScaler()
-            )
+            pipeline = DataProcessor.create_pipeline(OneHotEncoder(), clf, MinMaxScaler())
             pipeline.fit(X, y)
-
             if item_list:
-                # This function would load or filter the items to predict
                 X_items = self.load_items_for_prediction(item_list, test_mode)
-                self.dict_pred[clf.__class__.__name__] = pipeline.predict(X_items)
+                self.predictions[clf.__class__.__name__] = pipeline.predict(X_items)
+        return self.predictions
 
-        # Save dictionary to CSV or manipulate further
-        # ...
-        return self.dict_pred
-
-    def load_items_for_prediction(self, items, test_mode):
-        """
-        If 'test_mode' is True, it reads from a testing sheet.
-        Otherwise, it filters the main data by the given item list.
-        """
-        # Implementation that fetches or filters the relevant items
-        # ...
-        return X_selected
-
-# Example usage
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test, X, y = DataProcessor.data_final(gender='hombre', category='camisas')
     trainer = ModelTrainer(gender='hombre', exhibition_month=5)
-    trainer.train_models(X_train, y_train, item_list=['itemA','itemB'])
-    </code></pre>
-    <p>
-      <strong>Explanation:</strong> 
-      <ul>
-        <li><code>ModelTrainer</code> defines and manages the three classifiers: 
-            <em>Neural Network</em>, <em>Decision Tree</em>, and <em>K-Nearest Neighbors</em>.</li>
-        <li><code>train_models</code> uses pipelines (built in <code>DataProcessor</code>) 
-            to train each classifier and optionally predict on a specific list of items.</li>
-        <li><code>load_items_for_prediction</code> is a helper to fetch or filter data 
-            for new items you want to predict.</li>
-      </ul>
-    </p>
+    trainer.train_models(X_train, y_train, item_list=['itemA', 'itemB'])
+</code></pre>
 
-    <!-- Project Execution -->
-    <h2>🚀 How to Run the Project</h2>
-    <p>
-    To get started with this rating prediction project, follow these steps:
-    </p>
-    <ol>
-    <li>
-        <strong>Install Dependencies:</strong><br>
-        Use the requirements file to install everything you need:
-        <pre><code>pip install -r requirements.txt</code></pre>
-    </li>
-    <li>
-        <strong>Execute Each Script in Order:</strong><br>
-        <ol style="list-style-type: circle;">
-            <li><code>python data_preparation.py</code> – Prepares and merges dataset information.</li>
-            <li><code>python data_processing.py</code> – Splits data into training and testing sets, applies pipelines.</li>
-            <li><code>python model.py</code> – Trains the chosen models and generates predictions.</li>
-        </ol>
-    </li>
-    <li>
-        <strong>Adjust Project Parameters:</strong><br>
-        Within <code>model.py</code>, you can customize options (e.g., <em>gender</em>, 
-        <em>category</em>, or <em>exhibition_month</em>) to meet your data and modeling needs.
-    </li>
-    </ol>
+<h2>Evaluation</h2>
+<p>
+  Each model is evaluated with a <strong>confusion matrix</strong>. Comparing
+  predictions with the actual ratings shows exactly where and how often a model is
+  right or wrong, which classes need more attention, and whether certain patterns are
+  being systematically misclassified.
+</p>
 
-    <!-- Dependencies -->
-    <h2>📦 Project Dependencies</h2>
-    <p>
-    This project relies on the following key libraries and packages:
-    </p>
-    <ul>
-        <li><code>scikit-learn</code> – Machine Learning pipelines and algorithms</li>
-        <li><code>pandas</code> – Data manipulation and analysis</li>
-        <li><code>numpy</code> – Numerical operations</li>
-        <li><code>sqlalchemy</code> – SQL database interaction</li>
-        <li><code>openpyxl</code> – Excel file reading</li>
-        <li><code>matplotlib</code> – Data visualization (optional)</li>
-    </ul>
-
-    <!-- Confusion Matrix -->
-    <h2>📊 Model Evaluation with a Confusion Matrix</h2>
-    <p>
-    I used a <strong>confusion matrix</strong> to assess each model’s performance. 
-    By comparing predictions to actual labels, you can see exactly where and how often 
-    the model is correct or incorrect. This reveals which classes need more attention 
-    or if certain patterns are being misclassified.
-    </p>
-
-  </div> <!-- project-summary -->
-</div> <!-- jumbotron -->
+<h2>Running it</h2>
+<ol>
+  <li>Install the dependencies: <code>pip install -r requirements.txt</code></li>
+  <li>Run the scripts in order: <code>data_preparation.py</code> → <code>data_processing.py</code> → <code>model.py</code></li>
+  <li>Tune <em>gender</em>, <em>category</em> and <em>exhibition_month</em> in <code>model.py</code> to match the segment you want to predict.</li>
+</ol>
+<p>
+  Key libraries: <code>scikit-learn</code>, <code>pandas</code>, <code>numpy</code>,
+  <code>sqlalchemy</code>, <code>openpyxl</code> and <code>matplotlib</code>.
+</p>
 {% endblock %}
