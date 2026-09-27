@@ -1,31 +1,32 @@
 <!-- app/templates/projects/openai/sonic_surprise.html -->
 {% extends "base.html" %}
 
-{% block titulo %}Sonic Surprise - Recomendaciones de Canciones{% endblock %}
+{% block titulo %}Sonic Surprise — Song Recommendations{% endblock %}
 
 {% block head %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/projects/footer-projects.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/projects/openai/sonic_surprise.css') }}">
 {% endblock %}
 
 {% block contenido %}
-
-<link rel="stylesheet" href="{{ url_for('static', filename='css/projects/openai/sonic_surprise.css') }}">
-
 <div class="content-wrapper-professional-description section wrapper">
     <div class="container section">
         <h1 class="display-4">Sonic Surprise</h1>
-        <h4 class="mb-4">Descubre nuevas canciones recomendadas especialmente para ti</h4>
-        <form action="login" method="post" class="form-inline justify-content-center">
+        <h4 class="mb-4">Tell me one song you love and I'll find ten more you probably will.</h4>
+        <form action="{{ url_for('openai.recommend') }}" method="post" class="form-inline justify-content-center">
             <div class="form-group mb-2">
-                <label for="song" class="sr-only">Canción:</label>
-                <input type="text" class="form-control" id="song" name="song" placeholder="No sabe igual" required>
+                <label for="song" class="sr-only">Song</label>
+                <input type="text" class="form-control" id="song" name="song" placeholder="Song, e.g. No sabe igual" required>
             </div>
             <div class="form-group mb-2">
-                <label for="artist" class="sr-only">Artista:</label>
-                <input type="text" class="form-control" id="artist" name="artist" placeholder="Rels B" required>
+                <label for="artist" class="sr-only">Artist</label>
+                <input type="text" class="form-control" id="artist" name="artist" placeholder="Artist, e.g. Rels B" required>
             </div>
-            <button type="submit" class="btn btn-secondary mb-2">Enviar</button>
+            <button type="submit" class="btn btn-secondary mb-2">Recommend</button>
         </form>
+        {% if demo_ai %}
+        <p class="project-note">Demo mode: the AI key is not configured on this deployment, so you'll get a sample list instead of personalized picks.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

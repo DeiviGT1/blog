@@ -1,81 +1,98 @@
 # app/routes/openai_routes.py
-from flask import Blueprint, render_template, request, redirect, session, url_for
-from ..python.openai.spotify import (
-    app_Authorization as openai_app_Authorization,
-    search_song,
-    user_Authorization as openai_user_Authorization
-)
+import os
+import urllib.parse
+from flask import Blueprint, render_template, request, redirect, url_for
+from ..python.openai.spotify import get_app_token, search_song
 from ..python.openai.openaiapi import generar_respuesta
 
 openai_bp = Blueprint('openai', __name__, url_prefix='/openai')
 
+# Recomendaciones de muestra cuando no hay OPENAI_API_KEY configurada.
+DEMO_RECOMMENDATIONS = [
+    "Cómo Dormiste? - Rels B",
+    "A Mí - Rels B",
+    "Amorfoda - Bad Bunny",
+    "Normal - Feid",
+    "Una Vez - Bad Bunny, Mora",
+    "Todo de Ti - Rauw Alejandro",
+    "Como Tú - Dellafuente",
+    "Loco - Beéle",
+    "Se Preparó - Ozuna",
+    "Traicionera - Sebastián Yatra",
+]
 
-def _redirect_uri():
-    # Spotify vuelve a /callback (raíz), que es la URI registrada en el dashboard de Spotify.
-    return request.url_root.rstrip('/') + "/callback"
+_ACCENTS = str.maketrans("ñáéíóúÑÁÉÍÓÚ", "naeiouNAEIOU")
+
+
+def _clean(text):
+    text = text.replace('"', "").translate(_ACCENTS)
+    for ch in "¿?¡!.,":
+        text = text.replace(ch, "")
+    return " ".join(text.split())
+
+
+def _split_song(text):
+    """'Song - Artist' -> (song, artist). Falls back to (text, '')."""
+    for sep in (" - ", " – ", " by "):
+        if sep in text:
+            song, artist = text.split(sep, 1)
+            return song.strip(), artist.strip()
+    return text.strip(), ""
+
+
+def _search_link(query):
+    return "https://open.spotify.com/search/" + urllib.parse.quote(query)
 
 
 @openai_bp.route('/')
 def openai_index():
-    return render_template('projects/openai/sonic_surprise.html')
+    return render_template('projects/openai/sonic_surprise.html',
+                           demo_ai=not os.getenv("OPENAI_API_KEY"))
 
-@openai_bp.route("/login", methods=["POST", "GET"])
-def login():
-    auth_url = openai_app_Authorization(_redirect_uri())
-    session["spotify"] = auth_url
 
-    session["song"] = request.form.get("song")
-    session["artist"] = request.form.get("artist")
-    return redirect(auth_url)
-
-# Spotify redirige a /callback (raíz), que antes no existía y devolvía 404.
-# main_bp expone esa ruta y delega aquí (ver app/routes/main.py).
-@openai_bp.route("/callback")
-def callback():
-    if "code" not in request.args:
-        return redirect(url_for("openai.openai_index"))
-    header = openai_user_Authorization(_redirect_uri())
-    session["user"] = header
-    return redirect(url_for("openai.get_input"))
-
-@openai_bp.route("/song_recommendations", methods=["POST","GET"])
-def get_input():
-    header = session.get("user")
-    song = session.get("song")
-    artist = session.get("artist")
-    if not header or not song:
+@openai_bp.route("/recommend", methods=["POST"])
+def recommend():
+    song = (request.form.get("song") or "").strip()
+    artist = (request.form.get("artist") or "").strip()
+    if not song:
         return redirect(url_for("openai.openai_index"))
 
+    # 1) Lista de canciones: OpenAI si hay clave, si no una muestra fija.
+    demo_ai = not os.getenv("OPENAI_API_KEY")
+    raw = DEMO_RECOMMENDATIONS if demo_ai else (generar_respuesta(song, artist) or [])
+    if not raw:
+        raw = DEMO_RECOMMENDATIONS
+        demo_ai = True
+    cleaned = [_clean(r) for r in raw][:10]
+
+    # 2) Enriquecer con Spotify (client credentials, sin login del usuario).
+    token = get_app_token()
     real_songs = []
-    playlists = generar_respuesta(song, artist)
+    for item in cleaned:
+        name, by = _split_song(item)
+        entry = {"name": name, "artist": by, "url": _search_link(item), "image": ""}
+        if token:
+            result = search_song(header=token, song_name=item)
+            tracks = result.get("tracks", {}).get("items") or []
+            if tracks:
+                track = tracks[0]
+                images = track["album"].get("images") or []
+                entry = {
+                    "name": track["name"],
+                    "artist": track["artists"][0]["name"],
+                    "url": track["external_urls"]["spotify"],
+                    "image": images[0]["url"] if images else "",
+                }
+        real_songs.append(entry)
 
-    lista_nueva = []
-    for elemento in playlists:
-        elemento_nuevo = elemento.replace("\"", "") \
-                                 .replace("ñ", "n") \
-                                 .replace("á", "a") \
-                                 .replace("é", "e") \
-                                 .replace("í", "i") \
-                                 .replace("ó", "o") \
-                                 .replace("ú", "u") \
-                                 .replace("¿", "") \
-                                 .replace("?", "") \
-                                 .replace("¡", "") \
-                                 .replace("!", "") \
-                                 .replace(".", "") \
-                                 .replace(",", "") \
-                                 .replace("  ", " ").strip()
-        lista_nueva.append(elemento_nuevo)
+    return render_template("projects/openai/recommendations.html",
+                           songs=real_songs, query_song=song, query_artist=artist,
+                           demo_ai=demo_ai, demo_spotify=token is None)
 
-    for song in lista_nueva:
-        result = search_song(header=header, song_name=song)
-        if result.get("tracks", {}).get("items"):
-            track = result["tracks"]["items"][0]
-            real_songs.append({
-                "name": track["name"],
-                "artist": track["artists"][0]["name"],
-                "url": track["external_urls"]["spotify"],
-                "image": track["album"]["images"][0]["url"]
-            })
 
-    return render_template("projects/openai/recommendations.html", songs=real_songs)
+# Compatibilidad con el flujo antiguo (login con Spotify): ya no es necesario.
+@openai_bp.route("/login", methods=["GET", "POST"])
+@openai_bp.route("/callback")
+@openai_bp.route("/song_recommendations", methods=["GET", "POST"])
+def legacy_redirect():
+    return redirect(url_for("openai.openai_index"))

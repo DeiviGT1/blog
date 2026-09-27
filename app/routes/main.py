@@ -18,8 +18,7 @@ Disallow: /curso/admin
 Disallow: /dashboard_index
 Disallow: /meper
 Disallow: /hf
-Disallow: /callback
-Disallow: /openai/callback
+Disallow: /openai/recommend
 Disallow: /playlists/callback
 
 Sitemap: https://www.josedavidgt.com/sitemap.xml
@@ -161,10 +160,3 @@ def index():
 @main_bp.route('/hf')
 def hf():
     return render_template('main/hf.html')
-
-
-@main_bp.route('/callback')
-def spotify_callback_root():
-    # URI de retorno registrada en el dashboard de Spotify para Sonic Surprise (/openai)
-    from .openai_routes import callback
-    return callback()

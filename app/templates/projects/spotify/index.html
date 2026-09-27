@@ -14,12 +14,17 @@
 <div class="content-wrapper wrapper">
   <div class="container">
     <h1>Your Music Is Unique and Special!</h1>
-    <p>Discover how popular your playlist is with our popularity average. Log in to Spotify now!</p>
-    <a href="/playlists/login">
-      <button class="btn btn-primary">
-        Log in with Spotify
-      </button>
+    <p>Discover how popular your playlists are: each one gets a score from the popularity Spotify assigns to its songs.</p>
+    {% if demo %}
+    <a href="{{ url_for('playlists.playlists_demo') }}">
+      <button class="btn btn-primary">See a sample analysis</button>
     </a>
+    <p class="project-note">Spotify login is temporarily unavailable, so this shows the analysis with sample playlists.</p>
+    {% else %}
+    <a href="{{ url_for('playlists.playlists_login') }}">
+      <button class="btn btn-primary">Log in with Spotify</button>
+    </a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

@@ -1,70 +1,51 @@
-<!-- app/templates/recommendations.html -->
+<!-- app/templates/projects/openai/recommendations.html -->
 {% extends "base.html" %}
 
-{% block titulo %}Recomendaciones de Canciones - Sonic Surprise{% endblock %}
+{% block titulo %}Recommendations for {{ query_song }} — Sonic Surprise{% endblock %}
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/projects/openai/recommendations.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/projects/footer-projects.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/projects/footer-projects.css') }}">
 {% endblock %}
 
 {% block contenido %}
-
-
 <div class="content-wrapper-recomendation section wrapper">
     <div class="container section">
         <div id="header" class="mb-4">
-            <a href="https://josedavidgt.com/" id="inicio" class="inicio">
+            <a href="{{ url_for('openai.openai_index') }}" id="inicio" class="inicio">
                 <h1>Sonic Surprise</h1>
             </a>
-            <div>
-                <p>
-                    Según la canción que seleccionaste, esta es una lista de las canciones
-                    que muy probablemente te encantarán.
-                </p>
-            </div>
+            <p>
+                Based on <strong>{{ query_song }}</strong>{% if query_artist %} by <strong>{{ query_artist }}</strong>{% endif %},
+                here are ten songs you will most likely love.
+            </p>
+            {% if demo_ai %}
+            <p class="project-note">Demo mode: sample recommendations (AI key not configured on this deployment).</p>
+            {% elif demo_spotify %}
+            <p class="project-note">Album art is unavailable right now; each link opens a Spotify search for the song.</p>
+            {% endif %}
         </div>
-        <div class="mainDiv"></div>
-        
-        <!-- Botón para regresar a /openai -->
+
+        <div class="mainDiv">
+            <ul class="list-group">
+                {% for s in songs %}
+                <li class="list-group-item">
+                    <a href="{{ s.url }}" class="songName" target="_blank" rel="noopener noreferrer">
+                        {% if s.image %}
+                        <img src="{{ s.image }}" alt="" class="song-image" loading="lazy">
+                        {% else %}
+                        <span class="song-image song-image--placeholder" aria-hidden="true">♪</span>
+                        {% endif %}
+                        <p>{{ s.name }}{% if s.artist %} — {{ s.artist }}{% endif %}</p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
         <div class="mt-4 text-center">
-            <a href="/openai" class="btn btn-secondary">
-                Regresar a OpenAI
-            </a>
+            <a href="{{ url_for('openai.openai_index') }}" class="btn btn-secondary">Try another song</a>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var json_str = '{{ songs | tojson | safe }}';
-        var json_obj = JSON.parse(json_str);
-        var mainDiv = document.querySelector('.mainDiv');
-        var list = document.createElement('ul');
-        list.classList.add('list-group');
-
-        for (var i = 0; i < json_obj.length; i++) {
-            var li = document.createElement('li');
-            li.classList.add('list-group-item');
-
-            var a = document.createElement('a');
-            a.setAttribute('href', json_obj[i].url);
-            a.classList.add('songName');
-
-            var img = document.createElement('img');
-            img.setAttribute('src', json_obj[i].image);
-            img.setAttribute('alt', json_obj[i].name + " - " + json_obj[i].artist);
-            img.classList.add('song-image');
-
-            var name = document.createElement('p');
-            name.textContent = json_obj[i].name + " - " + json_obj[i].artist;
-
-            a.appendChild(img);
-            a.appendChild(name);
-            li.appendChild(a);
-            list.appendChild(li);
-        }
-        mainDiv.appendChild(list);
-    });
-</script>
 {% endblock %}

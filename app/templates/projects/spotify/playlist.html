@@ -13,7 +13,12 @@
 <div class="content-wrapper wrapper">
   <div id="header">
     <h1>Spotify Playlist Analyzer</h1>
+    {% if demo %}
+    <p class="project-note">Sample data — Spotify login is temporarily unavailable.</p>
+    <a href="{{ url_for('playlists.playlists_index') }}" id="logout">← Back</a>
+    {% else %}
     <a href="{{ url_for('playlists.playlists_logout') }}" id="logout">Logout</a>
+    {% endif %}
   </div>
 
   <!-- Hidden element to store encoded data -->
@@ -25,7 +30,7 @@
 
   <div id="playlist"></div>
   <p>
-    * The scores are calculated based on the popularity score that Spotify assigns to each song, considering the number of listeners they have.
+    * Each score is the average of the popularity Spotify assigns to the songs in the playlist (0–100), which reflects how many people listen to them.
   </p>
 
 </div>
