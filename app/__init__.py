@@ -19,5 +19,10 @@ def create_app():
     if os.getenv("FLASK_ENV") == "production":
         app.config['SESSION_COOKIE_SECURE'] = True   # solo HTTPS
 
+    @app.context_processor
+    def _inject_globals():
+        from datetime import date
+        return {"current_year": date.today().year}
+
     register_routes(app)
     return app

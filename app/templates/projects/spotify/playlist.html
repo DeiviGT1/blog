@@ -13,7 +13,7 @@
 <div class="content-wrapper wrapper">
   <div id="header">
     <h1>Spotify Playlist Analyzer</h1>
-    <a href="{{ url_for('main.playlists_logout') }}" id="logout">Logout</a>
+    <a href="{{ url_for('playlists.playlists_logout') }}" id="logout">Logout</a>
   </div>
 
   <!-- Hidden element to store encoded data -->
@@ -28,12 +28,10 @@
     * The scores are calculated based on the popularity score that Spotify assigns to each song, considering the number of listeners they have.
   </p>
 
-  <!-- This is only to verify that the data is being passed -->
-  <p>avg_per_playlist_base64: {{ avg_per_playlist_base64 }}</p>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <!-- Include the external script -->
-<script src="{{ url_for('static', filename='js/playlist.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main/playlist.js') }}"></script>
 {% endblock %}

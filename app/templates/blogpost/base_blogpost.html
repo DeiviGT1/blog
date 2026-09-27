@@ -4,9 +4,16 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}JoseDavidGT BlogPost{% endblock %}</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO@4x.webp') }}">
-    <link rel="canonical" href="https://www.josedavidgt.com/">
+    <title>{% block title %}Project Explain — Jose David GT{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Technical breakdowns of Jose David GT's data science, web and mobile projects.{% endblock %}">
+    <meta name="author" content="Jose David GT">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/LOGOS/favicon-dark-bg.png') }}">
+    <link rel="canonical" href="https://www.josedavidgt.com{{ request.path }}">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Jose David GT">
+    <meta property="og:title" content="{{ self.title() }}">
+    <meta property="og:url" content="https://www.josedavidgt.com{{ request.path }}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/PP.webp', _external=True) }}">
 
 
     <!-- CSS globales -->
@@ -45,7 +52,7 @@
             <li><a href="/blogpost/kmeans">Kmeans</a></li>
             <li><a href="/blogpost/macros-excel">VBA Macros</a></li>
             <li><a href="/blogpost/webscrapping">WebScrapping</a></li>
-            <li><a href="/blogpost/predict-calification">Predict califitation</a></li>
+            <li><a href="/blogpost/predict-calification">Predict qualification</a></li>
           </ul>
         </li>
         <li>
@@ -84,7 +91,7 @@
   <!-- FOOTER -->
   <footer>
     <div class="footer-message">
-      <p>© 2024 JoseDavidGT. All rights reserved.</p>
+      <p>© {{ current_year }} Jose David GT. All rights reserved.</p>
     </div>
   </footer>
 

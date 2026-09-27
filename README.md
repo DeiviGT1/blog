@@ -20,8 +20,8 @@ Hybrid pricing model — clients pay a one-time setup fee + low monthly maintena
 
 | Plan | USA | Colombia |
 |---|---|---|
-| **Sitio** | $149 setup + $29/mo | $299K setup + $59K/mo |
-| **Sweet Spot** | $299 setup + $59/mo | $599K setup + $99K/mo |
+| **Sitio** | $499 setup + $49/mo | $900K setup + $120K/mo |
+| **Sweet Spot** | $999 setup + $99/mo | $1.7M setup + $180K/mo |
 
 6 vertical landing pages: restaurantes, barberias, botanicas, tabaquerias, tiendas, galerias.
 
@@ -47,6 +47,6 @@ python run.py
 
 ## Author
 
-**Jose David GT** — Data Engineer, Hollywood FL
+**Jose David GT** — Data Engineer, Hollywood FL · josedago1163@gmail.com
 
 [LinkedIn](https://www.linkedin.com/in/davidgt1/) · [GitHub](https://github.com/DeiviGT1) · [Instagram](https://www.instagram.com/davidgt1163/)

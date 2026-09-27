@@ -59,11 +59,8 @@
                   <img
                     class="front-image"
                     src="{{ url_for('static', filename='images/PP.webp') }}"
-                    srcset="{{ url_for('static', filename='images/PP.webp') }} 400w,
-                            {{ url_for('static', filename='images/PP.webp') }} 800w,
-                            {{ url_for('static', filename='images/PP.webp') }} 1200w"
-                    sizes="(max-width: 600px) 400px, (max-width: 900px) 800px, 1200px"
-                    alt="Avatar Front"
+                    width="400" height="400"
+                    alt="Jose David GT"
                   />
                   <!-- Back Images (Different Depending on Mode) -->
                   <img
@@ -71,7 +68,7 @@
                     src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO-BLACK@4x.webp') }}"
                     data-default-src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO-BLACK@4x.webp') }}"
                     data-inverted-src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO@4x.webp') }}"
-                    alt="Avatar Back"
+                    alt="Logo Jose David GT"
                   />
                 </div>
               </div>
@@ -102,8 +99,8 @@
               <label for="invertToggle" class="switch">
                 <input type="checkbox" id="invertToggle" name="invertMode" />
                 <span class="slider">
-                  <i class="fas fa-sun sun-icon"></i>
-                  <i class="fas fa-moon moon-icon"></i>
+                  <span class="sun-icon" aria-hidden="true">&#9728;</span>
+                  <span class="moon-icon" aria-hidden="true">&#9790;</span>
                 </span>
               </label>
             </div>
@@ -127,7 +124,7 @@
 
         <!-- Pie de Página -->
         <footer class="footer">
-          <span class="text-muted">© 2025 Jose David GT. All rights reserved.</span>
+          <span class="text-muted">© {{ current_year }} Jose David GT. All rights reserved.</span>
         </footer>
       </div>
     </div>
