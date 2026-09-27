@@ -27,6 +27,7 @@ Sitemap: https://www.josedavidgt.com/sitemap.xml
 
 @main_bp.route('/sitemap.xml')
 def sitemap():
+    from .blogpost_routes import CASE_STUDIES
     xml = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -84,52 +85,12 @@ def sitemap():
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/distribucion-sobrantes</loc>
+""" + "".join(f"""  <url>
+    <loc>https://www.josedavidgt.com/blogpost/{cs["slug"]}</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/kmeans</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/macros-excel</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/predict-calification</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/webscrapping</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/motivai</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/raisen</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/gato-tuerto</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.josedavidgt.com/blogpost/portfolio</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-</urlset>"""
+""" for cs in CASE_STUDIES) + """</urlset>"""
     return Response(xml, mimetype='application/xml')
 
 @main_bp.route('/')

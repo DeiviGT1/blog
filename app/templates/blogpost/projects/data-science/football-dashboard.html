@@ -1,0 +1,80 @@
+<!-- app/templates/blogpost/projects/data-science/football-dashboard.html -->
+{% extends "blogpost/base_case_study.html" %}
+
+{% block body %}
+<p>
+  I wanted a playground to practice three things at once: serving analytics from a
+  Flask app, splitting heavy work into a separate service, and letting an LLM explain a
+  chart to someone who does not read charts. The dataset is a Kaggle export of
+  <strong>club ELO ratings</strong> — a strength score for European football clubs —
+  with one row per club and date since 2000, about 25 years of history.
+</p>
+
+<h2>What the dashboard does</h2>
+<p>
+  The page has a single form: pick teams to follow, a country for a top-N bar chart,
+  a country for a ranking-evolution chart, and toggles for a violin plot and a heatmap.
+  Every change posts the selection to <code>/update_charts</code>, which filters the
+  DataFrame server-side and returns the five charts as base64 images.
+</p>
+<ul>
+  <li><strong>Team trend</strong> — ELO over time for the selected clubs.</li>
+  <li><strong>Top N by country</strong> — average ELO of the strongest clubs in a league.</li>
+  <li><strong>Ranking evolution</strong> — how the top clubs of a country swap positions year by year.</li>
+  <li><strong>Violin plot</strong> — the distribution of ratings across all clubs.</li>
+  <li><strong>Heatmap</strong> — club × year matrix of average ELO.</li>
+</ul>
+
+<figure>
+  <img src="{{ url_for('static', filename='images/projects/football_analytics.webp') }}" alt="Football ELO dashboard with charts" />
+  <figcaption>The dashboard with the trend and ranking charts loaded.</figcaption>
+</figure>
+
+<h2>Why the charts are rendered elsewhere</h2>
+<p>
+  Plotting libraries are heavy and slow to import, which hurts on serverless hosting
+  where every cold start counts. So the Flask app only does the pandas filtering and
+  sends the already-reduced records to a small <strong>plotting microservice on Google
+  Cloud Run</strong>, one endpoint per chart type. The microservice renders the figure
+  and returns it as base64; the web app never imports a plotting library at all.
+</p>
+<pre><code># app/python/microservice_helpers.py
+def get_plot_top_teams_country(df, country, num_teams=5):
+    df_country = df[df['country'] == country]
+    top_clubs = (df_country.groupby('club')['elo'].mean()
+                 .sort_values(ascending=False).head(num_teams).index)
+    payload = {"country": country,
+               "df": df_country[df_country['club'].isin(top_clubs)].to_dict(orient="records")}
+    response = requests.post(f"{MICROSERVICE_URL}/plot_top_teams_country", json=payload)
+    response.raise_for_status()
+    return response.json()["image_base64"]
+</code></pre>
+<p>
+  Filtering before sending matters: the full dataset is ~9 MB, but a top-5-clubs
+  payload is a few hundred rows. It keeps the request small and the microservice
+  stateless.
+</p>
+
+<h2>Letting the model read the chart</h2>
+<p>
+  Each chart has an <em>AI conclusions</em> button. It sends the chart type and the
+  active filters to <code>/generate_conclusions_ajax</code>; the server rebuilds the
+  same slice of data the chart used, summarizes it (top rows, ranges, aggregates) and
+  asks <strong>GPT-4o</strong> for three or four short observations "as a football
+  analyst". The prompt receives numbers, never the image, which keeps it cheap and
+  makes the answer verifiable against the chart.
+</p>
+
+<div class="result-callout">
+  <div><strong>5</strong><span>chart types generated on demand</span></div>
+  <div><strong>25 yrs</strong><span>of club ELO history</span></div>
+  <div><strong>0</strong><span>plotting libraries in the web app</span></div>
+</div>
+
+<h2>Takeaways</h2>
+<p>
+  Splitting rendering into a microservice was the right call for a Flask app on
+  serverless hosting, and the "summarize, then ask" pattern for AI explanations is one
+  I have reused since: give the model the data behind the chart, not a picture of it.
+</p>
+{% endblock %}

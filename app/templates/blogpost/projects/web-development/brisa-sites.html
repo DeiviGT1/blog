@@ -1,0 +1,61 @@
+<!-- app/templates/blogpost/projects/web-development/brisa-sites.html -->
+{% extends "blogpost/base_case_study.html" %}
+
+{% block body %}
+<p>
+  After building the website for El Gato Tuerto I kept meeting the same kind of
+  business owner: a restaurant, a barbershop, a botánica, a smoke shop — busy, Spanish
+  speaking, with a great Instagram and no website. <strong>Brisa Sites</strong> is my
+  attempt to serve them as a product instead of one-off freelance work.
+</p>
+
+<figure>
+  <img src="{{ url_for('static', filename='images/projects/brisa_sites.webp') }}" alt="Brisa Sites landing page" />
+  <figcaption>The main landing page, US region, Spanish.</figcaption>
+</figure>
+
+<h2>The offer</h2>
+<p>
+  Two plans with a hybrid price: a one-time setup fee plus a low monthly maintenance
+  that covers hosting, changes and support. The monthly piece is what makes the
+  business sustainable — and what the client actually wants, because it means someone
+  keeps the site alive. Prices exist in two regional lists (USD for South Florida, COP
+  for Colombia) and the page switches between them with a single
+  <code>data-region</code> attribute.
+</p>
+
+<h2>Six verticals, one codebase</h2>
+<p>
+  Instead of one generic pitch, each vertical has its own landing page — restaurants,
+  barbershops, botánicas, smoke shops, retail stores and galleries — with the pains and
+  examples that audience recognizes. They share one stylesheet and one script, so a
+  change in the pricing block propagates everywhere.
+</p>
+<ul>
+  <li><strong>Bilingual by design.</strong> Every text block exists in Spanish and English; a toggle flips the language without a reload and remembers the choice.</li>
+  <li><strong>WhatsApp-first funnel.</strong> Every call to action opens a pre-filled WhatsApp message that names the vertical, so the conversation starts with context.</li>
+  <li><strong>SEO groundwork.</strong> Canonicals, Open Graph, a <code>ProfessionalService</code> JSON-LD block with the areas served, and every landing listed in the sitemap.</li>
+  <li><strong>Measured.</strong> GA4 on all pages; an internal admin page tracks leads and the pipeline.</li>
+</ul>
+
+<h2>Client sites</h2>
+<p>
+  The sites delivered to clients are built with a separate Next.js site-builder,
+  deployed on Vercel, with GA4, Google Business Profile and local SEO included in the
+  setup. Payments are handled with Stripe in the US and Wompi in Colombia.
+</p>
+
+<div class="result-callout">
+  <div><strong>6</strong><span>vertical landing pages</span></div>
+  <div><strong>2</strong><span>languages, 2 regional price lists</span></div>
+  <div><strong>7 days</strong><span>from brief to live site</span></div>
+</div>
+
+<h2>Takeaways</h2>
+<p>
+  The engineering here is deliberately simple; the work was in the positioning,
+  the pricing model and writing copy that a business owner reads on a phone between
+  customers. It is the project where I learned the most about the business side of
+  building websites.
+</p>
+{% endblock %}

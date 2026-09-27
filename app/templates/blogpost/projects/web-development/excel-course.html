@@ -1,0 +1,79 @@
+<!-- app/templates/blogpost/projects/web-development/excel-course.html -->
+{% extends "blogpost/base_case_study.html" %}
+
+{% block body %}
+<p>
+  I have taught Excel informally for years — to colleagues, to friends starting a
+  business, to family. When I decided to turn that into an online course, the obvious
+  path was a platform like Teachable or Hotmart. I chose to build it myself instead,
+  as a product I fully control and as a full-stack exercise on my own site.
+</p>
+
+<h2>The course</h2>
+<p>
+  Five levels, from a free <em>Fundamentals</em> level to <em>Excel Pro</em>: 36 modules
+  covering formulas, references, conditional formatting, pivot tables, XLOOKUP and
+  INDEX/MATCH, dynamic arrays, Power Query, dashboards, macros, VBA and Power Pivot.
+  Every level ships with two workbooks — worked examples and practice exercises — plus
+  a cheat sheet in PDF. Extra modules cover shortcuts, common errors, a glossary and a
+  diagnostic test.
+</p>
+
+<figure>
+  <img src="{{ url_for('static', filename='images/projects/excel_course.webp') }}" alt="Excel 365 course landing page" />
+  <figcaption>The landing page of the course.</figcaption>
+</figure>
+
+<h2>Architecture</h2>
+<ul>
+  <li><strong>Flask</strong> serves everything under <code>/curso</code>: landing, pricing, auth, dashboard, modules, submissions and an admin area.</li>
+  <li><strong>Supabase</strong> handles authentication (email + password with OTP verification, Google OAuth with PKCE), the Postgres tables for profiles, purchases, per-module permissions and submissions, and a storage bucket for uploaded workbooks.</li>
+  <li><strong>Stripe Checkout</strong> sells each level or a bundle; a webhook marks the purchase complete and unlocks the modules.</li>
+  <li><strong>Modules as React components.</strong> Each lesson is a JSX file rendered in the browser; Flask injects the user's preferred formula language so <code>=SUMIFS</code> and <code>=SUMAR.SI.CONJUNTO</code> are one setting away.</li>
+</ul>
+
+<pre><code># The module registry drives navigation, pricing and permissions
+LEVELS = {
+    "nivel2": {
+        "title": "Nivel 2 — Intermedio",
+        "modules": [
+            {"id": "nivel2_modulo01_absolute_refs", "title": "Referencias absolutas y mixtas"},
+            {"id": "nivel2_modulo08_pivottables",   "title": "Tablas dinámicas"},
+            # ...
+        ],
+        "xlsx": ["nivel2_ejemplos.xlsx", "nivel2_practica.xlsx"],
+    },
+}
+</code></pre>
+
+<h2>Grading real workbooks</h2>
+<p>
+  Students submit their practice file for each module. Uploads are validated (Excel
+  formats only), stored in Supabase Storage under <code>user/module/timestamp</code>
+  and listed in an admin panel where I open the workbook, grade it and leave feedback
+  that shows up in the student's dashboard. It is the part that makes the course feel
+  like a class rather than a video library.
+</p>
+
+<h2>Access control</h2>
+<p>
+  Access is granular: a purchase unlocks a level, but I can also enable or revoke
+  individual modules per student, and new accounts wait for approval before they can
+  buy — a small friction that keeps the platform tidy while it is young. Everything
+  admin-side goes through the Supabase service role on the server; the browser only
+  ever holds the anon key.
+</p>
+
+<div class="result-callout">
+  <div><strong>36</strong><span>interactive modules</span></div>
+  <div><strong>10</strong><span>practice workbooks</span></div>
+  <div><strong>$0</strong><span>platform fees</span></div>
+</div>
+
+<h2>Takeaways</h2>
+<p>
+  Owning the platform meant owning auth, payments and file handling — more work than
+  uploading videos somewhere, but it gave me a real product with real users on my own
+  domain, and a codebase I keep extending.
+</p>
+{% endblock %}

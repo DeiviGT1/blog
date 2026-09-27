@@ -57,8 +57,12 @@ input:checked + .slider::before {
     transition: color 0.4s;
 }
 
+.slider .sun-icon {
+    left: 9px;
+}
+
 .slider .moon-icon {
-    right: 10px;
+    right: 9px;
     color: #f1c40f; 
 }
 
