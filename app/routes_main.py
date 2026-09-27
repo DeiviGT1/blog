@@ -1,28 +1,10 @@
 # app/routes_main.py
 
-from flask_login import LoginManager
-from flask_bootstrap import Bootstrap
+import os
+
 
 def register_routes(app):
-    # --- Inicializar extensiones ---
-    Bootstrap(app)
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.init_app(app)
-
-    # --- user_loader para reconstruir al usuario desde su ID ---
-    from .routes.auth_routes import User, _CREDENTIALS
-    @login_manager.user_loader
-    def load_user(user_id):
-        for username, cred in _CREDENTIALS.items():
-            if cred['id'] == int(user_id):
-                # CORRECCIÓN CRÍTICA: Se pasa el valor 'admin' al crear el objeto User.
-                # Sin esto, ningún usuario será reconocido como administrador.
-                return User(cred['id'], username, cred.get('admin', False))
-        return None
-
     # --- Supabase / curso config ---
-    import os
     app.config["SUPABASE_URL"]          = os.getenv("SUPABASE_URL", "")
     app.config["SUPABASE_ANON_KEY"]     = os.getenv("SUPABASE_ANON_KEY", "")
     app.config["SUPABASE_SERVICE_ROLE_KEY"] = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
@@ -35,8 +17,9 @@ def register_routes(app):
     from .routes.dashboard_routes import dashboard_bp
     from .routes.blogpost_routes import blogpost_bp
     from .routes.articles_routes import articles_bp
-    # from .routes.sosqueue_routes import sos_bp  # deshabilitado temporalmente (requiere Redis)
-    from .routes.auth_routes import auth_bp
+    # SOS Queue y su login (auth_routes) están deshabilitados: requieren Redis.
+    # from .routes.sosqueue_routes import sos_bp
+    # from .routes.auth_routes import auth_bp
     from .routes.curso_routes import curso_bp
     from .routes.brisa_sites_routes import brisa_sites_bp
     from .routes.meper_routes import meper_bp
@@ -47,8 +30,8 @@ def register_routes(app):
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(blogpost_bp)
     app.register_blueprint(articles_bp)
-    # app.register_blueprint(sos_bp)  # deshabilitado temporalmente (requiere Redis)
-    app.register_blueprint(auth_bp)
+    # app.register_blueprint(sos_bp)
+    # app.register_blueprint(auth_bp)
     app.register_blueprint(curso_bp)
     app.register_blueprint(brisa_sites_bp)
     app.register_blueprint(meper_bp)

@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /private-section/
-Disallow: /brisa-sites/admin
-
-Sitemap: https://www.josedavidgt.com/sitemap.xml

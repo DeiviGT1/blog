@@ -17,6 +17,9 @@ Disallow: /brisa-sites/admin
 Disallow: /curso/admin
 Disallow: /dashboard_index
 Disallow: /meper
+Disallow: /hf
+Disallow: /openai/recommend
+Disallow: /playlists/callback
 
 Sitemap: https://www.josedavidgt.com/sitemap.xml
 """
@@ -80,6 +83,51 @@ def sitemap():
     <loc>https://www.josedavidgt.com/curso</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/distribucion-sobrantes</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/kmeans</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/macros-excel</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/predict-calification</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/webscrapping</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/motivai</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/raisen</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/gato-tuerto</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.josedavidgt.com/blogpost/portfolio</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>"""
     return Response(xml, mimetype='application/xml')

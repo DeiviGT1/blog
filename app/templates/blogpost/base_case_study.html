@@ -1,0 +1,74 @@
+<!-- app/templates/blogpost/base_case_study.html -->
+{% extends "base.html" %}
+
+{% block titulo %}{{ cs.title }} — Case Study · Jose David GT{% endblock %}
+
+{% block meta_description %}
+<meta name="description" content="{{ cs.excerpt }}">
+{% endblock %}
+
+{% block og_tags %}
+<meta property="og:title" content="{{ cs.title }} — Case Study">
+<meta property="og:description" content="{{ cs.excerpt }}">
+<meta property="og:url" content="https://www.josedavidgt.com/blogpost/{{ cs.slug }}">
+<meta property="og:image" content="{{ url_for('static', filename=cs.image or 'images/PP.webp', _external=True) }}">
+{% endblock %}
+
+{% block canonical %}https://www.josedavidgt.com/blogpost/{{ cs.slug }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/articles/articles.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost/case-study.css') }}" />
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ cs.title | tojson }},
+  "description": {{ cs.excerpt | tojson }},
+  "author": {"@type": "Person", "name": "Jose David GT", "url": "https://www.josedavidgt.com/"},
+  "url": "https://www.josedavidgt.com/blogpost/{{ cs.slug }}"
+}
+</script>
+{% endblock %}
+
+{% block contenido %}
+<article class="article-wrapper case-study">
+  <a class="cs-back" href="{{ url_for('blogpost.index') }}">← All case studies</a>
+
+  <header class="article-header">
+    <div class="article-category">{{ cs.category }}</div>
+    <h1>{{ cs.title }}</h1>
+    <p class="article-subtitle">{{ cs.subtitle }}</p>
+    <div class="cs-meta">
+      <ul class="cs-stack">
+        {% for tech in cs.stack %}<li>{{ tech }}</li>{% endfor %}
+      </ul>
+      {% if cs.demo %}
+      <a class="cs-demo" href="{{ cs.demo }}" target="_blank" rel="noopener noreferrer">Visit live site ↗</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="article-body">
+    {% block body %}{% endblock %}
+  </div>
+
+  <footer class="article-footer cs-nav">
+    {% if prev_cs %}
+    <a class="cs-nav-link prev" href="{{ url_for('blogpost.case_study', slug=prev_cs.slug) }}">
+      <span>← Previous</span>
+      <strong>{{ prev_cs.title }}</strong>
+    </a>
+    {% else %}<span></span>{% endif %}
+    {% if next_cs %}
+    <a class="cs-nav-link next" href="{{ url_for('blogpost.case_study', slug=next_cs.slug) }}">
+      <span>Next →</span>
+      <strong>{{ next_cs.title }}</strong>
+    </a>
+    {% endif %}
+  </footer>
+</article>
+{% endblock %}

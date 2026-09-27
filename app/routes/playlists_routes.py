@@ -1,5 +1,5 @@
 # app/routes/playlists_routes.py
-from flask import Blueprint, render_template, request, redirect, session
+from flask import Blueprint, render_template, request, redirect, session, url_for
 from ..python.spotify.spotify import (
     app_Authorization as playlists_app_Authorization,
     user_Authorization as playlists_user_Authorization,
@@ -7,17 +7,43 @@ from ..python.spotify.spotify import (
     Playlist_Data,
     Song_Data
 )
+import os
 import base64
 import json
 
 playlists_bp = Blueprint('playlists', __name__, url_prefix='/playlists')
 
+# Datos de muestra para cuando no hay credenciales de Spotify configuradas.
+DEMO_PLAYLISTS = [
+    {"playlist_name": "Road Trip 2024", "playlist_url": "https://open.spotify.com/", "avg_popularity": "78.40"},
+    {"playlist_name": "Focus / Deep Work", "playlist_url": "https://open.spotify.com/", "avg_popularity": "61.25"},
+    {"playlist_name": "Reggaetón Viejo", "playlist_url": "https://open.spotify.com/", "avg_popularity": "52.10"},
+    {"playlist_name": "Indie que nadie conoce", "playlist_url": "https://open.spotify.com/", "avg_popularity": "23.70"},
+]
+
+
+def _spotify_configured():
+    return bool(os.getenv("SPOTIFY_API_KEY_2"))
+
+
+def _encode(rows):
+    return base64.b64encode(json.dumps(rows).encode('utf-8')).decode('utf-8')
+
+
 @playlists_bp.route('/')
 def playlists_index():
-    return render_template("projects/spotify/index.html")
+    return render_template("projects/spotify/index.html", demo=not _spotify_configured())
+
+
+@playlists_bp.route('/demo')
+def playlists_demo():
+    return render_template("projects/spotify/playlist.html",
+                           avg_per_playlist_base64=_encode(DEMO_PLAYLISTS), demo=True)
 
 @playlists_bp.route("/login")
 def playlists_login():
+    if not _spotify_configured():
+        return redirect(url_for("playlists.playlists_demo"))
     REDIRECT_URI = request.url_root.rstrip('/') + "/playlists/callback"
     auth_url = playlists_app_Authorization(REDIRECT_URI)
     session["playlists_auth_url"] = auth_url
@@ -75,14 +101,8 @@ def playlists_callback():
             "avg_popularity": "{:.2f}".format(row[1])
         })
 
-    # Convierte final_result a JSON y luego a Base64
-    data_json = json.dumps(final_result)
-    data_base64 = base64.b64encode(data_json.encode('utf-8')).decode('utf-8')
-
-    print('final_result:', final_result)
-    print('avg_per_playlist_base64:', data_base64)
-
-    return render_template("projects/spotify/playlist.html", avg_per_playlist_base64=data_base64)
+    return render_template("projects/spotify/playlist.html",
+                           avg_per_playlist_base64=_encode(final_result), demo=False)
 
 @playlists_bp.route("/logout")
 def playlists_logout():

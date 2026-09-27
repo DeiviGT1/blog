@@ -1,0 +1,455 @@
+/* app/static/css/blogpost/case-study.css
+   Case Studies: portada (grid de tarjetas) y páginas individuales.
+   Se apoya en articles.css para la tipografía editorial. */
+
+/* ── Portada ── */
+
+.cs-index {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+.cs-index * {
+  text-align: left;
+}
+
+.cs-index h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.cs-index .section-lead {
+  color: var(--muted-text-color);
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+  max-width: 640px;
+}
+
+.cs-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.cs-filters button {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--hover-bg-color);
+  background: transparent;
+  color: var(--main-text-color);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.cs-filters button:hover,
+.cs-filters button[aria-pressed="true"] {
+  background-color: var(--hover-bg-color);
+  color: var(--hover-text-color);
+}
+
+.cs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cs-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--hover-bg-color);
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: var(--sidebar-bg-color);
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s;
+}
+
+.cs-card[hidden] {
+  display: none;
+}
+
+.cs-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.cs-card a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+}
+
+.cs-card-media {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: var(--hover-bg-color);
+}
+
+.cs-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  transition: transform 0.4s;
+}
+
+.cs-card:hover .cs-card-media img {
+  transform: scale(1.03);
+}
+
+.cs-card-media.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #5A6D7C 0%, #3d4a55 100%);
+}
+
+.cs-card-media.placeholder span {
+  font-family: "Menlo", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.85rem;
+  color: #fff;
+  opacity: 0.85;
+  padding: 1rem;
+  text-align: center;
+}
+
+.cs-card-body {
+  padding: 1.1rem 1.2rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.cs-card .article-category {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hover-bg-color);
+}
+
+.cs-card h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+  color: var(--main-text-color);
+}
+
+.cs-card p {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--muted-text-color);
+  margin: 0;
+  flex: 1;
+}
+
+.cs-card .cs-stack {
+  margin-top: 0.5rem;
+}
+
+/* ── Página individual ── */
+
+.case-study * {
+  text-align: left;
+}
+
+.cs-back {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted-text-color);
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+
+.cs-back:hover {
+  color: var(--main-text-color);
+}
+
+.cs-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.cs-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cs-stack li {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--hover-bg-color);
+  border-radius: 4px;
+  color: var(--main-text-color);
+}
+
+.cs-demo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--hover-bg-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.case-study .article-body h2 {
+  font-size: 1.35rem;
+  margin-top: 2.8rem;
+}
+
+.case-study .article-body h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 2rem 0 0.6rem;
+  color: var(--main-text-color);
+}
+
+.case-study .article-body ul,
+.case-study .article-body ol {
+  padding-left: 1.4rem;
+  margin: 0 0 1.4rem;
+  list-style-position: outside;
+}
+
+.case-study .article-body ul {
+  list-style-type: disc;
+}
+
+.case-study .article-body ol {
+  list-style-type: decimal;
+}
+
+.case-study .article-body li {
+  font-size: 1.02rem;
+  line-height: 1.7;
+  margin-bottom: 0.45rem;
+  color: var(--main-text-color);
+}
+
+.case-study .article-body li p {
+  margin-bottom: 0.6rem;
+}
+
+.case-study .article-body a {
+  color: var(--hover-bg-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Figuras */
+
+.case-study figure {
+  margin: 2.2rem 0;
+}
+
+.case-study figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  border: 1px solid var(--hover-bg-color);
+}
+
+.case-study figure.phones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  justify-items: center;
+}
+
+.case-study figure.phones img {
+  max-width: 260px;
+  border-radius: 18px;
+}
+
+.case-study figure.phones figcaption {
+  grid-column: 1 / -1;
+}
+
+.case-study figure.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.case-study figure.pair figcaption {
+  grid-column: 1 / -1;
+}
+
+.case-study figcaption {
+  font-size: 0.85rem;
+  color: var(--muted-text-color);
+  margin-top: 0.6rem;
+  line-height: 1.5;
+}
+
+/* Fórmulas (MathJax) */
+
+.case-study .formula {
+  margin: 1.4rem 0;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  background-color: var(--sidebar-bg-color);
+  border: 1px solid var(--hover-bg-color);
+  overflow-x: auto;
+  transition: background-color 0.5s;
+}
+
+/* Callouts reutilizados de articles.css: .data-callout */
+
+.case-study .result-callout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.case-study .result-callout div {
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid var(--hover-bg-color);
+  background-color: var(--sidebar-bg-color);
+  transition: background-color 0.5s;
+}
+
+.case-study .result-callout strong {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+  color: var(--main-text-color);
+}
+
+.case-study .result-callout span {
+  font-size: 0.85rem;
+  color: var(--muted-text-color);
+}
+
+/* Código */
+
+.case-study code {
+  font-family: "Menlo", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.88em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background-color: var(--sidebar-bg-color);
+  border: 1px solid var(--hover-bg-color);
+  color: var(--main-text-color);
+}
+
+.case-study pre {
+  margin: 1.6rem 0;
+  padding: 1.2rem 1.4rem;
+  border-radius: 8px;
+  background-color: #1f2429;
+  border: 1px solid #3a434b;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.case-study pre code {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #e6e9ec;
+  white-space: pre;
+  font-size: inherit;
+}
+
+/* Navegación anterior / siguiente */
+
+.cs-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.cs-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-width: 48%;
+  color: var(--main-text-color);
+  transition: opacity 0.2s;
+}
+
+.cs-nav-link:hover {
+  opacity: 0.7;
+}
+
+.cs-nav-link span {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-text-color);
+}
+
+.cs-nav-link strong {
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.cs-nav-link.next {
+  margin-left: auto;
+  align-items: flex-end;
+}
+
+.cs-nav-link.next * {
+  text-align: right;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  .cs-index {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .cs-index h1 {
+    font-size: 1.7rem;
+  }
+
+  .case-study figure.pair {
+    grid-template-columns: 1fr;
+  }
+
+  .cs-nav {
+    flex-direction: column;
+  }
+
+  .cs-nav-link,
+  .cs-nav-link.next {
+    max-width: 100%;
+    align-items: flex-start;
+  }
+
+  .cs-nav-link.next * {
+    text-align: left;
+  }
+}

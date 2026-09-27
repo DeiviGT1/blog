@@ -1,159 +1,70 @@
-<!-- app/templates/blogpost/projects/app-development/raisen.html -->
-{% extends "blogpost/base_blogpost.html" %}
+<!-- app/templates/blogpost/projects/mobile-development/raisen.html -->
+{% extends "blogpost/base_case_study.html" %}
 
-{% block extra_head %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/blogpost/projects.css') }}"
-/>
-{% endblock %}
+{% block body %}
+<p>
+  <strong>Raisen</strong> is a personal project that simplifies travel planning and adds
+  a creative twist. Built in <strong>Swift</strong> with <strong>Firebase</strong> for
+  data, it does two things: generates personalized travel itineraries with the
+  <strong>OpenAI API</strong>, and creates city-inspired collages with
+  <strong>DALL·E</strong>. Like my other apps, it supports Google, Apple or email
+  sign-in.
+</p>
 
-{% block content %}
-<div class="jumbotron">
-  <div class="project-title">
-    <h1 class="display-4">Raisen</h1>
-    <h3 class="lead">AI-Powered Itinerary & Collage Generator</h3>
-  </div>
+<h2>Sign-in without reinventing the wheel</h2>
+<p>
+  <strong>Firebase Authentication</strong> handles logins, giving quick and secure
+  access through familiar providers. As a solo developer, delegating auth and database
+  logic let me focus on the core: understanding the user's input and integrating AI.
+</p>
 
-  <div class="project-summary">
-    <!-- Intro / Overview -->
-    <p>
-      <strong>Raisen</strong> is a personal project I developed to simplify travel 
-      planning and offer creative visual content to users. Built with <em>Swift</em> 
-      and powered by <strong>Firebase</strong> for data management, Raisen focuses 
-      on two core functionalities: generating <em>personalized travel schedules</em> 
-      using the <strong>OpenAI API</strong> and creating <em>city-inspired collages</em> 
-      via <strong>DALL·E</strong>. Like my other work, the app supports 
-      <strong>Google, Apple, or email sign-in</strong> to offer a seamless login 
-      experience.
-    </p>
+<figure class="phones">
+  <img src="{{ url_for('static', filename='images/blogpost/raisen-1.webp') }}" alt="Raisen landing screen" />
+  <img src="{{ url_for('static', filename='images/blogpost/raisen-2.webp') }}" alt="Raisen city selection" />
+  <figcaption>Landing and city selection.</figcaption>
+</figure>
 
-    <!-- First Image -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-          src="{{ url_for('static', filename='images/blogpost/raisen-1.png') }}"
-          alt="Raisen Landing Screen"
-          style="max-height: 600px;"
-        />
-      </div>
-      <div>
-        <p>
-          Similar to my other app projects, <strong>Firebase Authentication</strong> 
-          handles user logins in Raisen, allowing quick and secure access through 
-          familiar platforms. I wanted to keep the onboarding as simple as possible 
-          while maintaining strong security measures. As a solo developer, this 
-          approach let me focus on the core features—analyzing user input and 
-          integrating AI solutions—without rewriting login and database logic.
-        </p>
-      </div>
-    </div>
+<h2>Itinerary generation</h2>
+<p>
+  Enter a city and the number of days you will stay, and the app asks the OpenAI API
+  for a personalized schedule: recommended spots, an efficient route between them, an
+  estimate of how long to spend at each one, and images that showcase the city's
+  highlights.
+</p>
+<p>
+  Preferences — city, days, personal constraints — are stored in <strong>Firestore</strong>,
+  so a previous itinerary can be revisited or updated. The UI is deliberately minimal:
+  the essential information about the trip is visible at a glance, without digging
+  through menus.
+</p>
 
-    <!-- Second Image -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-          src="{{ url_for('static', filename='images/blogpost/raisen-2.png') }}"
-          alt="Raisen City Selection"
-          style="max-height: 600px;"
-        />
-      </div>
-      <div>
-        <p>
-          At the heart of Raisen is an <strong>itinerary generation tool</strong>. 
-          Upon entering a city name and specifying how many days the user will stay, 
-          the app communicates with the <em>OpenAI API</em> to create a 
-          personalized travel schedule. This schedule includes recommended 
-          <em>tourist spots</em>, optimal <em>routes</em> to visit them, an estimate 
-          of how long users might spend at each site, and even <strong>images</strong> 
-          that showcase some highlights of the city.
-        </p>
-      </div>
-    </div>
+<figure class="phones">
+  <img src="{{ url_for('static', filename='images/blogpost/raisen-3.webp') }}" alt="AI-generated itinerary in Raisen" />
+  <img src="{{ url_for('static', filename='images/blogpost/raisen-4.webp') }}" alt="Raisen collage generator" />
+  <img src="{{ url_for('static', filename='images/blogpost/raisen-5.webp') }}" alt="Raisen settings" />
+  <figcaption>Generated itinerary, collage generator and settings.</figcaption>
+</figure>
 
-    <!-- Third Image -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-          src="{{ url_for('static', filename='images/blogpost/raisen-3.png') }}"
-          alt="Raisen AI-Generated Itinerary"
-          style="max-height: 600px;"
-        />
-      </div>
-      <div>
-        <p>
-          To keep everything organized, I used <em>Firestore</em> (a part of Firebase) 
-          to store user preferences—like which city they're interested in, how many 
-          days they'll be there, and any personal constraints or preferences. This 
-          data structure makes it easy to revisit or update a previously generated 
-          schedule. The <strong>UI</strong> was designed to feel minimal and intuitive, 
-          so users can quickly see the most critical information about their trip 
-          without digging through cluttered menus.
-        </p>
-      </div>
-    </div>
+<h2>Collage generator</h2>
+<p>
+  Beyond planning, Raisen uses the <strong>DALL·E API</strong> to produce unique
+  background images based on the chosen city — a collage that works as a wallpaper or
+  can be shared. It was the most fun part to build: creative AI output driven by a
+  single user input.
+</p>
 
-    <!-- Fourth Image -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-          src="{{ url_for('static', filename='images/blogpost/raisen-4.png') }}"
-          alt="Raisen Collage Generator"
-          style="max-height: 600px;"
-        />
-      </div>
-      <div>
-        <p>
-          Beyond itinerary planning, Raisen features a <strong>collage generator</strong> 
-          that uses the <em>DALL·E API</em> to produce unique background images 
-          based on the user’s chosen city. By simply entering a city name, the 
-          app creates an <em>image collage</em> that can be used as a device 
-          wallpaper or shared on social media. This feature was particularly fun 
-          to develop, as it merges creative AI capabilities with user-generated 
-          inputs, providing a delightful, personalized result.
-        </p>
-      </div>
-    </div>
+<h2>Settings</h2>
+<p>
+  Users can change their login method, adjust notifications for future trips and log
+  out or revoke access. Firebase keeps the data secure and preferences in sync across
+  sessions.
+</p>
 
-    <!-- Fifth Image -->
-    <div class="project-image-text">
-      <div class="project-image">
-        <img
-          src="{{ url_for('static', filename='images/blogpost/raisen-5.png') }}"
-          alt="Raisen Settings Screen"
-          style="max-height: 600px;"
-        />
-      </div>
-      <div>
-        <p>
-          In the <strong>Settings Screen</strong>, users can update their 
-          <em>login method</em>, adjust notification preferences for future 
-          trip alerts, and of course <em>log out</em> or revoke access. Through 
-          Firebase, all user data remains secure, while providing a convenient 
-          way to sync preferences and maintain session state across sessions.
-        </p>
-        <p>
-          As a solo developer on this project, I handled everything from 
-          <strong>UI/UX design</strong> to <strong>API integrations</strong>. 
-          It has been a great learning experience, combining open-ended AI 
-          interactions with structured app components. Looking ahead, I plan 
-          to refine the routing suggestions by incorporating real-time data—such 
-          as traffic or local events—and expand the DALL·E collage feature 
-          for more creative output variations.
-        </p>
-      </div>
-    </div>
-
-    <!-- Conclusion -->
-    <p>
-      In essence, <strong>Raisen</strong> merges travel planning with AI-driven 
-      image generation, presenting a fresh approach to both functional 
-      and aesthetic needs of travelers. Whether you’re looking for an 
-      in-depth itinerary or a visually stunning backdrop reflecting your 
-      chosen destination, Raisen aims to deliver an engaging, user-centric 
-      experience. Stay tuned for ongoing feature enhancements as I continue 
-      to explore new possibilities with AI and mobile development.
-    </p>
-  </div>
-</div>
+<h2>Takeaways</h2>
+<p>
+  I handled everything from UI/UX to API integrations, combining open-ended AI
+  interactions with structured app components. Planned improvements include real-time
+  data — traffic, local events — in the routing suggestions and more variety in the
+  collage output.
+</p>
 {% endblock %}

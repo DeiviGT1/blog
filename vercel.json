@@ -3,20 +3,13 @@
     "builds": [
       {
         "src": "run.py",
-        "use": "@vercel/python",
-        "config": { "pythonVersion": "3.9.6" }
+        "use": "@vercel/python"
       }
     ],
     "routes": [
       {
         "src": "/(.*)",
         "dest": "run.py"
-      }
-    ],
-    "crons": [
-      {
-        "path": "/sosqueue/api/reset-queues",
-        "schedule": "0 2 * * *"
       }
     ]
   }

@@ -47,15 +47,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var Comentario;
     if (average_popularity > 70){
-      Comentario = 'Esta playlist es increíble. ¡Tienes muy buen gusto musical! Cada canción es una joya.';
+      Comentario = 'Incredible playlist. You have great taste — every song is a gem.';
     } else if (average_popularity > 55){
-      Comentario = 'Esta playlist es muy buena. Tiene una variedad de estilos y ritmos que te hacen disfrutar de la música.';
+      Comentario = 'Very good playlist. A mix of styles and rhythms that is easy to enjoy.';
     } else if (average_popularity > 45){
-      Comentario = 'Esta playlist es decente. Tiene un equilibrio entre canciones populares y otras más desconocidas.';
+      Comentario = 'Decent playlist. A balance between popular songs and lesser-known ones.';
     } else if (average_popularity > 20){
-      Comentario = 'Esta playlist no es muy atractiva. Tiene algunas canciones buenas, pero otras que no pegan nada.';
+      Comentario = 'Not very catchy. Some good songs, but others do not land at all.';
     } else {
-      Comentario = 'Esta playlist necesita una renovación urgente. Tal vez deberías explorar otros géneros musicales.';
+      Comentario = 'This playlist needs an urgent refresh. Maybe explore other genres.';
     }
 
     localStorage.setItem('playlistData', dataJson);
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
     listItem.className = "playlist-item";
 
     var playlistTitle = document.createElement("h3");
-    playlistTitle.textContent = "El puntaje de tu playlist '" + playlist_name + "' es de: " + average_popularity;
+    playlistTitle.textContent = "'" + playlist_name + "' scores " + average_popularity + " / 100";
 
     var progressBarContainer = document.createElement("div");
     progressBarContainer.className = "progress-bar-container";
@@ -76,17 +76,14 @@ document.addEventListener("DOMContentLoaded", function() {
     var comentarioDiv = document.createElement("div");
     comentarioDiv.className = "comentario-div";
 
-    var spotifyLogo = document.createElement("img");
-    spotifyLogo.setAttribute("src", "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg");
-    spotifyLogo.className = "spotify-logo";
-
     var comentarioLink = document.createElement("a");
     comentarioLink.setAttribute("href", playlist_url);
-    comentarioLink.textContent = Comentario;
+    comentarioLink.setAttribute("target", "_blank");
+    comentarioLink.setAttribute("rel", "noopener noreferrer");
+    comentarioLink.textContent = Comentario + " Open on Spotify ↗";
     comentarioLink.className = "comentario";
 
     progressBarContainer.appendChild(progressBar);
-    comentarioDiv.appendChild(spotifyLogo);
     comentarioDiv.appendChild(comentarioLink);
 
     listItem.appendChild(playlistTitle);

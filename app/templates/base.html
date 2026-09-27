@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block titulo %}Jose David GT — Data Engineer & Web Developer{% endblock %}</title>
     {% block meta_description %}
-    <meta name="description" content="Jose David GT — Data Engineer en Hollywood, FL. Especializado en analytics, business intelligence, desarrollo web y Brisa Sites. Portafolio, proyectos y artículos.">
+    <meta name="description" content="Jose David GT — Data Engineer in Hollywood, FL. Databricks, Spark, AWS, Python and SQL; data platforms, BI, web development and Brisa Sites. Portfolio, case studies and articles.">
     {% endblock %}
 
     <meta name="author" content="Jose David GT">
@@ -18,7 +18,7 @@
     <meta property="og:site_name" content="Jose David GT">
     {% block og_tags %}
     <meta property="og:title" content="Jose David GT — Data Engineer & Web Developer">
-    <meta property="og:description" content="Data Engineer en Hollywood, FL. Analytics, BI, desarrollo web y Brisa Sites.">
+    <meta property="og:description" content="Data Engineer in Hollywood, FL. Databricks, Spark, AWS, analytics, BI and web development.">
     <meta property="og:url" content="https://www.josedavidgt.com/">
     <meta property="og:image" content="{{ url_for('static', filename='images/PP.webp', _external=True) }}">
     {% endblock %}
@@ -59,11 +59,8 @@
                   <img
                     class="front-image"
                     src="{{ url_for('static', filename='images/PP.webp') }}"
-                    srcset="{{ url_for('static', filename='images/PP.webp') }} 400w,
-                            {{ url_for('static', filename='images/PP.webp') }} 800w,
-                            {{ url_for('static', filename='images/PP.webp') }} 1200w"
-                    sizes="(max-width: 600px) 400px, (max-width: 900px) 800px, 1200px"
-                    alt="Avatar Front"
+                    width="400" height="400"
+                    alt="Jose David GT"
                   />
                   <!-- Back Images (Different Depending on Mode) -->
                   <img
@@ -71,14 +68,14 @@
                     src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO-BLACK@4x.webp') }}"
                     data-default-src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO-BLACK@4x.webp') }}"
                     data-inverted-src="{{ url_for('static', filename='images/LOGOS/LOGO-ISOTIPO@4x.webp') }}"
-                    alt="Avatar Back"
+                    alt="Logo Jose David GT"
                   />
                 </div>
               </div>
               <h3>Jose David GT</h3>
               <h4 style="font-weight: 500">Data Engineer</h4>
               <p>
-                Data Engineer building analytics pipelines, BI dashboards, and full-stack applications. I also write about technology and its impact on work.
+                Data Engineer building data platforms on Databricks and AWS, BI dashboards and full-stack applications. I also write about technology and its impact on work.
               </p>
             </div>
           </a>
@@ -102,8 +99,8 @@
               <label for="invertToggle" class="switch">
                 <input type="checkbox" id="invertToggle" name="invertMode" />
                 <span class="slider">
-                  <i class="fas fa-sun sun-icon"></i>
-                  <i class="fas fa-moon moon-icon"></i>
+                  <span class="sun-icon" aria-hidden="true">&#9728;</span>
+                  <span class="moon-icon" aria-hidden="true">&#9790;</span>
                 </span>
               </label>
             </div>
@@ -112,8 +109,7 @@
 
         <div class="sidebar-bottom">
           <a class="brisa-sites-bottom" href="https://brisasites.com" target="_blank" rel="noopener">Brisa Sites</a>
-          <a class="excel-course-bottom" href="/curso">Excel Course</a>
-          <a class="blogpost-bottom" href="/blogpost">Project Explain</a>
+          <a class="blogpost-bottom" href="/blogpost">Case Studies</a>
         </div>
 
       </nav>
@@ -127,7 +123,7 @@
 
         <!-- Pie de Página -->
         <footer class="footer">
-          <span class="text-muted">© 2025 Jose David GT. All rights reserved.</span>
+          <span class="text-muted">© {{ current_year }} Jose David GT. All rights reserved.</span>
         </footer>
       </div>
     </div>

@@ -26,7 +26,7 @@
               data-project="1"
               data-title="SONIC SURPRISE"
               data-description="It is a project that uses OpenAI's GPT-4o to generate recommendations of songs based on a song that the user sends."
-              data-image="{{ url_for('static', filename='images/projects/sonic_surprise.png') }}"
+              data-image="{{ url_for('static', filename='images/projects/sonic_surprise.webp') }}"
             >
               <p>SONIC SURPRISE</p>
             </a>
@@ -49,7 +49,7 @@
               data-project="2"
               data-title="PLAYLISTS QUALIFIER"
               data-description="It is a project that uses the Spotify API to provide proper qualifications for each user playlist based on Spotify data."
-              data-image="{{ url_for('static', filename='images/projects/playlists_qualifier.png') }}"
+              data-image="{{ url_for('static', filename='images/projects/playlists_qualifier.webp') }}"
             >
               <p>PLAYLISTS QUALIFIER</p>
             </a>
@@ -71,7 +71,7 @@
               data-project="3"
               data-title="ANALYTICS STOCKS"
               data-description="This is a tool that allows you to analyze the data of the best stock companies per country and each country's rates over the last year."
-              data-image="{{ url_for('static', filename='images/projects/power_bi_analytics.png') }}"
+              data-image="{{ url_for('static', filename='images/projects/power_bi_analytics.webp') }}"
               data-video="https://video-motivai.s3.us-east-2.amazonaws.com/analytics-stocks.mp4"
             >
               <p>ANALYTICS STOCKS</p>
@@ -95,7 +95,7 @@
               data-project="4"
               data-title="FOOTBALL DASHBOARD"
               data-description="This tools was created to check Football data based on data validated from Kaggle to illustrate and use AI to give some conclusions."
-              data-image="{{ url_for('static', filename='images/projects/football_analytics.png') }}"
+              data-image="{{ url_for('static', filename='images/projects/football_analytics.webp') }}"
             >
               <p>FOOTBALL DASHBOARD</p>
             </a>
@@ -124,7 +124,7 @@
               data-project="5"
               data-title="GATO TUERTO WEBSITE"
               data-description="A liquor store website that allows you to buy the best liquors in the market."
-              data-image="{{ url_for('static', filename='images/projects/gato_tuerto.png') }}"
+              data-image="{{ url_for('static', filename='images/projects/gato_tuerto.webp') }}"
               target="_blank"
             >
               <p>GATO TUERTO WEBSITE</p>
@@ -154,7 +154,7 @@
               data-project="6"
               data-title="MOTIVAI"
               data-description="A coaching AI tool to boost personal development."
-              data-image="{{ url_for('static', filename='images/projects/motivai.png') }}"
+              data-image="{{ url_for('static', filename='images/projects/motivai.webp') }}"
               data-video="https://video-motivai.s3.us-east-2.amazonaws.com/motivai.mp4"
             >
               <p>MOTIVAI</p>
@@ -175,10 +175,10 @@
                 <a
                 href="#"
                 class="project-link"
-                data-project="6"
+                data-project="7"
                 data-title="RAISEN"
                 data-description="An AI tool made to help people do their own personal itineraries for travel and also generate cellphone backgrounds."
-                data-image="{{ url_for('static', filename='images/projects/raisen.png') }}"
+                data-image="{{ url_for('static', filename='images/projects/raisen.webp') }}"
                 data-video="https://video-raisen.s3.us-east-2.amazonaws.com/raisen2.mp4"
                 >
                 <p>RAISEN</p>
@@ -192,6 +192,35 @@
                 </ul>
             </div>
             </li>
+      </ul>
+    </details>
+
+    <!-- Menú Desplegable: Education -->
+    <details open>
+      <summary>Education</summary>
+      <ul class="project-list list-unstyled">
+        <!-- Project 8: EXCEL 365 COURSE -->
+        <li class="project-item">
+          <div class="project-left">
+            <a
+              href="/curso"
+              class="project-link"
+              data-project="8"
+              data-title="EXCEL 365 COURSE"
+              data-description="An online Excel course (5 levels, 36 interactive modules) with practice files, graded submissions, Supabase auth and Stripe payments."
+              data-image="{{ url_for('static', filename='images/projects/excel_course.webp') }}"
+            >
+              <p>EXCEL 365 COURSE</p>
+            </a>
+          </div>
+          <div class="project-right">
+            <ul class="sub-project-list">
+              <li class="sub-project-item excel-hover">Excel</li>
+              <li class="sub-project-item python-hover">Flask</li>
+              <li class="sub-project-item backend-hover">Stripe</li>
+            </ul>
+          </div>
+        </li>
       </ul>
     </details>
 

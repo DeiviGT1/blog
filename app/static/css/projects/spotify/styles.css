@@ -110,3 +110,4 @@
       padding: 15px;
     }
   }
+#playlist ul { list-style: none; padding: 0; margin: 0; }

@@ -1,244 +1,83 @@
-<!-- app/templates/blogpost/web-development/portfolio.html -->
-{% extends "blogpost/base_blogpost.html" %}
+<!-- app/templates/blogpost/projects/web-development/portfolio.html -->
+{% extends "blogpost/base_case_study.html" %}
 
-{% block extra_head %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/blogpost/projects.css') }}"
-/>
-{% endblock %}
+{% block body %}
+<p>
+  The goal was a personal portfolio that could evolve with my growth in web development
+  and data engineering. Over five iterations I tried different stacks — a static site,
+  a refined static site, a React SPA, an extended React app, and finally
+  <strong>Python + Jinja</strong>. This is what each version taught me.
+</p>
 
-{% block content %}
-<div class="jumbotron">
-  <div class="project-title">
-    <h1 class="display-4">Creation and Evolution of My Personal Portfolio</h1>
-    <h3 class="lead">Detailed Journey Through Multiple Iterations</h3>
-  </div>
+<h2>Version 1 — Minimal static HTML &amp; CSS</h2>
+<p>
+  Built only with HTML and CSS, focused on rapid prototyping: Home, Academic Profile,
+  Professional Profile, Projects and Travels. Navigation was a header menu with no
+  interactivity. Easy to maintain, but scalability was already a concern.
+</p>
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/portfolio-1.webp') }}" alt="First version of the portfolio, static HTML and CSS" />
+  <figcaption>Version 1.</figcaption>
+</figure>
 
-  <div class="project-summary">
-    <div class="project-intro">
+<h2>Version 2 — Better design, still static</h2>
+<p>
+  A refined color palette and typography, better spacing, dedicated sections for
+  project details and a simpler navigation bar. A few small JavaScript snippets for
+  animations, but the content stayed static. It looked better, yet adding features
+  meant repeating code — I wanted something component-based.
+</p>
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/portfolio-2.webp') }}" alt="Second version with an enhanced design" />
+  <figcaption>Version 2.</figcaption>
+</figure>
 
-      <!-- Introduction / Motivation -->
-      <p>
-        The primary goal of this project was to build a <strong>personal portfolio</strong>
-        that could evolve alongside my growth in web development and data engineering.
-        Over a series of iterations, I experimented with different tech stacks—starting
-        with a purely static approach, then refining it further, moving on to a dynamic
-        React-based solution, and finally migrating to a <em>Python + Jinja</em> architecture.
-      </p>
-      <p>
-        Below is an in-depth look at each major phase, the decisions that guided
-        my choices, and the lessons learned at every step.
-      </p>
+<h2>Version 3 — Migrating to React</h2>
+<p>
+  The site was broken down into React components, navigation moved to React Router for
+  a single-page feel, and I started fetching dynamic data such as my GitHub
+  repositories. State management, smoother transitions and the door open to features
+  like dark mode and API integrations.
+</p>
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/portfolio-3.webp') }}" alt="Third version, React-based" />
+  <figcaption>Version 3.</figcaption>
+</figure>
 
-      <!-- Version 1: Minimal Static HTML & CSS -->
-      <h4>Version 1: Minimal Static HTML & CSS</h4>
-      <p>
-        The <strong>first version</strong> of my portfolio (<em>first image</em>) was built
-        solely with <em>HTML & CSS</em>. My focus was on rapid prototyping and
-        establishing a basic structure. I created sections for
-        <strong>“Home,” “Academic Profile,” “Professional Profile,” “Projects,”</strong>
-        and <strong>“Travels.”</strong>
-      </p>
-      <ul>
-        <li>
-          I kept the design <strong>simple</strong> to ensure I could quickly deploy
-          a functional website. 
-        </li>
-        <li>
-          Navigation was limited to basic links in a header menu, with no
-          additional interactivity.
-        </li>
-        <li>
-          Maintenance was straightforward—just a few static files with minimal
-          styling—but <em>scalability</em> was a concern for future additions.
-        </li>
-      </ul>
-      <div class="project-image-text">
-        <div class='project-image'>
-          <img
-            src="{{ url_for('static', filename='images/blogpost/portfolio-1.png') }}"
-            alt="First iteration of the portfolio with minimal static HTML/CSS"
-          />
-        </div>
-      </div>
+<h2>Version 4 — Extending React</h2>
+<p>
+  A complete homepage redesign with a hero section, refined colors and typography;
+  API integrations such as a Spotify widget; React Hooks for cleaner state logic. My
+  confidence in front-end work grew, but I still lacked a natural way to plug in the
+  Python scripts behind my data projects.
+</p>
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/portfolio-4.webp') }}" alt="Fourth version with advanced React features" />
+  <figcaption>Version 4.</figcaption>
+</figure>
 
-      <!-- Version 2: Enhanced Layout & Design (Still Static) -->
-      <h4>Version 2: Enhanced Layout & Design (Still Static)</h4>
-      <p>
-        Realizing that a purely minimal design lacked depth, I made substantial
-        <strong>visual improvements</strong> in the <em>second version</em> (<em>second image</em>)
-        while still relying on static HTML & CSS. This step did not yet incorporate
-        React or any other JavaScript framework.
-      </p>
-      <ul>
-        <li>
-          I refined the <strong>color palette</strong> and typography, giving the site
-          a more polished and cohesive look.
-        </li>
-        <li>
-          The layout became more <em>user-friendly</em> with better spacing, new 
-          sections to highlight project details, and a simpler navigation bar.
-        </li>
-        <li>
-          I introduced some basic <em>JavaScript snippets</em> (e.g., for small animations),
-          but the content remained primarily <strong>static</strong>.
-        </li>
-      </ul>
-      <p>
-        While this version improved the user experience, I began feeling the need for
-        a more dynamic, component-based solution that could handle expansions or
-        feature integrations with less repetitive code.
-      </p>
-      <div class="project-image-text">
-        <div class='project-image'>
-          <img
-            src="{{ url_for('static', filename='images/blogpost/portfolio-2.png') }}"
-            alt="Second iteration with enhanced design but still static"
-          />
-        </div>
-      </div>
+<h2>Version 5 — A fresh start with Python + Jinja</h2>
+<p>
+  I restarted the project on <strong>Flask</strong> with server-side rendering. Jinja
+  templates for every section, a clear separation of concerns, and the ability to
+  import my Python modules for data manipulation directly into the site. The design kept
+  the dark-mode aesthetic and gained a personal logo and sidebar navigation. This is
+  the version you are reading now.
+</p>
+<figure>
+  <img src="{{ url_for('static', filename='images/blogpost/portfolio-5.webp') }}" alt="Fifth version, Python and Jinja" />
+  <figcaption>Version 5 — the current site.</figcaption>
+</figure>
 
-      <!-- Version 3: Migrating to React -->
-      <h4>Version 3: Migrating to React</h4>
-      <p>
-        The leap from static pages to a <strong>React-based</strong> structure occurred
-        in the <em>third version</em> (<em>third image</em>). This was a significant
-        shift in my workflow:
-      </p>
-      <ul>
-        <li>
-          I broke down the site into <em>React components</em>, each responsible
-          for a specific part of the UI. This made the codebase <strong>modular</strong>
-          and more scalable.
-        </li>
-        <li>
-          Navigation was handled by React Router, providing a <strong>single-page
-          application (SPA)</strong> feel. Page transitions became smoother without
-          full page reloads.
-        </li>
-        <li>
-          I started experimenting with dynamic <em>data fetching</em>, such as pulling
-          my GitHub repositories to show real-time updates on my projects section.
-        </li>
-      </ul>
-      <p>
-        This version introduced <strong>state management</strong>, improved user
-        interactivity, and a more modern design approach. React also opened doors for
-        advanced features like toggles (e.g., dark mode), API integrations, and
-        live feeds.
-      </p>
-      <div class="project-image-text">
-        <div class='project-image'>
-          <img
-            src="{{ url_for('static', filename='images/blogpost/portfolio-3.png') }}"
-            alt="Third iteration, the move to a React-based architecture"
-          />
-        </div>
-      </div>
-
-      <!-- Version 4: Extending React for Better UX and Advanced Features -->
-      <h4>Version 4: Extending React for Better UX and Advanced Features</h4>
-      <p>
-        Building upon the React foundation, the <em>fourth version</em> (<em>fourth image</em>)
-        showcased further design improvements and introduced additional features:
-      </p>
-      <ul>
-        <li>
-          A <strong>complete redesign</strong> of the homepage, featuring a hero section
-          with a background image, refined color scheme, and enhanced typography.
-        </li>
-        <li>
-          Advanced <em>API integrations</em> for displaying external data, such as a
-          Spotify widget or basic analytics pulled from other services.
-        </li>
-        <li>
-          Use of <strong>React Hooks</strong> for cleaner state logic, better
-          performance, and easier testing.
-        </li>
-      </ul>
-      <p>
-        This phase improved my confidence in <strong>frontend development</strong>. However,
-        I still needed a cohesive way to integrate more complex Python scripts related
-        to data analysis, which led me to reconsider my approach for the backend.
-      </p>
-      <div class="project-image-text">
-        <div class='project-image'>
-          <img
-            src="{{ url_for('static', filename='images/blogpost/portfolio-4.png') }}"
-            alt="Fourth iteration, improved React UI with advanced features"
-          />
-        </div>
-      </div>
-
-      <!-- Version 5: A Fresh Start with Python & Jinja -->
-      <h4>Version 5: A Fresh Start with Python & Jinja</h4>
-      <p>
-        In the <em>fifth version</em> (<em>fifth image</em>), I decided to
-        <strong>restart the project</strong> and migrate from React to a
-        <strong>Python + Jinja</strong> approach, embracing server-side rendering
-        for better data handling and a simpler integration with my backend scripts.
-      </p>
-      <ul>
-        <li>
-          A <strong>Flask-based</strong> (or similar) setup for routing, enabling me
-          to easily merge database queries and analytics results into templates.
-        </li>
-        <li>
-          <em>Jinja templates</em> for each major section, facilitating dynamic content
-          rendering and a clear separation of concerns. This also supports quick updates
-          without manually modifying large swaths of frontend code.
-        </li>
-        <li>
-          An updated design that maintained a <em>dark-mode aesthetic</em>, along with
-          brand new branding elements such as a personal logo and sidebar navigation.
-        </li>
-      </ul>
-      <p>
-        This server-side approach aligned better with my ambitions as a <strong>data
-        engineer</strong>, letting me import Python modules for data manipulation
-        and analytics directly within the same environment as my site’s code.
-      </p>
-      <div class="project-image-text">
-        <div class='project-image'>
-          <img
-            src="{{ url_for('static', filename='images/blogpost/portfolio-5.png') }}"
-            alt="Fifth iteration, restarting with Python and Jinja templates"
-          />
-        </div>
-      </div>
-
-      <!-- Deployment and Conclusion -->
-      <h4>Deployment & Final Thoughts</h4>
-      <p>
-        Over these five versions, I learned the importance of <strong>iterative
-        development</strong> and continuous improvement. Each transition, from minimal
-        static pages to React, and eventually to Python + Jinja, was inspired by the
-        desire to:
-      </p>
-      <ul>
-        <li>
-          Make the site <strong>scalable</strong> for new features, whether in data
-          visualization or user experience.
-        </li>
-        <li>
-          <strong>Integrate seamlessly</strong> with backend scripts, ensuring that
-          data-driven elements could be added without complex client-side orchestration.
-        </li>
-        <li>
-          Maintain a <em>professional and modern</em> look, reflecting my progression 
-          in both design and development practices.
-        </li>
-      </ul>
-      <p>
-        Ultimately, the ability to pivot and adopt different technologies 
-        (React vs. Python + Jinja) demonstrated my commitment to learning 
-        and adapting. I plan to keep refining this portfolio by adding new 
-        projects, integrating advanced data engineering demos, and exploring 
-        microservices or SSR frameworks in future updates.
-      </p>
-
-    </div>
-  </div>
-</div>
+<h2>What the five versions taught me</h2>
+<ul>
+  <li>Make the site <strong>scalable</strong> for new features, whether data visualization or UX.</li>
+  <li><strong>Integrate</strong> with backend scripts so data-driven elements can be added without complex client-side orchestration.</li>
+  <li>Keep a <strong>professional, modern</strong> look that reflects progress in both design and engineering.</li>
+</ul>
+<p>
+  Being willing to pivot between technologies — React versus Python + Jinja — was the
+  most valuable lesson. The plan is to keep adding projects, data engineering demos and
+  to explore microservices or SSR frameworks in future updates.
+</p>
 {% endblock %}
