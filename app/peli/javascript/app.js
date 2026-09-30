@@ -93,18 +93,13 @@
       aviso.textContent = "Correo de confirmación enviado a " + (C.de || "Jose") + ".";
       aviso.hidden = false;
 
-      if (!C.web3forms_key) return; // mockup: sin clave no envía nada
-      fetch("https://api.web3forms.com/submit", {
+      fetch("./confirmar", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          access_key: C.web3forms_key,
-          subject: "🎬 Dijo que sí: " + C.pelicula.titulo,
-          from_name: "¿Vemos una película?",
           pelicula: C.pelicula.titulo,
-          fecha: C.fecha, hora: C.hora, lugar: C.lugar,
-          para: C.para || "",
-          cuando: new Date().toLocaleString("es-CO"),
+          fecha: C.fecha, hora: C.hora,
+          web: "",  // honeypot: siempre vacío
         }),
       }).catch(function () {});
     });

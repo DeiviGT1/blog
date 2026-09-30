@@ -16,9 +16,7 @@ window.SALIMOS = {
   hora:  "11:30 pm",
   lugar: "Mi casa",
 
-  // Aviso real para ti. Clave gratis en https://web3forms.com (te la mandan al correo).
-  // Vacía = no envía nada, pero ella igual ve el mensaje de confirmación.
-  web3forms_key: "",
+  // Al confirmar, el servidor (/peli/confirmar) te manda un correo. No hay que configurar nada aquí.
 
   // Lo que dice el botón NO cada vez que se escapa
   excusas: ["No", "¿Está segura?", "Piénselo bien", "Dele…", "Última oportunidad", "Ya, diga que sí"],
