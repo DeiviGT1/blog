@@ -155,7 +155,9 @@ body {
 }
 .datos dt { opacity: 0.6; font-size: 0.95rem; }
 .datos dd { margin: 0; font-weight: 600; text-align: right; }
-#cita .si { margin-top: 1.6rem; max-width: 320px; text-align: center; }
+.nota { margin: 1.4rem 0 0; font-size: 0.98rem; line-height: 1.5; max-width: 32ch; }
+.nota span { opacity: 0.65; }
+#cita .si { margin-top: 1.2rem; max-width: 320px; text-align: center; }
 #cita .si:disabled { opacity: 0.5; cursor: default; }
 .aviso { margin: 1rem 0 0; font-size: 0.95rem; color: var(--coral); }
 
