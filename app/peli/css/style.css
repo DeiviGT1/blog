@@ -168,7 +168,7 @@ body {
 }
 .pie a { color: var(--coral); text-decoration: none; }
 @media (max-width: 560px) {
-  .pie { font-size: 0.65rem; opacity: 0.3; padding-bottom: 0.9rem; }
+  .pie { font-size: 0.6rem; opacity: 0.15; padding-bottom: 0.9rem; }
   .pie a { color: inherit; }
 }
 
