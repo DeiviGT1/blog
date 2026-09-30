@@ -35,7 +35,11 @@
       no.style.transform = "scale(" + Math.max(0.45, 1 - huidas * 0.1) + ")";   // el NO se encoge
       si.style.transform = "scale(" + Math.min(1.25, 1 + huidas * 0.04) + ")";  // el SÍ crece un poco
     });
-    si.addEventListener("click", function () { window.location.href = "plan.html"; });
+    si.addEventListener("click", function () {
+      no.remove();                       // que no quede el NO suelto por la pantalla
+      document.getElementById("inicio").hidden = true;
+      document.getElementById("elegir").hidden = false;
+    });
   }
 
   // ---------- Página 2 ----------

@@ -10,13 +10,14 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 
-html, body { height: 100%; margin: 0; }
+html, body { height: 100%; margin: 0; overscroll-behavior: none; }
 
 body {
   font-family: var(--texto);
   color: var(--tinta);
   background: var(--fondo);
   overflow: hidden;
+  touch-action: manipulation;
   display: grid;
   grid-template-rows: 1fr auto;
   -webkit-font-smoothing: antialiased;

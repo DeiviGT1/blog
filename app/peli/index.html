@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>¿Vemos una película?</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
   <meta property="og:type" content="website">
@@ -22,13 +22,34 @@
 </head>
 <body>
   <main class="escena">
-    <p class="para" id="para"></p>
-    <h1 class="titulo chico">¿Vemos una película?</h1>
-    <p class="sub">Para descansar de la semana fea.</p>
-    <div class="acciones">
-      <button class="btn si" id="si" type="button">Sí, vamos</button>
-      <button class="btn no" id="no" type="button">No</button>
-    </div>
+    <section id="inicio" class="bloque">
+      <p class="para" id="para"></p>
+      <h1 class="titulo chico">¿Vemos una película?</h1>
+      <p class="sub">Para descansar de la semana fea.</p>
+      <div class="acciones">
+        <button class="btn si" id="si" type="button">Sí, vamos</button>
+        <button class="btn no" id="no" type="button">No</button>
+      </div>
+    </section>
+
+    <section id="elegir" class="bloque" hidden>
+      <h1 class="titulo chico">¿Cuál vemos?</h1>
+      <p class="sub">Escoja usted.</p>
+      <div class="opciones" id="opciones"></div>
+    </section>
+
+    <section id="cita" class="bloque" hidden>
+      <p class="para">Entonces quedamos así</p>
+      <img class="poster grande" id="c-poster" src="" alt="" hidden>
+      <h1 class="titulo chico" id="c-titulo"></h1>
+      <dl class="datos">
+        <div><dt>Fecha</dt><dd id="c-fecha"></dd></div>
+        <div><dt>Hora</dt><dd id="c-hora"></dd></div>
+        <div><dt>Lugar</dt><dd id="c-lugar"></dd></div>
+      </dl>
+      <button class="btn si" id="confirmar" type="button">Confirmar</button>
+      <p class="aviso" id="aviso" hidden></p>
+    </section>
   </main>
   <footer class="pie">Hecho con ❤️ por <a href="https://josedavidgt.com" target="_blank" rel="noopener">José David</a></footer>
 </body>
