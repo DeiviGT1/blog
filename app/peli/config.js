@@ -12,8 +12,8 @@ window.SALIMOS = {
   ],
 
   // Datos de la cita — MOCKUP, cámbialos
-  fecha: "Sábado 11 de octubre",
-  hora:  "7:00 pm",
+  fecha: "Viernes 2 de octubre",
+  hora:  "11:30 pm",
   lugar: "Mi casa",
 
   // Aviso real para ti. Clave gratis en https://web3forms.com (te la mandan al correo).
