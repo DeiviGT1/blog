@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Empleos cerca de casa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{
+  --bg:#f4f1ec; --paper:#fffdf9; --ink:#1d2430; --muted:#6b7280; --line:#e6e0d6;
+  --sea:#0e7c86; --sea-soft:#dff1f2; --coral:#e2603f; --coral-soft:#fde8e1;
+  --sun:#f2b134; --sun-soft:#fdf2d8; --plum:#6d4aa8; --plum-soft:#ece5f7;
+  --leaf:#3c8d5a; --leaf-soft:#e2f2e7; --shadow:0 1px 2px rgba(29,36,48,.06),0 8px 24px rgba(29,36,48,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+header{background:linear-gradient(135deg,#0b4f5c 0%,#0e7c86 55%,#2aa39b 100%);color:#fff;padding:40px 0 92px;position:relative;overflow:hidden}
+header:after{content:"";position:absolute;right:-120px;top:-160px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(242,177,52,.55),rgba(242,177,52,0) 70%)}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:600}
+h1{font-family:Fraunces,serif;font-weight:700;font-size:clamp(30px,4.4vw,50px);line-height:1.05;margin:10px 0 12px;max-width:760px}
+.sub{max-width:640px;opacity:.9;font-size:16px;margin:0}
+.origin{display:inline-flex;gap:8px;align-items:center;margin-top:18px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:7px 14px;border-radius:999px;font-size:13px;font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-58px;position:relative;z-index:2}
+.stat{background:var(--paper);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.stat b{display:block;font-family:Fraunces,serif;font-size:30px;line-height:1.1}
+.stat span{color:var(--muted);font-size:13px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:22px;margin:26px auto 40px;align-items:start}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.chip{border:1px solid var(--line);background:var(--paper);padding:7px 13px;border-radius:999px;font:600 13px Inter;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip .n{opacity:.55;margin-left:4px;font-weight:500}
+.spacer{flex:1}
+select{font:600 13px Inter;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:7px 10px;color:var(--ink)}
+.toggle{font-size:13px;display:flex;gap:6px;align-items:center;color:var(--muted);font-weight:500}
+.list{display:grid;gap:12px}
+.card{background:var(--paper);border-radius:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:86px minmax(0,1fr);overflow:hidden;border:1px solid transparent;transition:border-color .15s,transform .15s}
+.card.hl{border-color:var(--sea);transform:translateY(-1px)}
+.card.done{opacity:.55}
+.dist{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 6px;color:#fff}
+.dist b{font-family:Fraunces,serif;font-size:28px;line-height:1}
+.dist small{font-size:11px;opacity:.9;font-weight:600;letter-spacing:.04em}
+.c-hosp .dist{background:var(--plum)} .c-playa .dist{background:var(--sea)} .c-hotel .dist{background:var(--coral)} .c-res .dist{background:var(--leaf)} .c-com .dist{background:#b7791f} .c-rest .dist{background:#c2417a}
+.zone{display:flex;align-items:baseline;gap:10px;margin:22px 0 10px}.zone:first-child{margin-top:0}
+.zone h2{font-family:Fraunces,serif;font-size:22px;margin:0}.zone span{color:var(--muted);font-size:13px}
+.body{padding:14px 18px 14px}
+.top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.title{font-weight:700;font-size:16px;line-height:1.3}
+.emp{color:var(--muted);font-size:13.5px;margin-top:1px}
+.pay{white-space:nowrap;font-weight:700;font-size:15px;color:var(--leaf);text-align:right}
+.pay.none{color:var(--muted);font-weight:500;font-size:12.5px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 8px}
+.tag{font-size:12px;padding:3px 9px;border-radius:999px;background:#f1ede6;font-weight:500}
+.tag.en-ok{background:var(--leaf-soft);color:#21603a}
+.tag.en-basic{background:var(--sun-soft);color:#8a5a00}
+.tag.flag{background:var(--coral-soft);color:#a33a1e}
+.note{font-size:13.5px;color:#3d4552;margin:0 0 6px}
+.addr{font-size:12.5px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font:600 13px Inter;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:#fff}
+.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn:hover{filter:brightness(.96)}
+.check{margin-left:auto;font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:center;cursor:pointer;user-select:none}
+.side{position:sticky;top:16px;display:grid;gap:14px}
+#map{height:400px;border-radius:16px;box-shadow:var(--shadow);z-index:1}
+.panel{background:var(--paper);border-radius:16px;box-shadow:var(--shadow);padding:16px 18px}
+.panel h3{font-family:Fraunces,serif;font-size:19px;margin:0 0 8px}
+.panel p{margin:0 0 8px;font-size:13.5px;color:#3d4552}
+.panel ul{margin:0;padding-left:18px;font-size:13.5px;color:#3d4552}
+.panel li{margin-bottom:6px}
+.prime{border-left:4px solid var(--sun)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+details{background:var(--paper);border-radius:16px;box-shadow:var(--shadow);padding:14px 18px;margin-bottom:40px}
+summary{cursor:pointer;font-weight:700}
+.disc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:12px}
+.disc div{font-size:13px;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.disc b{display:block}
+.disc span{color:var(--coral);font-weight:600}
+.home-pin{background:var(--ink);color:#fff;border-radius:10px;padding:3px 8px;font:700 12px Inter;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+footer{color:var(--muted);font-size:12.5px;padding-bottom:40px}
+@media (max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}.layout>*{min-width:0}.side{position:static;order:-1}#map{height:300px}.stats{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.wrap{padding:0 16px}.card{grid-template-columns:64px minmax(0,1fr)}.dist b{font-size:22px}.top{flex-direction:column;gap:2px}.pay{text-align:left}.check{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Búsqueda de empleo · Limpieza · Octubre 2026</div>
+    <h1>Trabajos de limpieza caminando desde casa</h1>
+    <p class="sub">Primero lo que queda a pie (menos de 1.5 millas), después los anuncios del 33020 sin dirección exacta y al final lo que requiere bus. Ofertas abiertas y links verificados el 6 de octubre.</p>
+    <div class="origin">📍 Punto de partida: 2233 Hollywood Blvd (Revv), Hollywood 33020</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stats" id="stats"></div>
+
+  <div class="layout">
+    <main>
+      <div class="toolbar" id="chips"></div>
+      <div class="toolbar">
+        <select id="sort">
+          <option value="dist">Ordenar: más cerca primero</option>
+          <option value="pay">Ordenar: mejor pago primero</option>
+          <option value="new">Ordenar: más recientes</option>
+        </select>
+        <label class="toggle"><input type="checkbox" id="onlyPay"> Solo con pago publicado</label>
+        <span class="spacer"></span>
+        <label class="toggle"><input type="checkbox" id="hideDone"> Ocultar las ya aplicadas</label>
+      </div>
+      <div class="list" id="list"></div>
+    </main>
+
+    <aside class="side">
+      <div id="map"></div>
+      <div class="legend" id="legend"></div>
+      <div class="legend"><span><i style="background:none;border:2px solid #c2417a"></i>Círculo rosado: 1.5 mi a pie</span><span><i style="background:none;border:1px dashed #0e7c86"></i>Punteado: 5 mi</span></div>
+      <div class="panel">
+        <h3>Para ir en persona o llamar</h3>
+        <p>Sin vacante publicada de limpieza, pero quedan a pie y suelen contratar.</p>
+        <ul>
+          <li><b>The Harrison Hotel</b>, 1925 Harrison St, a 0.4 mi. <a href="tel:+19547046944">(954) 704-6944</a>. Preguntar por housekeeping.</li>
+          <li><b>Circ Hotel</b>, 1780 Polk St, a 0.6 mi junto a Young Circle. Mejor ir a la recepción con el CV impreso.</li>
+          <li><b>Broward Outreach Center</b>, 2056 Scott St, a 1.3 mi. <a href="tel:+19549267417">(954) 926-7417</a>. Tienen abierta una plaza de mantenimiento (hasta $17/h): <a href="https://caringplace.org/jobs-2/" target="_blank" rel="noopener">ver empleos</a>.</li>
+          <li><b>Office Pride Fort Lauderdale-Hollywood</b>, limpieza de oficinas, dueños hispanos. <a href="tel:+19549983518">(954) 998-3518</a>.</li>
+          <li><b>CareerSource Broward</b>, oficina pública de empleo gratuita con personal en español. <a href="https://careersourcebroward.com" target="_blank" rel="noopener">web</a></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Antes de aplicar</h3>
+        <ul>
+          <li>Tener a mano el EAD y el número de Social Security, porque los piden para el formulario I-9.</li>
+          <li>Los pagos que no aparecen se preguntan en la entrevista. En hospitales y hoteles de la zona suelen estar entre $15 y $18/h.</li>
+          <li>"Cómo llegar" abre Google Maps con la ruta a pie (las cercanas) o en bus desde Revv.</li>
+          <li>Primetone pide en sus anuncios dos identificaciones y la tarjeta de Social Security.</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <details>
+    <summary>Ofertas descartadas y por qué</summary>
+    <div class="disc">
+      <div><b>Signia by Hilton Diplomat · Houseperson y Banquet ($21.45/h)</b><span>Inglés:</span> piden "communicate in English" y "polished communication".</div>
+      <div><b>Seminole Hard Rock · Houseperson y Floor Technician</b><span>Inglés:</span> exigen comunicarse en inglés con huéspedes, y el houseperson pide diploma de secundaria.</div>
+      <div><b>JW Marriott Turnberry · Public Area Attendant</b><span>Inglés:</span> piden inglés y diploma de secundaria.</div>
+      <div><b>Hallandale Pharmacy · Cleaning Technician</b><span>Inglés:</span> procedimientos escritos en inglés.</div>
+      <div><b>Metropolis · Porter</b><span>Inglés:</span> exige leer y escribir inglés.</div>
+      <div><b>ABM · Warehouse Janitorial</b><span>Sin ubicación:</span> el anuncio no dice dónde queda.</div>
+      <div><b>Essential Cleaners, Busy Mop, MaidPro, The Cleaning Authority, Lauderdale Clean Co</b><span>Carro:</span> limpieza de casas y Airbnb que exige vehículo propio.</div>
+      <div><b>Broward Health, Hilton FTL Marina ($20/h), FirstService FTL ($19/h), KW FTL ($22/h), Office Pride FTL</b><span>Lejos:</span> a más de 5 millas.</div>
+    </div>
+  </details>
+
+  <footer>Fuentes: portales oficiales (Memorial Workday, Davidson Hospitality iCIMS, CareerPlug, ADP) y SimplyHired / Hospitality Online. Distancias en línea recta desde Revv; la ruta real en bus puede ser algo más larga. Verificado el 6 de octubre de 2026: las ofertas se cierran rápido, así que conviene aplicar pronto.</footer>
+</div>
+
+<script>
+const JOBS = [
+ {
+  "zone": "walk",
+  "cat": "res",
+  "emp": "Primetone (Emprime Solutions) · edificio Revv",
+  "title": "Housekeeper en Revv",
+  "addr": "2233 Hollywood Blvd, Hollywood, FL 33020",
+  "mi": 0.0,
+  "lat": 26.01141,
+  "lon": -80.15159,
+  "pay": "$15.50/h",
+  "sched": "—",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Es tu propio edificio, publicada hoy. El anuncio pide vehículo propio y licencia; pregúntale a Jose si aplica para quien trabaja fijo en Revv.",
+  "flag": "Pide carro y licencia",
+  "url": "https://emprime-solutions-llc.careerplug.com/jobs/3630341",
+  "posted": "2026-10-06"
+ },
+ {
+  "zone": "walk",
+  "cat": "rest",
+  "emp": "C4Eats (restaurante vegano)",
+  "title": "Lavaplatos",
+  "addr": "2003 Harrison St, Hollywood, FL 33020",
+  "mi": 0.3,
+  "lat": 26.010538,
+  "lon": -80.147058,
+  "pay": null,
+  "sched": "Cualquier horario",
+  "tipo": "Completo o medio",
+  "eng": "No exige",
+  "note": "A unas 6 cuadras, en Harrison St. Aceptan cualquier disponibilidad.",
+  "url": "https://www.seasoned.co/job/dishwasher-c4eats-hollywood-fl_113c4645-33ec-4c0e-aff6-42d4136e7c8f/apply",
+  "posted": "2026-09-23",
+  "flag": null
+ },
+ {
+  "zone": "walk",
+  "cat": "rest",
+  "emp": "Twin Peaks Hollywood",
+  "title": "Lavaplatos",
+  "addr": "1903 Hollywood Blvd, Hollywood, FL 33020",
+  "mi": 0.4,
+  "lat": 26.011605,
+  "lon": -80.145096,
+  "pay": "$15–18/h",
+  "sched": "Entre semana, fines de semana, noches",
+  "tipo": "Medio tiempo",
+  "eng": "No exige",
+  "note": "Sobre Hollywood Blvd, 8 minutos caminando. Opción de cobrar el pago diario.",
+  "url": "https://www.seasoned.co/job/dishwasher-twin-peaks-hollywood-hollywood-fl_6cf5d21f-8a9c-4c31-88d4-bde7d708e6e9/apply",
+  "posted": "2026-10-05",
+  "flag": null
+ },
+ {
+  "zone": "walk",
+  "cat": "rest",
+  "emp": "Twin Peaks Hollywood",
+  "title": "Busser / limpieza del restaurante",
+  "addr": "1903 Hollywood Blvd, Hollywood, FL 33020",
+  "mi": 0.4,
+  "lat": 26.011605,
+  "lon": -80.145096,
+  "pay": null,
+  "sched": "—",
+  "tipo": "—",
+  "eng": "Básico",
+  "note": "Limpieza del salón y del local. Pide experiencia como janitor o busser y comunicarse en inglés básico.",
+  "url": "https://www.linkedin.com/jobs/view/busser-at-twin-peaks-restaurants-4448942659",
+  "posted": "2026-08-05",
+  "flag": null
+ },
+ {
+  "zone": "walk",
+  "cat": "com",
+  "emp": "Alsco Uniforms",
+  "title": "Mat Roller (lavandería industrial)",
+  "addr": "Hollywood 33020 (dirección exacta no publicada, cerca de Young Circle según el mapa)",
+  "mi": 0.6,
+  "lat": 26.01944,
+  "lon": -80.14788,
+  "pay": "$15/h",
+  "sched": "—",
+  "tipo": "—",
+  "eng": "No menciona",
+  "note": "Enrollar y preparar tapetes en lavandería industrial. Trabajo pesado: levantar hasta 60 lb.",
+  "flag": "Ubicación aproximada",
+  "url": "https://www.linkedin.com/jobs/view/mat-roller-at-alsco-uniforms-4471987986",
+  "posted": "2026-09-30"
+ },
+ {
+  "zone": "walk",
+  "cat": "com",
+  "emp": "Broward County Public Schools · McNicol Middle",
+  "title": "Conserje escolar (Facilities Serviceperson)",
+  "addr": "1602 S 27th Ave, Hollywood, FL 33020",
+  "mi": 1.1,
+  "lat": 25.998319,
+  "lon": -80.160865,
+  "pay": "Desde $15.84/h",
+  "sched": "Lunes a viernes, 8 h",
+  "tipo": "Tiempo completo",
+  "eng": "Básico",
+  "note": "Empleo público con beneficios. Solo pide seguir instrucciones de limpieza en inglés. Hay que crear cuenta en el portal del distrito.",
+  "flag": "Certificación (la dan ellos)",
+  "url": "https://careers.browardschools.com/job/FACILITIES-SERVICEPERSON/24528-en_US",
+  "posted": "2026-09-22"
+ },
+ {
+  "zone": "walk",
+  "cat": "com",
+  "emp": "Broward County Public Schools · Oakridge Elementary",
+  "title": "Conserje escolar (Facilities Serviceperson)",
+  "addr": "1507 N 28th Ave, Hollywood, FL 33020",
+  "mi": 1.1,
+  "lat": 26.024024,
+  "lon": -80.162992,
+  "pay": "Desde $15.84/h",
+  "sched": "Lunes a viernes, 8 h",
+  "tipo": "Tiempo completo",
+  "eng": "Básico",
+  "note": "Igual que la de McNicol, en otra escuela. Puede aplicar a las dos.",
+  "flag": "Certificación (la dan ellos)",
+  "url": "https://careers.browardschools.com/job/FACILITIES-SERVICEPERSON/24325-en_US",
+  "posted": "2026-08-21"
+ },
+ {
+  "zone": "walk",
+  "cat": "res",
+  "emp": "Merriment Assisted Living Residence",
+  "title": "Housekeeper en residencia de mayores",
+  "addr": "1835 Wilson St, Hollywood, FL 33020",
+  "mi": 1.2,
+  "lat": 26.02723,
+  "lon": -80.14398,
+  "pay": "$12–15/h",
+  "sched": "Variable",
+  "tipo": "Tiempo completo",
+  "eng": "No menciona",
+  "note": "Residencia pequeña. El anuncio dice $12–15 pero el mínimo en Florida ya es $15, así que deberían pagarle al menos eso.",
+  "url": "https://apply-jobs.apploi.com/job/754498/merriment-assisted-living-residence/housekeeper",
+  "posted": "2026-07-19",
+  "flag": null
+ },
+ {
+  "zone": "zip",
+  "cat": "res",
+  "emp": "Primetone (Emprime Solutions)",
+  "title": "Porters / personal de limpieza",
+  "addr": "Downtown Hollywood 33020 (edificio no publicado)",
+  "mi": null,
+  "pay": "$15/h",
+  "sched": "Lunes a viernes 7:00–3:30",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Edificios residenciales del downtown, probablemente cerca de Revv.",
+  "flag": "Pide carro y licencia",
+  "url": "https://emprime-solutions-llc.careerplug.com/jobs/3423898",
+  "posted": "2026-05-26",
+  "lat": null,
+  "lon": null
+ },
+ {
+  "zone": "zip",
+  "cat": "res",
+  "emp": "Primetone (Emprime Solutions)",
+  "title": "Janitorial staff (housekeepers y porters)",
+  "addr": "Hallandale / Hollywood 33020 (edificio no publicado)",
+  "mi": null,
+  "pay": "$15–17/h",
+  "sched": "Mañanas 7–3, 30–40 h/semana",
+  "tipo": "Completo o medio",
+  "eng": "No exige",
+  "note": "Única de Primetone que no pide carro, pero el texto habla de varias ciudades; preguntar dónde sería.",
+  "flag": "Ubicación dudosa",
+  "url": "https://emprime-solutions-llc.careerplug.com/jobs/3116657",
+  "posted": "2025-09-24",
+  "lat": null,
+  "lon": null
+ },
+ {
+  "zone": "zip",
+  "cat": "res",
+  "emp": "Primetone (Emprime Solutions)",
+  "title": "Porter y housekeeper",
+  "addr": "Hollywood 33019 (edificio no publicado)",
+  "mi": null,
+  "pay": "$15/h",
+  "sched": "—",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Comunidades residenciales.",
+  "flag": "Pide carro y licencia",
+  "url": "https://emprime-solutions-llc.careerplug.com/jobs/3207380",
+  "posted": "2025-12-17",
+  "lat": null,
+  "lon": null
+ },
+ {
+  "zone": "zip",
+  "cat": "res",
+  "emp": "Primetone (Emprime Solutions)",
+  "title": "Personal de limpieza y mantenimiento",
+  "addr": "Hollywood 33019 (edificio no publicado)",
+  "mi": null,
+  "pay": "$15/h",
+  "sched": "Flexible",
+  "tipo": "Medio tiempo",
+  "eng": "No exige",
+  "note": "Comunidades residenciales.",
+  "flag": "Pide carro y licencia",
+  "url": "https://emprime-solutions-llc.careerplug.com/jobs/3332344",
+  "posted": "2026-03-27",
+  "lat": null,
+  "lon": null
+ },
+ {
+  "zone": "zip",
+  "cat": "res",
+  "emp": "Primetone (Emprime Solutions)",
+  "title": "Housekeeper / porter",
+  "addr": "Hollywood 33019 (edificio no publicado)",
+  "mi": null,
+  "pay": "$14/h",
+  "sched": "—",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Paga por debajo del mínimo de Florida ($15); las otras de Primetone pagan mejor.",
+  "flag": "Pide carro y licencia",
+  "url": "https://app.careerplug.com/jobs/3246937",
+  "posted": "2026-01-26",
+  "lat": null,
+  "lon": null
+ },
+ {
+  "zone": "zip",
+  "cat": "res",
+  "emp": "FirstService Residential",
+  "title": "Porter / housekeeper de condominio",
+  "addr": "Hollywood (el anuncio no dice el edificio; suelen ser condos de la playa)",
+  "mi": null,
+  "pay": "$18.50/h",
+  "sched": "Domingo a jueves 8:30–4:30",
+  "tipo": "Tiempo completo",
+  "eng": "Básico",
+  "note": "El mejor pago de toda la lista. Antes de aceptar, preguntar en qué edificio es.",
+  "flag": "Preguntar el edificio",
+  "url": "https://careers.fsresidential.com/jobs/18028536-porter",
+  "posted": "2026-10-05",
+  "lat": null,
+  "lon": null
+ },
+ {
+  "zone": "zip",
+  "cat": "res",
+  "emp": "FirstService Residential",
+  "title": "Housekeeper (viernes y domingos)",
+  "addr": "Hollywood (el anuncio no dice el edificio)",
+  "mi": null,
+  "pay": "$16/h",
+  "sched": "Viernes 3–8 pm, domingo 9–5",
+  "tipo": "Medio tiempo",
+  "eng": "Básico",
+  "note": "Pocas horas; sirve para complementar otro trabajo.",
+  "flag": "Preguntar el edificio",
+  "url": "https://careers.fsresidential.com/jobs/18172601-housekeeper-fridays-and-sundays-only",
+  "posted": "2026-10-06",
+  "lat": null,
+  "lon": null
+ },
+ {
+  "cat": "hosp",
+  "emp": "Memorial – Joe DiMaggio Children's Hospital",
+  "title": "Técnica de limpieza hospitalaria (EVS)",
+  "orig": "Environmental Services Technician - Days - FT - JDCH",
+  "addr": "1005 Joe DiMaggio Dr, Hollywood, FL 33021",
+  "mi": 1.9,
+  "lat": 26.0135,
+  "lon": -80.183,
+  "pay": null,
+  "sched": "Día",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Limpieza de habitaciones, cambio de sábanas, desinfección. No exige experiencia. Publicada hoy.",
+  "flag": null,
+  "url": "https://memorialhealthcare.wd1.myworkdayjobs.com/MHS_Careers/job/Joe-DiMaggio-Childrens-Hospital/Environmental-Services-Technician---Days---FT---JDCH_JR-23929-2",
+  "posted": "2026-10-06",
+  "zone": "bus"
+ },
+ {
+  "cat": "hosp",
+  "emp": "Memorial – Joe DiMaggio Children's Hospital",
+  "title": "Técnica de limpieza hospitalaria (EVS)",
+  "orig": "Environmental Services Technician - Per Diem - Evenings - JDCH",
+  "addr": "1005 Joe DiMaggio Dr, Hollywood, FL 33021",
+  "mi": 1.9,
+  "lat": 26.0135,
+  "lon": -80.183,
+  "pay": null,
+  "sched": "Tarde/noche",
+  "tipo": "Por día (per diem)",
+  "eng": "No exige",
+  "note": "Turnos según necesidad. Bueno para empezar mientras sale algo fijo.",
+  "flag": null,
+  "url": "https://memorialhealthcare.wd1.myworkdayjobs.com/MHS_Careers/job/Joe-DiMaggio-Childrens-Hospital/Environmental-Services-Technician---Per-Diem---Evenings---JDCH_JR-23660-1",
+  "posted": "2026-09-29",
+  "zone": "bus"
+ },
+ {
+  "cat": "hosp",
+  "emp": "Memorial – Joe DiMaggio Children's Hospital",
+  "title": "Técnica de limpieza hospitalaria (EVS)",
+  "orig": "Environmental Sevices Technician - Per Diem - Days - JDCH",
+  "addr": "1005 Joe DiMaggio Dr, Hollywood, FL 33021",
+  "mi": 1.9,
+  "lat": 26.0135,
+  "lon": -80.183,
+  "pay": null,
+  "sched": "Día",
+  "tipo": "Por día (per diem)",
+  "eng": "No exige",
+  "note": "Turnos de día según necesidad.",
+  "flag": null,
+  "url": "https://memorialhealthcare.wd1.myworkdayjobs.com/MHS_Careers/job/Environmental-Sevices-Technician---Per-Diem---Days---JDCH_JR-23271-1",
+  "posted": "2026-09-05",
+  "zone": "bus"
+ },
+ {
+  "cat": "hosp",
+  "emp": "Memorial Regional Hospital South",
+  "title": "Técnica de limpieza hospitalaria (EVS)",
+  "orig": "Technician - Environmental Services - PT - Evenings - MRHS",
+  "addr": "3600 Washington St, Hollywood, FL 33021",
+  "mi": 1.8,
+  "lat": 26.00302,
+  "lon": -80.17955,
+  "pay": null,
+  "sched": "Tarde/noche",
+  "tipo": "Medio tiempo",
+  "eng": "No exige",
+  "note": "Limpieza de habitaciones y áreas del hospital.",
+  "flag": null,
+  "url": "https://memorialhealthcare.wd1.myworkdayjobs.com/MHS_Careers/job/Memorial-Regional-Hospital-South/Technician---Environmental-Services---PT---Evenings---MRHS_JR-23207-1",
+  "posted": "2026-08-27",
+  "zone": "bus"
+ },
+ {
+  "cat": "hosp",
+  "emp": "Memorial Regional Hospital South",
+  "title": "Técnica de pisos (EVS)",
+  "orig": "Floor Technician - Environmental Services - FT - Evenings - MRHS",
+  "addr": "3600 Washington St, Hollywood, FL 33021",
+  "mi": 1.8,
+  "lat": 26.00302,
+  "lon": -80.17955,
+  "pay": null,
+  "sched": "Tarde/noche",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Enfocado en pisos: brillado y encerado con máquina.",
+  "flag": null,
+  "url": "https://memorialhealthcare.wd1.myworkdayjobs.com/MHS_Careers/job/Memorial-Regional-Hospital-South/Environmental-Services-Technician---FT---Evenings---MRHS_JR-22535-1",
+  "posted": "2026-08-27",
+  "zone": "bus"
+ },
+ {
+  "cat": "hosp",
+  "emp": "Memorial Regional Hospital South",
+  "title": "Lavaplatos / porter de cocina",
+  "orig": "Dishwasher - Porter - FT - Days - MRHS",
+  "addr": "3600 Washington St, Hollywood, FL 33021",
+  "mi": 1.8,
+  "lat": 26.00302,
+  "lon": -80.17955,
+  "pay": null,
+  "sched": "Día",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Limpieza de cocina, no de habitaciones. Opción de respaldo.",
+  "flag": null,
+  "url": "https://memorialhealthcare.wd1.myworkdayjobs.com/MHS_Careers/job/Memorial-Regional-Hospital-South/Dishwasher---Porter---FT---Days---MRHS_JR-16692-1",
+  "posted": "2026-08-31",
+  "zone": "bus"
+ },
+ {
+  "cat": "playa",
+  "emp": "Margaritaville Hollywood Beach Resort",
+  "title": "Camarera de habitaciones (Room Attendant)",
+  "orig": "Room Attendant (Full time)",
+  "addr": "1111 N Ocean Dr, Hollywood, FL 33019",
+  "mi": 2.2,
+  "lat": 26.01843,
+  "lon": -80.11701,
+  "pay": null,
+  "sched": "Flexible, incluye fines de semana",
+  "tipo": "Tiempo completo",
+  "eng": "No menciona",
+  "note": "Habitaciones de hotel: camas, baños, aspirado. Su experiencia en Airbnb encaja perfecto.",
+  "flag": null,
+  "url": "https://careers-davidsonhospitality.icims.com/jobs/28196/room-attendant-%28full-time%29/job",
+  "posted": "2026-08-10",
+  "zone": "bus"
+ },
+ {
+  "cat": "playa",
+  "emp": "Margaritaville Hollywood Beach Resort",
+  "title": "Camarera de habitaciones (Room Attendant)",
+  "orig": "Room Attendant (Full time)",
+  "addr": "1111 N Ocean Dr, Hollywood, FL 33019",
+  "mi": 2.2,
+  "lat": 26.01843,
+  "lon": -80.11701,
+  "pay": null,
+  "sched": "Flexible, incluye fines de semana",
+  "tipo": "Tiempo completo",
+  "eng": "No menciona",
+  "note": "Segunda vacante igual (otra plaza abierta). Puede aplicar a ambas.",
+  "flag": null,
+  "url": "https://careers-davidsonhospitality.icims.com/jobs/28198/room-attendant-%28full-time%29/job",
+  "posted": "2026-08-10",
+  "zone": "bus"
+ },
+ {
+  "cat": "playa",
+  "emp": "Margaritaville Hollywood Beach Resort",
+  "title": "Houseperson nocturna (áreas públicas)",
+  "orig": "Overnight Housekeeping Houseperson / Public Area (Full time)",
+  "addr": "1111 N Ocean Dr, Hollywood, FL 33019",
+  "mi": 2.2,
+  "lat": 26.01843,
+  "lon": -80.11701,
+  "pay": null,
+  "sched": "Noche",
+  "tipo": "Tiempo completo",
+  "eng": "No menciona",
+  "note": "Lobbies, pasillos y reposición de lencería en la noche. Revisar horario del bus de madrugada.",
+  "flag": null,
+  "url": "https://careers-davidsonhospitality.icims.com/jobs/29175/overnight-housekeeping-houseperson---public-area-%28full-time%29/job",
+  "posted": "2026-09-18",
+  "zone": "bus"
+ },
+ {
+  "cat": "playa",
+  "emp": "KW Property Management",
+  "title": "Housekeeper de condominio",
+  "orig": "Housekeeper",
+  "addr": "Condominio en Hollywood Beach (el anuncio no nombra el edificio)",
+  "mi": 1.9,
+  "lat": 26.02185,
+  "lon": -80.123474,
+  "pay": null,
+  "sched": "Según el edificio",
+  "tipo": "—",
+  "eng": "Básico",
+  "note": "Pasillos, lobby, baños y gimnasio de un condominio. Igual que lo de Primetone en Revv.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/RNTYeEVirER23bYIrgp5j-XNSVKr9hoOYe0jpxEw3zonrfhzwJStAA",
+  "posted": "2026-10-06",
+  "zone": "bus"
+ },
+ {
+  "cat": "res",
+  "emp": "Hollywood Diagnostics Center",
+  "title": "Personal de limpieza",
+  "orig": "Housekeeper / Personal de Limpieza",
+  "addr": "4224 Hollywood Blvd, Hollywood, FL 33021",
+  "mi": 2.2,
+  "lat": 26.01037,
+  "lon": -80.18619,
+  "pay": "$15–16/h",
+  "sched": "Flexible",
+  "tipo": "Completo o medio",
+  "eng": "No exige",
+  "note": "Anuncio también en español. Oficinas y baños de un centro de imágenes médicas. Queda derecho por Hollywood Blvd.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/Vq9VtxxZSovPGQcdqUtvjRhqWAJHqUvIQfem0rNq32Am7KvT_XFXVQ",
+  "posted": "2026-10-03",
+  "zone": "bus"
+ },
+ {
+  "cat": "hotel",
+  "emp": "La Quinta Inn & Suites FLL Airport",
+  "title": "Camarera de habitaciones",
+  "orig": "Room Attendant",
+  "addr": "2620 N 26th Ave, Hollywood, FL 33020",
+  "mi": 1.8,
+  "lat": 26.03693,
+  "lon": -80.16031,
+  "pay": "$15/h",
+  "sched": "Flexible, incluye fines de semana",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Con seguro médico y dental.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/R0A93BJvgf3B2Lgd0keGeMpBbp9MEe4eyZHCZOp8XX3Tab17XlnTvg",
+  "posted": "2026-10-01",
+  "zone": "bus"
+ },
+ {
+  "cat": "hotel",
+  "emp": "Four Points by Sheraton (Apexx)",
+  "title": "Camarera de habitaciones",
+  "orig": "Marriott Four Points Hotel Housekeeping (Room Attendant)",
+  "addr": "1800 Stirling Rd, Dania Beach, FL 33004",
+  "mi": 2.6,
+  "lat": 26.04801,
+  "lon": -80.1601,
+  "pay": "$15/h",
+  "sched": "Entre semana y fines de semana",
+  "tipo": "Tiempo completo",
+  "eng": "Básico",
+  "note": "Pide \"basic English\", que es justo su nivel. Con beneficios.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/rv7sDf271oIV0Z8flO_CMopihKtoxP_BU7nzlTX6kfhSt7GsvS3DaA",
+  "posted": "2026-09-29",
+  "zone": "bus"
+ },
+ {
+  "cat": "hotel",
+  "emp": "Iras Group / Apexx Management",
+  "title": "Houseman de hotel",
+  "orig": "Hotel Houseman",
+  "addr": "Hotel en Dania Beach (el anuncio no lo nombra)",
+  "mi": 2.7,
+  "lat": 26.051174,
+  "lon": -80.14703,
+  "pay": "$16.50/h",
+  "sched": "—",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Apoyo a las camareras: lencería, suministros, áreas públicas. Con beneficios.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/6vuHE8PYBsCt-a_760mJfi4M84ntV3dCjYfIFCHdQSyOlrwP9Hiy6g",
+  "posted": "2026-10-06",
+  "zone": "bus"
+ },
+ {
+  "cat": "hotel",
+  "emp": "Hilton Garden Inn FLL Airport-Cruise Port",
+  "title": "Housekeeping Attendant",
+  "orig": "Housekeeping Attendant",
+  "addr": "180 SW 18th Ave, Dania Beach, FL 33004",
+  "mi": 2.6,
+  "lat": 26.04844,
+  "lon": -80.16056,
+  "pay": null,
+  "sched": "—",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Anuncio en inglés y español. Para aplicar pide crear una cuenta gratis en Hospitality Online. Vence el 17 de octubre.",
+  "flag": null,
+  "url": "https://www.hospitalityonline.com/jobs/4369812-housekeeping-attendant",
+  "posted": "2026-09-17",
+  "zone": "bus"
+ },
+ {
+  "cat": "hotel",
+  "emp": "Hampton Inn Hallandale Beach-Aventura",
+  "title": "Camarera de habitaciones",
+  "orig": "Housekeeping Room Attendant",
+  "addr": "1000 S Federal Hwy, Hallandale Beach, FL 33009",
+  "mi": 2.6,
+  "lat": 25.97554,
+  "lon": -80.14226,
+  "pay": "$15.50–16.25/h",
+  "sched": "—",
+  "tipo": "Tiempo completo",
+  "eng": "Preferido",
+  "note": "Inglés \"preferido\", no obligatorio. Pide 1 año de experiencia (ella tiene 4). Queda sobre la US-1.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/UAvRLJteujbaF0jd6HP_lC_JW0GcIhK0nYN9r4YKrGQhykzza5cZcw",
+  "posted": "2026-09-28",
+  "zone": "bus"
+ },
+ {
+  "cat": "hotel",
+  "emp": "The Casino @ Dania Beach",
+  "title": "Housekeeper",
+  "orig": "Housekeeper - Cleaning Staff",
+  "addr": "301 E Dania Beach Blvd, Dania Beach, FL 33004",
+  "mi": 2.9,
+  "lat": 26.05263,
+  "lon": -80.13848,
+  "pay": null,
+  "sched": "Flexible: noches, fines de semana",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Después de contratada debe sacar la licencia estatal de casino (incluye verificación del FBI).",
+  "flag": "Licencia de casino",
+  "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=bab8770b-faf9-4ec7-b324-762f0aa6f56b&ccId=19000101_000001&jobId=9201446534967_1&lang=en_US",
+  "posted": "2026-10-05",
+  "zone": "bus"
+ },
+ {
+  "cat": "res",
+  "emp": "The Terraces at Hollywood (Sinceri)",
+  "title": "Housekeeper en residencia de mayores",
+  "orig": "Housekeeper",
+  "addr": "2480 N Park Rd, Hollywood, FL 33021",
+  "mi": 2.0,
+  "lat": 26.03224,
+  "lon": -80.17535,
+  "pay": null,
+  "sched": "Horario fijo",
+  "tipo": "Completo o medio",
+  "eng": "No exige",
+  "note": "Con 401k, vacaciones pagadas y bono por antigüedad de hasta $5,000.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/BeVF_UKP6cvQZa4FUMUzR2Zi5a9ZInu3colkgCmNV03zmy3PQPIG7A",
+  "posted": "2026-09-28",
+  "zone": "bus"
+ },
+ {
+  "cat": "res",
+  "emp": "Emerald Park of Hollywood",
+  "title": "Housekeeper en residencia de mayores",
+  "orig": "Housekeeper",
+  "addr": "5770 Stirling Rd, Hollywood, FL 33021",
+  "mi": 4.1,
+  "lat": 26.04677,
+  "lon": -80.20431,
+  "pay": "$15/h",
+  "sched": "Variado",
+  "tipo": "Tiempo completo",
+  "eng": "No exige",
+  "note": "Habitaciones de residentes y áreas comunes. Queda más lejos, al oeste.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/FXalLywRgT4VcDqOcvnorITgAjytxHAo-uJXwJHntixQHNO-HYRGKQ",
+  "posted": "2026-09-28",
+  "zone": "bus"
+ },
+ {
+  "cat": "com",
+  "emp": "NetCost Market",
+  "title": "Janitor (supermercado)",
+  "orig": "Janitor",
+  "addr": "NetCost Market, Hollywood (el anuncio no da la dirección)",
+  "mi": 2.4,
+  "lat": 26.04538,
+  "lon": -80.15983,
+  "pay": "$15/h",
+  "sched": "—",
+  "tipo": "—",
+  "eng": "No exige",
+  "note": "Limpieza del supermercado.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/sNq84hKCgfc9E_d0FLI9MVX9VOSVn1_Lx0nrTs02Rg0Ntkx4F9J1ZA",
+  "posted": "2026-09-29",
+  "zone": "bus"
+ },
+ {
+  "cat": "com",
+  "emp": "Imperial Cleaning",
+  "title": "Limpieza comercial",
+  "orig": "Cleaner - Day Shift",
+  "addr": "Aventura (el anuncio no da la dirección exacta)",
+  "mi": 3.5,
+  "lat": 25.9619,
+  "lon": -80.14061,
+  "pay": "Desde $15.25/h",
+  "sched": "Día",
+  "tipo": "Medio tiempo",
+  "eng": "No exige",
+  "note": "Oficinas y locales.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/OMOIKgyQxDl-7vZCNTJ1116xAvq1OR9OKKZtiLUj6Y0by2Oh4dRgvQ",
+  "posted": "2026-10-01",
+  "zone": "bus"
+ },
+ {
+  "cat": "com",
+  "emp": "ServiceMaster by Crane IFS",
+  "title": "Limpieza comercial",
+  "orig": "Cleaner (PT-R087)",
+  "addr": "Aventura (el anuncio no da la dirección exacta)",
+  "mi": 3.5,
+  "lat": 25.9619,
+  "lon": -80.14061,
+  "pay": "$15.75/h",
+  "sched": "—",
+  "tipo": "Medio tiempo",
+  "eng": "Básico",
+  "note": "Contrato de limpieza.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/FbGhUt67d11fD35eH558Mpr6EEfN625YlCCE0mOaE5Y6d6YE4wgMug",
+  "posted": "2026-09-25",
+  "zone": "bus"
+ },
+ {
+  "cat": "com",
+  "emp": "Kellermeyer Bergensons (KBS)",
+  "title": "Janitorial porter",
+  "orig": "Janitorial Porter",
+  "addr": "Cerca de Aventura Mall",
+  "mi": 3.8,
+  "lat": 25.95702,
+  "lon": -80.14479,
+  "pay": "$15–15.56/h",
+  "sched": "1pm–8pm, libre lunes y martes",
+  "tipo": "—",
+  "eng": "Básico",
+  "note": "Hay versión del anuncio en español. Marca entrada con una app en su celular.",
+  "flag": null,
+  "url": "https://www.simplyhired.com/job/soFmZ13MyJIEAOpq-oQMChEr8xlVQfY2CbyTbI2j-79NMp5LAhmh6Q",
+  "posted": "2026-10-02",
+  "zone": "bus"
+ }
+];
+const ORIGIN = [26.01181, -80.15168];
+const ORIGIN_TXT = "2233 Hollywood Blvd, Hollywood, FL 33020";
+const CATS = {
+  all:{label:"Todas"},
+  hosp:{label:"Hospitales", color:"#6d4aa8"},
+  playa:{label:"Playa", color:"#0e7c86"},
+  hotel:{label:"Hoteles", color:"#e2603f"},
+  rest:{label:"Restaurantes", color:"#c2417a"},
+  res:{label:"Residencias y clínicas", color:"#3c8d5a"},
+  com:{label:"Comercios y escuelas", color:"#b7791f"}
+};
+let state = {cat:"all", sort:"dist", onlyPay:false, hideDone:false};
+const doneKey = "empleos-aplicados";
+let done = {};
+try { done = JSON.parse(localStorage.getItem(doneKey) || "{}"); } catch(e) {}
+const saveDone = () => { try { localStorage.setItem(doneKey, JSON.stringify(done)); } catch(e) {} };
+
+JOBS.forEach((j,i) => { j.id = j.url; j.payNum = j.pay ? parseFloat(j.pay.replace(/[^0-9.–-]/g,"").split(/[–-]/).pop()) : 0; });
+
+const payNums = JOBS.filter(j=>j.payNum).map(j=>j.payNum);
+const dists = JOBS.filter(j=>j.mi!=null).map(j=>j.mi);
+document.getElementById("stats").innerHTML = [
+  [JOBS.filter(j=>j.zone==="walk").length, "a pie, menos de 1.5 millas"],
+  [JOBS.filter(j=>j.zone==="zip").length, "en el 33020/33019 sin dirección exacta"],
+  [JOBS.filter(j=>j.zone==="bus").length, "más lejos, en bus (1.8 a 5 mi)"],
+  ["$"+Math.max(...payNums).toFixed(2), "mejor pago publicado por hora"]
+].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+
+function renderChips(){
+  document.getElementById("chips").innerHTML = Object.entries(CATS).map(([k,v])=>{
+    const n = k==="all" ? JOBS.length : JOBS.filter(j=>j.cat===k).length;
+    return `<button class="chip" data-k="${k}" aria-pressed="${state.cat===k}">${v.label}<span class="n">${n}</span></button>`;
+  }).join("");
+  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{state.cat=b.dataset.k;renderChips();render();});
+}
+document.getElementById("legend").innerHTML = Object.entries(CATS).filter(([k])=>k!=="all").map(([k,v])=>`<span><i style="background:${v.color}"></i>${v.label}</span>`).join("");
+
+function dirUrl(j){
+  const dest = j.lat && !/no da|no nombra|asignan/.test(j.addr) ? j.addr : (j.lat ? j.lat+","+j.lon : j.addr);
+  return "https://www.google.com/maps/dir/?api=1&travelmode="+(j.zone==="walk"?"walking":"transit")+"&origin="+encodeURIComponent(ORIGIN_TXT)+"&destination="+encodeURIComponent(dest);
+}
+function engTag(e){
+  const ok = e==="No exige"||e==="No menciona";
+  const txt = e==="No exige" ? "Sin requisito de inglés" : e==="No menciona" ? "No menciona inglés" : e==="Básico" ? "Inglés básico" : "Inglés preferido, no obligatorio";
+  return `<span class="tag ${ok?"en-ok":"en-basic"}">${txt}</span>`;
+}
+
+function render(){
+  let items = JOBS.filter(j=>(state.cat==="all"||j.cat===state.cat) && (!state.onlyPay||j.pay) && (!state.hideDone||!done[j.id]));
+  const by = {dist:(a,b)=>(a.mi??9)-(b.mi??9), pay:(a,b)=>b.payNum-a.payNum||(a.mi??9)-(b.mi??9), new:(a,b)=>b.posted.localeCompare(a.posted)};
+  items.sort(by[state.sort]);
+  const el = document.getElementById("list");
+  if(!items.length){ el.innerHTML = `<div class="empty">No hay ofertas con esos filtros.</div>`; return; }
+  const ZONES = [["walk","A pie","menos de 1.5 millas, hasta 25 minutos caminando"],["zip","En la zona, sin dirección exacta","anuncios del 33020/33019 que no dicen el edificio"],["bus","En bus","de 1.8 a 5 millas"]];
+  el.innerHTML = ZONES.map(([z,h,d])=>{ const g=items.filter(j=>j.zone===z); return g.length?`<div class="zone"><h2>${h}</h2><span>${g.length} · ${d}</span></div>`+g.map(card).join(""):""; }).join("");
+  bind(el);
+}
+function card(j){ return `
+    <article class="card c-${j.cat} ${done[j.id]?"done":""}" data-id="${j.id}">
+      <div class="dist"><b>${j.mi!=null?(j.mi<0.1?"🏠":j.mi.toFixed(1)):"📍"}</b><small>${j.mi!=null?(j.mi<0.1?"MISMO EDIFICIO":"MILLAS"):"33020"}</small></div>
+      <div class="body">
+        <div class="top">
+          <div><div class="title">${j.title}</div><div class="emp">${j.emp}</div></div>
+          <div class="pay ${j.pay?"":"none"}">${j.pay||"Pago no publicado"}</div>
+        </div>
+        <div class="tags">
+          ${engTag(j.eng)}
+          ${j.tipo!=="—"?`<span class="tag">${j.tipo}</span>`:""}
+          ${j.sched!=="—"?`<span class="tag">🕒 ${j.sched}</span>`:""}
+          ${j.flag?`<span class="tag flag">⚠ ${j.flag}</span>`:""}
+        </div>
+        <p class="note">${j.note}</p>
+        <div class="addr">📍 ${j.addr} · publicada ${fmtDate(j.posted)}</div>
+        <div class="actions">
+          <a class="btn primary" href="${j.url}" target="_blank" rel="noopener">Aplicar →</a>
+          ${j.mi===0||j.mi==null?"":`<a class="btn" href="${dirUrl(j)}" target="_blank" rel="noopener">${j.zone==="walk"?"🚶":"🚌"} Cómo llegar</a>`}
+          <label class="check"><input type="checkbox" ${done[j.id]?"checked":""} data-done="${j.id}"> Ya apliqué</label>
+        </div>
+      </div>
+    </article>`; }
+function bind(el){
+  el.querySelectorAll("[data-done]").forEach(c=>c.onchange=()=>{ if(c.checked) done[c.dataset.done]=1; else delete done[c.dataset.done]; saveDone(); render(); });
+  el.querySelectorAll(".card").forEach(c=>{
+    c.onmouseenter=()=>{ const m=markers[c.dataset.id]; if(m){ m.setStyle({radius:12,weight:3}); } };
+    c.onmouseleave=()=>{ const m=markers[c.dataset.id]; if(m){ m.setStyle({radius:8,weight:2}); } };
+  });
+}
+function fmtDate(d){
+  const [y,m,dd] = d.split("-").map(Number);
+  const mes = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][m-1];
+  return `${dd} ${mes}`;
+}
+
+const markers = {};
+if (window.L) {
+  const map = L.map("map",{scrollWheelZoom:false}).setView(ORIGIN, 12);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",{attribution:"Tiles © Esri",maxZoom:18}).addTo(map);
+  L.circle(ORIGIN,{radius:2414,color:"#c2417a",weight:2,fillOpacity:.06}).addTo(map);
+  L.circle(ORIGIN,{radius:8046.7,color:"#0e7c86",weight:1,dashArray:"4 6",fillOpacity:.04}).addTo(map);
+  L.marker(ORIGIN,{icon:L.divIcon({className:"",html:'<div class="home-pin">🏠 Revv</div>',iconSize:[70,24],iconAnchor:[35,12]})}).addTo(map);
+  const pts = [ORIGIN];
+  const seen = {};
+  JOBS.filter(j=>j.lat&&j.mi>0.05).forEach(j=>{
+    const key = j.lat+","+j.lon; seen[key]=(seen[key]||0)+1;
+    const off = (seen[key]-1)*0.0009;
+    const m = L.circleMarker([j.lat+off,j.lon+off],{radius:8,color:"#fff",weight:2,fillColor:CATS[j.cat].color,fillOpacity:1}).addTo(map);
+    m.bindPopup(`<b>${j.title}</b><br>${j.emp}<br>${j.pay||"Pago no publicado"} · ${j.mi} mi<br><a href="${j.url}" target="_blank" rel="noopener">Aplicar →</a>`);
+    m.on("click",()=>{ const c=document.querySelector(`.card[data-id="${CSS.escape(j.id)}"]`); if(c){ c.scrollIntoView({behavior:"smooth",block:"center"}); c.classList.add("hl"); setTimeout(()=>c.classList.remove("hl"),1600);} });
+    markers[j.id]=m; if(j.zone==="walk") pts.push([j.lat,j.lon]);
+  });
+  map.fitBounds(pts,{padding:[24,24]});
+  window._map=map;
+} else {
+  document.getElementById("map").style.display="none";
+}
+
+document.getElementById("sort").onchange=e=>{state.sort=e.target.value;render();};
+document.getElementById("onlyPay").onchange=e=>{state.onlyPay=e.target.checked;render();};
+document.getElementById("hideDone").onchange=e=>{state.hideDone=e.target.checked;render();};
+renderChips(); render();
+</script>
+</body>
+</html>
