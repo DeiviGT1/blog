@@ -9,3 +9,5 @@ venv
 services
 .claude/worktrees/
 .vercel
+.env*.local
+supabase/.temp/
