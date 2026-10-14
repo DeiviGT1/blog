@@ -225,9 +225,9 @@ def test_success_page_fulfills_only_own_session(env, monkeypatch):
 
 
 def test_bundle_offer_never_costs_more_than_missing_levels():
-    assert cr._bundle_offer({"nivel0"})["amount"] == 6000
-    assert cr._bundle_offer({"nivel0", "nivel1"})["amount"] == 6000          # 20+20+25 = 65 → 60
-    assert cr._bundle_offer({"nivel0", "nivel1", "nivel2"}) is None          # 20+25 = 45 < 60: no conviene
+    assert cr._bundle_offer({"nivel0"})["amount"] == 5000
+    assert cr._bundle_offer({"nivel0", "nivel1"})["amount"] == 5000          # 20+20+25 = 65 → 50
+    assert cr._bundle_offer({"nivel0", "nivel1", "nivel2"}) is None          # 20+25 = 45 < 50: no conviene
     assert cr._bundle_offer({"nivel0", "nivel1", "nivel2", "nivel3", "nivel4"}) is None
 
 

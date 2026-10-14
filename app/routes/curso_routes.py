@@ -271,18 +271,18 @@ PRICING = {
         "levels": ["nivel4"],
     },
     "bundle": {
-        "amount": 6000,
-        "price_display": "$60",
+        "amount": 5000,
+        "price_display": "$50",
         "label": "Curso Completo",
         "short": "Todo incluido",
         "color": "#1a1a2e",
         "module_count": sum(len(LEVELS[f"nivel{i}"]["modules"]) for i in range(1, 5)),
-        "description": "Acceso a los 4 niveles (30 módulos), archivos de práctica y revisión de entregas. Ahorra $20 vs comprar por separado.",
+        "description": "Acceso a los 4 niveles (30 módulos), archivos de práctica y revisión de entregas. Ahorra $30 vs comprar por separado.",
         "label_en": "Full Course",
         "short_en": "All inclusive",
-        "description_en": "Access to all 4 levels (30 modules), practice files and assignment reviews. Save $20 vs buying separately.",
+        "description_en": "Access to all 4 levels (30 modules), practice files and assignment reviews. Save $30 vs buying separately.",
         "levels": ["nivel1", "nivel2", "nivel3", "nivel4"],
-        "savings": "$20",
+        "savings": "$30",
     },
 }
 
