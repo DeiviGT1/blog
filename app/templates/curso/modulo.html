@@ -1,5 +1,5 @@
 {% extends "curso/base_curso.html" %}
-{% block title %}{{ meta.title }} — Excel 365{% endblock %}
+{% block title %}{{ loc(meta, 'title') }} — Excel 365{% endblock %}
 
 {% block extra_head %}
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -33,7 +33,7 @@
   <div class="modulo-layout">
 
     <aside class="modulo-sidebar">
-      <h3>{{ level_data.short }}</h3>
+      <h3>{{ loc(level_data, 'short') }}</h3>
       <ul class="sidebar-module-list" id="sidebarList">
         {% for m in level_data.modules %}
           <li>
@@ -41,9 +41,9 @@
                data-mid="{{ m.id }}"
                class="{% if m.id == module_id %}active{% elif m.id not in enabled_modules %}locked{% endif %}"
                {% if m.id not in enabled_modules and not session.get('curso_is_admin') %}
-                 title="Módulo bloqueado" onclick="return false;"
+                 title="{{ t('Módulo bloqueado', 'Locked module') }}" onclick="return false;"
                {% endif %}>
-              <span>{{ loop.index }}. {{ m.title }}</span>
+              <span>{{ loop.index }}. {{ loc(m, 'title') }}</span>
             </a>
           </li>
         {% endfor %}
@@ -51,12 +51,12 @@
 
       <div style="margin-top:1.3rem;padding-top:1rem;border-top:1px solid var(--c-border);">
         <p style="font-size:.75rem;font-weight:700;text-transform:uppercase;color:var(--c-text-muted);margin-bottom:.6rem;">
-          Archivos del nivel
+          {{ t('Archivos del nivel', 'Level files') }}
         </p>
         {% for xlsx in level_data.xlsx %}
           <a href="{{ url_for('curso.descargar', filename=xlsx) }}"
              class="btn btn-outline btn-sm btn-full" style="margin-bottom:.5rem;display:block;text-align:center;">
-            <i class="fas fa-download"></i> {{ xlsx.replace('_',' ').replace('.xlsx','') }}
+            <i class="fas fa-download"></i> {{ t(xlsx.replace('_',' ').replace('.xlsx',''), xlsx.replace('nivel', 'Level ').replace('_ejemplos', ' examples').replace('_practica', ' practice').replace('.xlsx', '')) }}
           </a>
         {% endfor %}
       </div>
@@ -73,16 +73,16 @@
       <div class="modulo-header">
         <div>
           <span class="level-badge" style="background:{{ level_data.color }};font-size:.7rem;padding:.2rem .7rem;">
-            Nivel {{ level_data.level_num }}
+            {{ t('Nivel', 'Level') }} {{ level_data.level_num }}
           </span>
-          <h1 style="margin-top:.5rem;">{{ meta.title }}</h1>
+          <h1 style="margin-top:.5rem;">{{ loc(meta, 'title') }}</h1>
         </div>
         <div class="modulo-nav">
           {% if prev_mod %}
-            <a class="btn btn-outline btn-sm" href="{{ url_for('curso.modulo', module_id=prev_mod) }}">← Anterior</a>
+            <a class="btn btn-outline btn-sm" href="{{ url_for('curso.modulo', module_id=prev_mod) }}">← {{ t('Anterior', 'Previous') }}</a>
           {% endif %}
           {% if next_mod %}
-            <a class="btn btn-primary btn-sm" href="{{ url_for('curso.modulo', module_id=next_mod) }}">Siguiente →</a>
+            <a class="btn btn-primary btn-sm" href="{{ url_for('curso.modulo', module_id=next_mod) }}">{{ t('Siguiente', 'Next') }} →</a>
           {% endif %}
         </div>
       </div>
@@ -90,7 +90,7 @@
       <!-- Progress bar: modules visited in this level -->
       <div id="progBar" style="margin-bottom:1.2rem;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
-          <span style="font-size:.78rem;font-weight:600;color:var(--c-text-muted);">Progreso del nivel</span>
+          <span style="font-size:.78rem;font-weight:600;color:var(--c-text-muted);">{{ t('Progreso del nivel', 'Level progress') }}</span>
           <span id="progText" style="font-size:.78rem;font-weight:700;color:var(--c-primary);"></span>
         </div>
         <div style="height:6px;background:var(--c-border);border-radius:3px;overflow:hidden;">
@@ -99,7 +99,7 @@
       </div>
 
       <div id="react-root">
-        <p style="color:var(--c-text-muted);font-size:.9rem;">Cargando módulo…</p>
+        <p style="color:var(--c-text-muted);font-size:.9rem;">{{ t('Cargando módulo…', 'Loading module…') }}</p>
       </div>
     </div>
   </div>
@@ -147,7 +147,7 @@
   var visited = countVisited();
   var pct = Math.round(visited / total * 100);
   document.getElementById('progFill').style.width = pct + '%';
-  document.getElementById('progText').textContent = visited + '/' + total + ' modulos';
+  document.getElementById('progText').textContent = visited + '/' + total + ' ' + {{ t('módulos', 'modules')|tojson }};
 
   // ── Sidebar: add check marks to visited modules ──
   var visitedMap = getVisited();

@@ -1,19 +1,19 @@
 {% extends "curso/base_curso.html" %}
-{% block title %}Pago exitoso — Excel 365{% endblock %}
+{% block title %}{{ t('Pago exitoso', 'Payment successful') }} — Excel 365{% endblock %}
 
 {% block content %}
 <main class="curso-main curso-main--narrow" style="padding-top:3rem;">
   <div class="auth-card" style="text-align:center;">
     <div style="font-size:3.5rem;margin-bottom:1rem;">🎉</div>
-    <h1 style="margin-bottom:.5rem;">¡Pago exitoso!</h1>
+    <h1 style="margin-bottom:.5rem;">{{ t('¡Pago exitoso!', 'Payment successful!') }}</h1>
     <p class="subtitle" style="margin-bottom:1.5rem;">
-      Tu compra fue procesada correctamente. Los modulos ya estan desbloqueados en tu dashboard.
+      {{ t('Tu compra fue procesada correctamente. Los modulos ya estan desbloqueados en tu dashboard.', 'Your purchase was processed successfully. The modules are now unlocked in your dashboard.') }}
     </p>
     <a href="{{ url_for('curso.dashboard') }}" class="btn btn-primary btn-full">
-      <i class="fas fa-arrow-right"></i> Ir a mi dashboard
+      <i class="fas fa-arrow-right"></i> {{ t('Ir a mi dashboard', 'Go to my dashboard') }}
     </a>
     <p style="font-size:.82rem;color:var(--c-text-muted);margin-top:1.2rem;">
-      Recibiras un recibo por correo electronico de Stripe.
+      {{ t('Recibiras un recibo por correo electronico de Stripe.', 'You’ll receive an email receipt from Stripe.') }}
     </p>
   </div>
 </main>

@@ -1,23 +1,24 @@
 {% extends "curso/base_curso.html" %}
-{% block title %}Cuenta pendiente — Excel 365{% endblock %}
+{% block title %}{{ t('Cuenta pendiente', 'Account pending') }} — Excel 365{% endblock %}
 
 {% block content %}
 <main class="curso-main">
   <div class="pending-box">
     <div class="icon">⏳</div>
-    <h1>Cuenta pendiente de activación</h1>
+    <h1>{{ t('Cuenta pendiente de activación', 'Account pending activation') }}</h1>
     <p style="margin-top:.8rem;">
-      Tu cuenta fue creada correctamente. El instructor la revisará pronto y
-      habilitará tu acceso al curso.
+      {% if lang == 'en' %}Your account was created successfully. The instructor will review it soon and
+      enable your access to the course.{% else %}Tu cuenta fue creada correctamente. El instructor la revisará pronto y
+      habilitará tu acceso al curso.{% endif %}
     </p>
     <p style="margin-top:.6rem;">
       <strong>{{ session.get('curso_email', '') }}</strong>
     </p>
     <p style="margin-top:1.2rem;font-size:.82rem;">
-      ¿Tienes preguntas? Escríbeme a
+      {{ t('¿Tienes preguntas? Escríbeme a', 'Questions? Email me at') }}
       <a href="mailto:josedago1163@gmail.com" style="color:var(--c-primary);font-weight:600;">josedago1163@gmail.com</a>
     </p>
-    <a class="btn btn-outline" style="margin-top:1.5rem;" href="{{ url_for('curso.logout') }}">Cerrar sesión</a>
+    <a class="btn btn-outline" style="margin-top:1.5rem;" href="{{ url_for('curso.logout') }}">{{ t('Cerrar sesión', 'Log out') }}</a>
   </div>
 </main>
 {% endblock %}

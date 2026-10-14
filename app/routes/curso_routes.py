@@ -22,86 +22,96 @@ LEVELS = {
     "nivel0": {
         "level_num": 0,
         "title": "Nivel 0 — Fundamentos",
+        "title_en": "Level 0 — Fundamentals",
+        "short_en": "Fundamentals",
         "short": "Fundamentos",
         "color": "#7B1D32",
         "accent": "#F9EAED",
         "modules": [
-            {"id": "nivel0_modulo01_interfaz",   "title": "La interfaz de Excel 365"},
-            {"id": "nivel0_modulo02_shortcuts",   "title": "Atajos esenciales"},
-            {"id": "nivel0_modulo03_estructura",  "title": "Estructura de datos"},
-            {"id": "nivel0_modulo04_formato",     "title": "Formato y presentación"},
-            {"id": "nivel0_modulo05_nombrado",    "title": "Nombrado y organización"},
-            {"id": "nivel0_modulo06_mentalidad",  "title": "Mentalidad Excel"},
+            {"id": "nivel0_modulo01_interfaz",   "title": "La interfaz de Excel 365", "title_en": "The Excel 365 interface"},
+            {"id": "nivel0_modulo02_shortcuts",   "title": "Atajos esenciales", "title_en": "Essential shortcuts"},
+            {"id": "nivel0_modulo03_estructura",  "title": "Estructura de datos", "title_en": "Data structure"},
+            {"id": "nivel0_modulo04_formato",     "title": "Formato y presentación", "title_en": "Formatting and presentation"},
+            {"id": "nivel0_modulo05_nombrado",    "title": "Nombrado y organización", "title_en": "Naming and organization"},
+            {"id": "nivel0_modulo06_mentalidad",  "title": "Mentalidad Excel", "title_en": "The Excel mindset"},
         ],
         "xlsx": ["nivel0_ejemplos.xlsx", "nivel0_practica.xlsx"],
     },
     "nivel1": {
         "level_num": 1,
         "title": "Nivel 1 — Básico",
+        "title_en": "Level 1 — Basic",
+        "short_en": "Basic",
         "short": "Básico",
         "color": "#1565C0",
         "accent": "#E3F2FD",
         "modules": [
-            {"id": "nivel1_modulo01_tipos_datos", "title": "Tipos de datos"},
-            {"id": "nivel1_modulo02_formulas",    "title": "Fórmulas y operadores"},
-            {"id": "nivel1_modulo03_references",  "title": "Referencias"},
-            {"id": "nivel1_modulo04_funciones",   "title": "Funciones esenciales"},
-            {"id": "nivel1_modulo05_conditional", "title": "Formato condicional"},
-            {"id": "nivel1_modulo06_sort_filter", "title": "Ordenar y filtrar"},
-            {"id": "nivel1_modulo07_charts",      "title": "Gráficos básicos"},
+            {"id": "nivel1_modulo01_tipos_datos", "title": "Tipos de datos", "title_en": "Data types"},
+            {"id": "nivel1_modulo02_formulas",    "title": "Fórmulas y operadores", "title_en": "Formulas and operators"},
+            {"id": "nivel1_modulo03_references",  "title": "Referencias", "title_en": "References"},
+            {"id": "nivel1_modulo04_funciones",   "title": "Funciones esenciales", "title_en": "Essential functions"},
+            {"id": "nivel1_modulo05_conditional", "title": "Formato condicional", "title_en": "Conditional formatting"},
+            {"id": "nivel1_modulo06_sort_filter", "title": "Ordenar y filtrar", "title_en": "Sort and filter"},
+            {"id": "nivel1_modulo07_charts",      "title": "Gráficos básicos", "title_en": "Basic charts"},
         ],
         "xlsx": ["nivel1_ejemplos.xlsx", "nivel1_practica.xlsx"],
     },
     "nivel2": {
         "level_num": 2,
         "title": "Nivel 2 — Intermedio",
+        "title_en": "Level 2 — Intermediate",
+        "short_en": "Intermediate",
         "short": "Intermedio",
         "color": "#2E7D32",
         "accent": "#E8F5E9",
         "modules": [
-            {"id": "nivel2_modulo01_absolute_refs",  "title": "Referencias absolutas y mixtas"},
-            {"id": "nivel2_modulo02_condicionales",  "title": "Funciones condicionales"},
-            {"id": "nivel2_modulo03_sumifs",         "title": "SUMIFS y agregación"},
-            {"id": "nivel2_modulo04_texto",          "title": "Funciones de texto"},
-            {"id": "nivel2_modulo05_fechas",         "title": "Funciones de fecha"},
-            {"id": "nivel2_modulo06_validation",     "title": "Validación de datos"},
-            {"id": "nivel2_modulo07_named_ranges",   "title": "Rangos nombrados"},
-            {"id": "nivel2_modulo08_pivottables",    "title": "Tablas dinámicas"},
-            {"id": "nivel2_modulo09_charts_adv",     "title": "Gráficos avanzados"},
+            {"id": "nivel2_modulo01_absolute_refs",  "title": "Referencias absolutas y mixtas", "title_en": "Absolute and mixed references"},
+            {"id": "nivel2_modulo02_condicionales",  "title": "Funciones condicionales", "title_en": "Conditional functions"},
+            {"id": "nivel2_modulo03_sumifs",         "title": "SUMIFS y agregación", "title_en": "SUMIFS and aggregation"},
+            {"id": "nivel2_modulo04_texto",          "title": "Funciones de texto", "title_en": "Text functions"},
+            {"id": "nivel2_modulo05_fechas",         "title": "Funciones de fecha", "title_en": "Date functions"},
+            {"id": "nivel2_modulo06_validation",     "title": "Validación de datos", "title_en": "Data validation"},
+            {"id": "nivel2_modulo07_named_ranges",   "title": "Rangos nombrados", "title_en": "Named ranges"},
+            {"id": "nivel2_modulo08_pivottables",    "title": "Tablas dinámicas", "title_en": "PivotTables"},
+            {"id": "nivel2_modulo09_charts_adv",     "title": "Gráficos avanzados", "title_en": "Advanced charts"},
         ],
         "xlsx": ["nivel2_ejemplos.xlsx", "nivel2_practica.xlsx"],
     },
     "nivel3": {
         "level_num": 3,
         "title": "Nivel 3 — Avanzado",
+        "title_en": "Level 3 — Advanced",
+        "short_en": "Advanced",
         "short": "Avanzado",
         "color": "#E65100",
         "accent": "#FFF3E0",
         "modules": [
-            {"id": "nivel3_modulo01_xlookup",        "title": "XLOOKUP"},
-            {"id": "nivel3_modulo02_index_match",    "title": "INDEX / MATCH"},
-            {"id": "nivel3_modulo03_dynamic_arrays", "title": "Arrays dinámicos"},
-            {"id": "nivel3_modulo04_pivot_adv",      "title": "Tablas dinámicas avanzadas"},
-            {"id": "nivel3_modulo05_power_query",    "title": "Power Query"},
-            {"id": "nivel3_modulo06_dashboards",     "title": "Dashboards"},
-            {"id": "nivel3_modulo07_proteccion",     "title": "Protección y seguridad"},
-            {"id": "nivel3_modulo08_colaboracion",   "title": "Colaboración en Excel"},
+            {"id": "nivel3_modulo01_xlookup",        "title": "XLOOKUP", "title_en": "XLOOKUP"},
+            {"id": "nivel3_modulo02_index_match",    "title": "INDEX / MATCH", "title_en": "INDEX / MATCH"},
+            {"id": "nivel3_modulo03_dynamic_arrays", "title": "Arrays dinámicos", "title_en": "Dynamic arrays"},
+            {"id": "nivel3_modulo04_pivot_adv",      "title": "Tablas dinámicas avanzadas", "title_en": "Advanced PivotTables"},
+            {"id": "nivel3_modulo05_power_query",    "title": "Power Query", "title_en": "Power Query"},
+            {"id": "nivel3_modulo06_dashboards",     "title": "Dashboards", "title_en": "Dashboards"},
+            {"id": "nivel3_modulo07_proteccion",     "title": "Protección y seguridad", "title_en": "Protection and security"},
+            {"id": "nivel3_modulo08_colaboracion",   "title": "Colaboración en Excel", "title_en": "Collaborating in Excel"},
         ],
         "xlsx": ["nivel3_ejemplos.xlsx", "nivel3_practica.xlsx"],
     },
     "nivel4": {
         "level_num": 4,
         "title": "Nivel 4 — Excel Pro",
+        "title_en": "Level 4 — Excel Pro",
+        "short_en": "Excel Pro",
         "short": "Excel Pro",
         "color": "#4A148C",
         "accent": "#F3E5F5",
         "modules": [
-            {"id": "nivel4_modulo01_macros",          "title": "Macros"},
-            {"id": "nivel4_modulo02_vba",             "title": "VBA básico"},
-            {"id": "nivel4_modulo03_power_pivot",     "title": "Power Pivot"},
-            {"id": "nivel4_modulo04_fuentes_externas","title": "Fuentes de datos externas"},
-            {"id": "nivel4_modulo05_pq_avanzado",     "title": "Power Query avanzado"},
-            {"id": "nivel4_modulo06_certificacion",   "title": "Certificación"},
+            {"id": "nivel4_modulo01_macros",          "title": "Macros", "title_en": "Macros"},
+            {"id": "nivel4_modulo02_vba",             "title": "VBA básico", "title_en": "VBA basics"},
+            {"id": "nivel4_modulo03_power_pivot",     "title": "Power Pivot", "title_en": "Power Pivot"},
+            {"id": "nivel4_modulo04_fuentes_externas","title": "Fuentes de datos externas", "title_en": "External data sources"},
+            {"id": "nivel4_modulo05_pq_avanzado",     "title": "Power Query avanzado", "title_en": "Advanced Power Query"},
+            {"id": "nivel4_modulo06_certificacion",   "title": "Certificación", "title_en": "Certification"},
         ],
         "xlsx": ["nivel4_ejemplos.xlsx", "nivel4_practica.xlsx"],
     },
@@ -120,6 +130,53 @@ MODULE_LOOKUP = {
 }
 
 
+# ── UI language (es/en) ───────────────────────────────────────────────────────
+# Vive en session["ui_lang"] (sin prefijo curso_ para que sobreviva al logout).
+# Se cambia con /curso/idioma/<code> o con ?lang=en en cualquier URL del curso.
+
+UI_LANGS = ("es", "en")
+
+
+def get_lang() -> str:
+    lang = session.get("ui_lang")
+    return lang if lang in UI_LANGS else "es"
+
+
+def tr(es: str, en: str) -> str:
+    """Devuelve el texto en el idioma activo."""
+    return en if get_lang() == "en" else es
+
+
+def loc(obj, key):
+    """Campo localizado de un dict: usa key_en si el idioma es inglés y existe."""
+    if get_lang() == "en" and obj.get(f"{key}_en"):
+        return obj[f"{key}_en"]
+    return obj.get(key)
+
+
+@curso_bp.before_request
+def _lang_from_query():
+    lang = request.args.get("lang")
+    if lang in UI_LANGS:
+        session["ui_lang"] = lang
+
+
+@curso_bp.context_processor
+def _inject_i18n():
+    return {"lang": get_lang(), "t": tr, "loc": loc}
+
+
+@curso_bp.route("/idioma/<code>")
+def set_lang(code):
+    if code in UI_LANGS:
+        session["ui_lang"] = code
+    nxt = request.args.get("next", "")
+    # Solo rutas internas del curso (evita open redirect)
+    if not nxt.startswith("/curso") or nxt.startswith("//"):
+        nxt = url_for("curso.landing")
+    return redirect(nxt)
+
+
 # ── Pricing configuration ────────────────────────────────────────────────────
 
 PRICING = {
@@ -131,6 +188,9 @@ PRICING = {
         "color": "#1565C0",
         "module_count": len(LEVELS["nivel1"]["modules"]),
         "description": "Tipos de datos, fórmulas, referencias, funciones esenciales, formato condicional, filtros y gráficos.",
+        "label_en": "Level 1 — Basic",
+        "short_en": "Basic",
+        "description_en": "Data types, formulas, references, essential functions, conditional formatting, filters and charts.",
         "levels": ["nivel1"],
     },
     "nivel2": {
@@ -141,6 +201,9 @@ PRICING = {
         "color": "#2E7D32",
         "module_count": len(LEVELS["nivel2"]["modules"]),
         "description": "Referencias absolutas, condicionales, SUMIFS, texto, fechas, validación, rangos nombrados, tablas dinámicas y gráficos avanzados.",
+        "label_en": "Level 2 — Intermediate",
+        "short_en": "Intermediate",
+        "description_en": "Absolute references, conditionals, SUMIFS, text, dates, validation, named ranges, PivotTables and advanced charts.",
         "levels": ["nivel2"],
     },
     "nivel3": {
@@ -151,6 +214,9 @@ PRICING = {
         "color": "#E65100",
         "module_count": len(LEVELS["nivel3"]["modules"]),
         "description": "XLOOKUP, INDEX/MATCH, arrays dinámicos, tablas dinámicas avanzadas, Power Query, dashboards, protección y colaboración.",
+        "label_en": "Level 3 — Advanced",
+        "short_en": "Advanced",
+        "description_en": "XLOOKUP, INDEX/MATCH, dynamic arrays, advanced PivotTables, Power Query, dashboards, protection and collaboration.",
         "levels": ["nivel3"],
     },
     "nivel4": {
@@ -161,6 +227,9 @@ PRICING = {
         "color": "#4A148C",
         "module_count": len(LEVELS["nivel4"]["modules"]),
         "description": "Macros, VBA, Power Pivot, fuentes externas, Power Query avanzado y preparación para certificación.",
+        "label_en": "Level 4 — Excel Pro",
+        "short_en": "Excel Pro",
+        "description_en": "Macros, VBA, Power Pivot, external sources, advanced Power Query and certification prep.",
         "levels": ["nivel4"],
     },
     "bundle": {
@@ -171,6 +240,9 @@ PRICING = {
         "color": "#1a1a2e",
         "module_count": sum(len(LEVELS[f"nivel{i}"]["modules"]) for i in range(1, 5)),
         "description": "Acceso a los 4 niveles (30 módulos), archivos de práctica y revisión de entregas. Ahorra $20 vs comprar por separado.",
+        "label_en": "Full Course",
+        "short_en": "All inclusive",
+        "description_en": "Access to all 4 levels (30 modules), practice files and assignment reviews. Save $20 vs buying separately.",
         "levels": ["nivel1", "nivel2", "nivel3", "nivel4"],
         "savings": "$20",
     },
@@ -222,7 +294,7 @@ def require_login(f):
     @functools.wraps(f)
     def decorated(*args, **kwargs):
         if not session.get("curso_user_id"):
-            flash("Inicia sesión para continuar.", "warning")
+            flash(tr("Inicia sesión para continuar.", "Log in to continue."), "warning")
             return redirect(url_for("curso.login"))
         return f(*args, **kwargs)
     return decorated
@@ -389,13 +461,13 @@ def login():
         except Exception as e:
             msg = str(e).lower()
             if "invalid login credentials" in msg or "invalid_credentials" in msg:
-                flash("Correo o contraseña incorrectos.", "error")
+                flash(tr("Correo o contraseña incorrectos.", "Incorrect email or password."), "error")
             elif "email not confirmed" in msg:
-                flash("Debes confirmar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.", "error")
+                flash(tr("Debes confirmar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.", "You need to confirm your email before logging in. Check your inbox."), "error")
             elif "too many requests" in msg:
-                flash("Demasiados intentos. Espera unos minutos e intenta de nuevo.", "error")
+                flash(tr("Demasiados intentos. Espera unos minutos e intenta de nuevo.", "Too many attempts. Wait a few minutes and try again."), "error")
             else:
-                flash("No se pudo iniciar sesión. Intenta de nuevo.", "error")
+                flash(tr("No se pudo iniciar sesión. Intenta de nuevo.", "Could not log in. Please try again."), "error")
 
     return render_template("curso/login.html")
 
@@ -405,7 +477,7 @@ def forgot_password():
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         if not email:
-            flash("Ingresa tu correo electrónico.", "error")
+            flash(tr("Ingresa tu correo electrónico.", "Enter your email address."), "error")
             return render_template("curso/forgot_password.html")
         try:
             from app.python.supabase_client import send_password_reset
@@ -415,7 +487,7 @@ def forgot_password():
             send_password_reset(email, reset_url)
         except Exception:
             pass  # Don't reveal whether the email exists
-        flash("Si ese correo está registrado, recibirás un enlace para restablecer tu contraseña.", "success")
+        flash(tr("Si ese correo está registrado, recibirás un enlace para restablecer tu contraseña.", "If that email is registered, you'll receive a link to reset your password."), "success")
         return redirect(url_for("curso.login"))
     return render_template("curso/forgot_password.html")
 
@@ -425,7 +497,7 @@ def reset_callback():
     """Supabase redirects here after the user clicks the reset link in their email."""
     code = request.args.get("code")
     if not code:
-        flash("Enlace de recuperación inválido o expirado.", "error")
+        flash(tr("Enlace de recuperación inválido o expirado.", "Invalid or expired reset link."), "error")
         return redirect(url_for("curso.login"))
     # Store code in session and send user to the form
     session["curso_reset_code"] = code
@@ -436,17 +508,17 @@ def reset_callback():
 def reset_password():
     code = session.get("curso_reset_code")
     if not code:
-        flash("Enlace de recuperación inválido o expirado.", "error")
+        flash(tr("Enlace de recuperación inválido o expirado.", "Invalid or expired reset link."), "error")
         return redirect(url_for("curso.login"))
 
     if request.method == "POST":
         password = request.form.get("password", "")
         confirm  = request.form.get("confirm", "")
         if len(password) < 8:
-            flash("La contraseña debe tener al menos 8 caracteres.", "error")
+            flash(tr("La contraseña debe tener al menos 8 caracteres.", "Password must be at least 8 characters."), "error")
             return render_template("curso/reset_password.html")
         if password != confirm:
-            flash("Las contraseñas no coinciden.", "error")
+            flash(tr("Las contraseñas no coinciden.", "Passwords don't match."), "error")
             return render_template("curso/reset_password.html")
         try:
             from app.python.supabase_client import get_client, update_user_password
@@ -454,10 +526,10 @@ def reset_password():
             resp = sb.auth.exchange_code_for_session({"auth_code": code})
             update_user_password(resp.session.access_token, password)
             session.pop("curso_reset_code", None)
-            flash("¡Contraseña actualizada! Ya puedes iniciar sesión.", "success")
+            flash(tr("¡Contraseña actualizada! Ya puedes iniciar sesión.", "Password updated! You can log in now."), "success")
             return redirect(url_for("curso.login"))
         except Exception as e:
-            flash("El enlace expiró o ya fue usado. Solicita uno nuevo.", "error")
+            flash(tr("El enlace expiró o ya fue usado. Solicita uno nuevo.", "The link expired or was already used. Request a new one."), "error")
             session.pop("curso_reset_code", None)
             return redirect(url_for("curso.forgot_password"))
 
@@ -476,10 +548,10 @@ def register():
         confirm  = request.form.get("confirm", "")
 
         if password != confirm:
-            flash("Las contraseñas no coinciden.", "error")
+            flash(tr("Las contraseñas no coinciden.", "Passwords don't match."), "error")
             return render_template("curso/register.html")
         if len(password) < 8:
-            flash("La contraseña debe tener al menos 8 caracteres.", "error")
+            flash(tr("La contraseña debe tener al menos 8 caracteres.", "Password must be at least 8 characters."), "error")
             return render_template("curso/register.html")
         try:
             from app.python.supabase_client import sign_up
@@ -491,9 +563,9 @@ def register():
         except Exception as e:
             msg = str(e)
             if "already registered" in msg or "already exists" in msg:
-                flash("Este correo ya esta registrado.", "error")
+                flash(tr("Este correo ya esta registrado.", "This email is already registered."), "error")
             else:
-                flash(f"Error al crear la cuenta: {msg}", "error")
+                flash(tr("Error al crear la cuenta: ", "Error creating account: ") + str(msg), "error")
 
     return render_template("curso/register.html")
 
@@ -507,7 +579,7 @@ def verify_email():
     if request.method == "POST":
         token = request.form.get("token", "").strip()
         if not token:
-            flash("Ingresa el codigo de verificacion.", "error")
+            flash(tr("Ingresa el codigo de verificacion.", "Enter the verification code."), "error")
             return render_template("curso/verify_email.html", email=email)
         try:
             from app.python.supabase_client import verify_email_otp
@@ -517,20 +589,20 @@ def verify_email():
             session.pop("curso_verify_email", None)
             if resp.user and resp.session:
                 _after_auth(resp.user, resp.session.access_token)
-                flash("¡Cuenta verificada! El Nivel 0 ya esta desbloqueado.", "success")
+                flash(tr("¡Cuenta verificada! El Nivel 0 ya esta desbloqueado.", "Account verified! Level 0 is now unlocked."), "success")
                 return redirect(url_for("curso.dashboard"))
             # Fallback: sign in with password if OTP didn't return session
             from app.python.supabase_client import sign_in
             login_resp = sign_in(email, password)
             _after_auth(login_resp.user, login_resp.session.access_token)
-            flash("¡Cuenta verificada! El Nivel 0 ya esta desbloqueado.", "success")
+            flash(tr("¡Cuenta verificada! El Nivel 0 ya esta desbloqueado.", "Account verified! Level 0 is now unlocked."), "success")
             return redirect(url_for("curso.dashboard"))
         except Exception as e:
             msg = str(e).lower()
             if "expired" in msg or "invalid" in msg:
-                flash("Codigo incorrecto o expirado. Revisa tu correo e intenta de nuevo.", "error")
+                flash(tr("Codigo incorrecto o expirado. Revisa tu correo e intenta de nuevo.", "Incorrect or expired code. Check your email and try again."), "error")
             else:
-                flash("No se pudo verificar el codigo. Intenta de nuevo.", "error")
+                flash(tr("No se pudo verificar el codigo. Intenta de nuevo.", "Could not verify the code. Please try again."), "error")
             return render_template("curso/verify_email.html", email=email)
 
     return render_template("curso/verify_email.html", email=email)
@@ -544,9 +616,9 @@ def resend_verification():
     try:
         from app.python.supabase_client import resend_confirmation
         resend_confirmation(email)
-        flash("Codigo reenviado. Revisa tu correo.", "success")
+        flash(tr("Codigo reenviado. Revisa tu correo.", "Code resent. Check your email."), "success")
     except Exception:
-        flash("No se pudo reenviar. Espera unos minutos e intenta de nuevo.", "error")
+        flash(tr("No se pudo reenviar. Espera unos minutos e intenta de nuevo.", "Could not resend. Wait a few minutes and try again."), "error")
     return redirect(url_for("curso.verify_email"))
 
 
@@ -580,7 +652,7 @@ def auth_callback():
                 return redirect(url_for("curso.dashboard"))
             return redirect(url_for("curso.pending"))
         except Exception as e:
-            flash(f"Error de autenticación: {e}", "error")
+            flash(tr("Error de autenticación: ", "Authentication error: ") + str(e), "error")
             return redirect(url_for("curso.login"))
 
     # Fallback — token in URL hash (implicit flow), handled by JS
@@ -655,13 +727,16 @@ def modulo(module_id):
     from app.python.supabase_client import get_user_permissions
     enabled = ALL_MODULE_IDS if is_admin else get_user_permissions(session["curso_user_id"])
     if not is_admin and module_id not in enabled:
-        flash("No tienes acceso a este módulo.", "warning")
+        flash(tr("No tienes acceso a este módulo.", "You don't have access to this module."), "warning")
         return redirect(url_for("curso.dashboard"))
 
     # Load and transform JSX
-    jsx_path = os.path.join(
-        current_app.root_path, "static", "curso", "modulos", f"{module_id}.jsx"
-    )
+    modulos_dir = os.path.join(current_app.root_path, "static", "curso", "modulos")
+    jsx_path = os.path.join(modulos_dir, f"{module_id}.jsx")
+    if get_lang() == "en":
+        en_path = os.path.join(modulos_dir + "_en", f"{module_id}.jsx")
+        if os.path.exists(en_path):
+            jsx_path = en_path
     if not os.path.exists(jsx_path):
         abort(404)
     with open(jsx_path, "r", encoding="utf-8") as f:
@@ -722,8 +797,13 @@ def descargar(filename):
         level_key = m.group(1).lower()
         file_type = m.group(2).lower()
         from app.python.supabase_client import get_formula_lang
-        from app.python.excel_generator import generate_excel
-        lang = get_formula_lang(session["curso_user_id"])
+        if get_lang() == "en":
+            # Interfaz en inglés → archivo 100% en inglés (textos y fórmulas)
+            from app.python.excel_generator_en import generate_excel
+            lang = "en"
+        else:
+            from app.python.excel_generator import generate_excel
+            lang = get_formula_lang(session["curso_user_id"])
         try:
             xlsx_bytes = generate_excel(level_key, file_type, lang)
         except ValueError:
@@ -731,6 +811,9 @@ def descargar(filename):
         from flask import Response
         lang_suffix = "_ES" if lang == "es" else "_EN"
         download_name = f"{level_key}_{file_type}{lang_suffix}.xlsx"
+        if get_lang() == "en":
+            en_type = "examples" if file_type == "ejemplos" else "practice"
+            download_name = f"{level_key.replace('nivel', 'level')}_{en_type}.xlsx"
         return Response(
             xlsx_bytes,
             mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -754,7 +837,7 @@ def perfil():
             lang = "es"
         update_formula_lang(user_id, lang)
         session["curso_formula_lang"] = lang
-        flash("Preferencias guardadas correctamente.", "success")
+        flash(tr("Preferencias guardadas correctamente.", "Preferences saved."), "success")
         return redirect(url_for("curso.perfil"))
     lang = session.get("curso_formula_lang") or get_formula_lang(user_id)
     profile = get_profile(user_id) or {}
@@ -780,19 +863,19 @@ def submit(module_id):
 
     file = request.files.get("file")
     if not file or file.filename == "":
-        flash("Selecciona un archivo.", "error")
+        flash(tr("Selecciona un archivo.", "Select a file."), "error")
         return redirect(back_url)
 
     filename = secure_filename(file.filename)
     ext      = os.path.splitext(filename)[1].lower()
     if ext not in (".xlsx", ".xls", ".xlsm"):
-        flash("Solo se aceptan archivos Excel (.xlsx, .xls, .xlsm).", "error")
+        flash(tr("Solo se aceptan archivos Excel (.xlsx, .xls, .xlsm).", "Only Excel files are accepted (.xlsx, .xls, .xlsm)."), "error")
         return redirect(back_url)
 
     MAX_BYTES = 10 * 1024 * 1024  # 10 MB
     file_bytes = file.read()
     if len(file_bytes) > MAX_BYTES:
-        flash("El archivo supera el límite de 10 MB.", "error")
+        flash(tr("El archivo supera el límite de 10 MB.", "The file exceeds the 10 MB limit."), "error")
         return redirect(back_url)
 
     try:
@@ -800,9 +883,9 @@ def submit(module_id):
         user_id   = session["curso_user_id"]
         path      = upload_submission_file(user_id, module_id, filename, file_bytes)
         create_submission(user_id, module_id, path, filename)
-        flash("¡Entrega enviada correctamente!", "success")
+        flash(tr("¡Entrega enviada correctamente!", "Assignment submitted!"), "success")
     except Exception as e:
-        flash(f"Error al subir el archivo: {e}", "error")
+        flash(tr("Error al subir el archivo: ", "Error uploading file: ") + str(e), "error")
 
     return redirect(back_url)
 
@@ -839,12 +922,12 @@ def checkout(product_id):
     # Don't allow purchasing already-owned levels
     purchased = _get_purchased_levels(user_id)
     if product_id != "bundle" and product_id in purchased:
-        flash("Ya tienes acceso a este nivel.", "info")
+        flash(tr("Ya tienes acceso a este nivel.", "You already have access to this level."), "info")
         return redirect(url_for("curso.dashboard"))
     if product_id == "bundle" and all(
         f"nivel{i}" in purchased for i in range(1, 5)
     ):
-        flash("Ya tienes acceso a todos los niveles.", "info")
+        flash(tr("Ya tienes acceso a todos los niveles.", "You already have access to all levels."), "info")
         return redirect(url_for("curso.dashboard"))
 
     base_url = os.getenv("BASE_URL", "").rstrip("/")
@@ -864,8 +947,8 @@ def checkout(product_id):
                     "currency": "usd",
                     "unit_amount": plan["amount"],
                     "product_data": {
-                        "name": plan["label"],
-                        "description": plan["description"],
+                        "name": loc(plan, "label"),
+                        "description": loc(plan, "description"),
                     },
                 },
                 "quantity": 1,
@@ -883,7 +966,7 @@ def checkout(product_id):
 
     except stripe.error.StripeError as e:
         logger.error("Stripe checkout error: %s", e)
-        flash("Error al iniciar el pago. Intenta de nuevo.", "error")
+        flash(tr("Error al iniciar el pago. Intenta de nuevo.", "Couldn't start the payment. Please try again."), "error")
         return redirect(url_for("curso.pricing"))
 
 

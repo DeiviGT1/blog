@@ -1,19 +1,19 @@
 {% extends "curso/base_curso.html" %}
-{% block title %}Verifica tu correo — Excel 365{% endblock %}
+{% block title %}{{ t('Verifica tu correo', 'Verify your email') }} — Excel 365{% endblock %}
 
 {% block content %}
 <main class="curso-main curso-main--narrow" style="padding-top:3rem;">
   <div class="auth-card" style="text-align:center;">
     <div style="font-size:3rem;margin-bottom:.8rem;">📧</div>
-    <h1>Verifica tu correo</h1>
+    <h1>{{ t('Verifica tu correo', 'Verify your email') }}</h1>
     <p class="subtitle">
-      Enviamos un codigo de 6 digitos a<br>
+      {{ t('Enviamos un codigo de 6 digitos a', 'We sent a 6-digit code to') }}<br>
       <strong style="color:var(--c-text);">{{ email }}</strong>
     </p>
 
     <form method="POST" action="{{ url_for('curso.verify_email') }}" style="margin-top:1.5rem;">
       <div class="form-group">
-        <label for="token">Codigo de verificacion</label>
+        <label for="token">{{ t('Codigo de verificacion', 'Verification code') }}</label>
         <input type="text"
                id="token"
                name="token"
@@ -25,22 +25,22 @@
                autocomplete="one-time-code"
                style="text-align:center;font-size:1.5rem;letter-spacing:.5rem;font-weight:700;" />
       </div>
-      <button type="submit" class="btn btn-primary btn-full">Verificar</button>
+      <button type="submit" class="btn btn-primary btn-full">{{ t('Verificar', 'Verify') }}</button>
     </form>
 
     <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--c-border);">
       <p style="font-size:.85rem;color:var(--c-text-muted);margin-bottom:.8rem;">
-        ¿No recibiste el correo? Revisa tu carpeta de spam.
+        {{ t('¿No recibiste el correo? Revisa tu carpeta de spam.', 'Didn’t get the email? Check your spam folder.') }}
       </p>
       <form method="POST" action="{{ url_for('curso.resend_verification') }}" style="display:inline;">
         <button type="submit" class="btn btn-outline btn-sm">
-          <i class="fas fa-redo"></i> Reenviar codigo
+          <i class="fas fa-redo"></i> {{ t('Reenviar codigo', 'Resend code') }}
         </button>
       </form>
     </div>
 
     <div class="auth-footer">
-      <a href="{{ url_for('curso.register') }}">← Volver al registro</a>
+      <a href="{{ url_for('curso.register') }}">← {{ t('Volver al registro', 'Back to sign up') }}</a>
     </div>
   </div>
 </main>

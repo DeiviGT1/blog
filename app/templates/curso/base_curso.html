@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ lang }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,6 +22,15 @@
     </a>
 
     <div class="curso-nav__links">
+      {% set _here = request.full_path.rstrip('?') %}
+      <div class="lang-toggle" role="group" aria-label="{{ t('Idioma', 'Language') }}">
+        <a href="{{ url_for('curso.set_lang', code='es', next=_here) }}"
+           class="lang-toggle__opt{% if lang == 'es' %} is-active{% endif %}"
+           {% if lang == 'es' %}aria-current="true"{% endif %} lang="es">ES</a>
+        <a href="{{ url_for('curso.set_lang', code='en', next=_here) }}"
+           class="lang-toggle__opt{% if lang == 'en' %} is-active{% endif %}"
+           {% if lang == 'en' %}aria-current="true"{% endif %} lang="en">EN</a>
+      </div>
       {% if session.get('curso_user_id') %}
         <a class="curso-nav__link {% if request.endpoint == 'curso.dashboard' %}active{% endif %}"
            href="{{ url_for('curso.dashboard') }}">Dashboard</a>
@@ -31,15 +40,15 @@
         {% endif %}
         <a class="curso-nav__link {% if request.endpoint == 'curso.perfil' %}active{% endif %}"
            href="{{ url_for('curso.perfil') }}"
-           title="Configuración de perfil">
+           title="{{ t('Configuración de perfil', 'Profile settings') }}">
           <i class="fas fa-user-circle"></i>
           {{ session.get('curso_username', '') }}
         </a>
-        <a class="curso-nav__logout" href="{{ url_for('curso.logout') }}">Salir</a>
+        <a class="curso-nav__logout" href="{{ url_for('curso.logout') }}">{{ t('Salir', 'Log out') }}</a>
       {% else %}
         <a class="curso-nav__link {% if request.endpoint == 'curso.pricing' %}active{% endif %}"
-           href="{{ url_for('curso.pricing') }}">Precios</a>
-        <a class="btn btn-outline btn-sm" href="{{ url_for('curso.login') }}">Iniciar sesión</a>
+           href="{{ url_for('curso.pricing') }}">{{ t('Precios', 'Pricing') }}</a>
+        <a class="btn btn-outline btn-sm" href="{{ url_for('curso.login') }}">{{ t('Iniciar sesión', 'Log in') }}</a>
       {% endif %}
     </div>
   </nav>
@@ -68,7 +77,7 @@
       animation:googleSpin .8s linear infinite;
     "></div>
     <p style="font-size:.95rem;font-weight:600;color:#1a2332;margin:0;">
-      Cargando…
+      {{ t('Cargando…', 'Loading…') }}
     </p>
     <style>
       @keyframes googleSpin {
@@ -82,7 +91,7 @@
 
   <!-- Footer -->
   <footer class="curso-footer">
-    © 2025 Jose David GT · <a href="{{ url_for('main.index') }}" style="color:var(--c-primary)">Portafolio</a> · Hecho por <a href="https://brisasites.com/?utm_source=josedavidgt.com&amp;utm_medium=referral&amp;utm_campaign=credito-footer" target="_blank" rel="noopener" style="font-weight:600;text-decoration:underline;text-underline-offset:2px">@brisasites</a>
+    © 2025 Jose David GT · <a href="{{ url_for('main.index') }}" style="color:var(--c-primary)">{{ t('Portafolio', 'Portfolio') }}</a> · {{ t('Hecho por', 'Made by') }} <a href="https://brisasites.com/?utm_source=josedavidgt.com&amp;utm_medium=referral&amp;utm_campaign=credito-footer" target="_blank" rel="noopener" style="font-weight:600;text-decoration:underline;text-underline-offset:2px">@brisasites</a>
   </footer>
 
   {% block scripts %}{% endblock %}

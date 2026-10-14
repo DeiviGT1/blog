@@ -1,5 +1,5 @@
 {% extends "curso/base_curso.html" %}
-{% block title %}Curso Excel 365 — JoseDavidGT{% endblock %}
+{% block title %}{{ t('Curso Excel 365 — JoseDavidGT', 'Excel 365 Course — JoseDavidGT') }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -147,12 +147,12 @@
 
     <!-- Floating formula pills -->
     <div class="hero__formulas">
-      <div class="formula-pill">=BUSCARV()</div>
-      <div class="formula-pill">=SI.CONJUNTO()</div>
-      <div class="formula-pill">=SUMAR.SI()</div>
-      <div class="formula-pill">=INDICE(COINCIDIR())</div>
-      <div class="formula-pill">=TABLA.DINAMICA</div>
-      <div class="formula-pill">=FILTRAR()</div>
+      <div class="formula-pill">{{ t('=BUSCARV()', '=VLOOKUP()') }}</div>
+      <div class="formula-pill">{{ t('=SI.CONJUNTO()', '=IFS()') }}</div>
+      <div class="formula-pill">{{ t('=SUMAR.SI()', '=SUMIF()') }}</div>
+      <div class="formula-pill">{{ t('=INDICE(COINCIDIR())', '=INDEX(MATCH())') }}</div>
+      <div class="formula-pill">{{ t('=TABLA.DINAMICA', '=PIVOTTABLE') }}</div>
+      <div class="formula-pill">{{ t('=FILTRAR()', '=FILTER()') }}</div>
     </div>
 
     <!-- Canvas for particles -->
@@ -160,22 +160,27 @@
 
     <div class="hero__content">
       <div class="hero__eyebrow">
-        <i class="fas fa-bolt"></i> Curso 2025 · 100% practico
+        <i class="fas fa-bolt"></i> {{ t('Curso 2025 · 100% practico', '2025 Course · 100% hands-on') }}
       </div>
       <h1 class="hero__title">
-        Domina <span class="text-gradient">Excel 365</span><br>
-        de cero a experto
+        {{ t('Domina', 'Master') }} <span class="text-gradient">Excel 365</span><br>
+        {{ t('de cero a experto', 'from zero to expert') }}
       </h1>
       <p class="hero__sub">
+        {% if lang == 'en' %}
+        5 progressive levels · 36 interactive modules · Downloadable practice
+        files · Personal feedback from a real instructor.
+        {% else %}
         5 niveles progresivos · 36 modulos interactivos · Archivos de practica
         descargables · Revision personalizada por un instructor real.
+        {% endif %}
       </p>
       <div class="hero__actions">
         <a href="{{ url_for('curso.register') }}" class="hero__btn-primary btn-glow">
-          <i class="fas fa-rocket"></i> Empezar gratis
+          <i class="fas fa-rocket"></i> {{ t('Empezar gratis', 'Start for free') }}
         </a>
         <a href="#temario" class="hero__btn-secondary">
-          <i class="fas fa-list"></i> Ver temario
+          <i class="fas fa-list"></i> {{ t('Ver temario', 'See the curriculum') }}
         </a>
       </div>
     </div>
@@ -185,46 +190,46 @@
   <div class="stats-bar reveal">
     <div class="stats-bar__item">
       <span class="stats-bar__num counter" data-target="36">0</span>
-      <span class="stats-bar__label">Modulos</span>
+      <span class="stats-bar__label">{{ t('Modulos', 'Modules') }}</span>
     </div>
     <div class="stats-bar__item">
       <span class="stats-bar__num counter" data-target="5">0</span>
-      <span class="stats-bar__label">Niveles</span>
+      <span class="stats-bar__label">{{ t('Niveles', 'Levels') }}</span>
     </div>
     <div class="stats-bar__item">
       <span class="stats-bar__num counter" data-target="100" data-suffix="%">0</span>
-      <span class="stats-bar__label">Practico</span>
+      <span class="stats-bar__label">{{ t('Practico', 'Hands-on') }}</span>
     </div>
     <div class="stats-bar__item">
       <span class="stats-bar__num counter" data-target="24" data-suffix="/7">0</span>
-      <span class="stats-bar__label">Acceso</span>
+      <span class="stats-bar__label">{{ t('Acceso', 'Access') }}</span>
     </div>
   </div>
 
   <!-- ═══════════════ MARQUEE ═══════════════ -->
   <div class="marquee-wrap">
     <div class="marquee-track">
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Tablas dinamicas</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> BUSCARV / BUSCARX</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Tablas dinamicas', 'PivotTables') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('BUSCARV / BUSCARX', 'VLOOKUP / XLOOKUP') }}</span>
       <span class="marquee-item"><i class="fas fa-check-circle"></i> Power Query</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Graficos avanzados</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Macros VBA</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Formatos condicionales</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Dashboard profesional</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Funciones anidadas</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Validacion de datos</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> SUMAR.SI / CONTAR.SI</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Graficos avanzados', 'Advanced charts') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Macros VBA', 'VBA macros') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Formatos condicionales', 'Conditional formatting') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Dashboard profesional', 'Professional dashboards') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Funciones anidadas', 'Nested functions') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Validacion de datos', 'Data validation') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('SUMAR.SI / CONTAR.SI', 'SUMIF / COUNTIF') }}</span>
       <!-- duplicated for seamless loop -->
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Tablas dinamicas</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> BUSCARV / BUSCARX</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Tablas dinamicas', 'PivotTables') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('BUSCARV / BUSCARX', 'VLOOKUP / XLOOKUP') }}</span>
       <span class="marquee-item"><i class="fas fa-check-circle"></i> Power Query</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Graficos avanzados</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Macros VBA</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Formatos condicionales</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Dashboard profesional</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Funciones anidadas</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> Validacion de datos</span>
-      <span class="marquee-item"><i class="fas fa-check-circle"></i> SUMAR.SI / CONTAR.SI</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Graficos avanzados', 'Advanced charts') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Macros VBA', 'VBA macros') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Formatos condicionales', 'Conditional formatting') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Dashboard profesional', 'Professional dashboards') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Funciones anidadas', 'Nested functions') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('Validacion de datos', 'Data validation') }}</span>
+      <span class="marquee-item"><i class="fas fa-check-circle"></i> {{ t('SUMAR.SI / CONTAR.SI', 'SUMIF / COUNTIF') }}</span>
     </div>
   </div>
 
@@ -233,9 +238,9 @@
     <!-- ═══════════════ FEATURES ═══════════════ -->
     <section class="section">
       <div class="section__header reveal">
-        <span class="section__eyebrow">Por que este curso</span>
-        <h2 class="section__title">Todo lo que necesitas para dominar Excel</h2>
-        <p class="section__sub">No es solo teoria — es practica real con retroalimentacion directa.</p>
+        <span class="section__eyebrow">{{ t('Por que este curso', 'Why this course') }}</span>
+        <h2 class="section__title">{{ t('Todo lo que necesitas para dominar Excel', 'Everything you need to master Excel') }}</h2>
+        <p class="section__sub">{{ t('No es solo teoria — es practica real con retroalimentacion directa.', 'Not just theory — real practice with direct, hands-on feedback.') }}</p>
       </div>
 
       <div class="features-grid">
@@ -243,29 +248,29 @@
           <div class="feature-card__icon" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#166534;">
             <i class="fas fa-graduation-cap"></i>
           </div>
-          <h3>Aprendizaje progresivo</h3>
-          <p>Desde la interfaz basica hasta macros y Power Query. Cada nivel construye sobre el anterior sin saltos.</p>
+          <h3>{{ t('Aprendizaje progresivo', 'Step-by-step learning') }}</h3>
+          <p>{{ t('Desde la interfaz basica hasta macros y Power Query. Cada nivel construye sobre el anterior sin saltos.', 'From the basic interface all the way to macros and Power Query. Each level builds on the last, with no gaps.') }}</p>
         </div>
         <div class="feature-card tilt-card reveal reveal-delay-2">
           <div class="feature-card__icon" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af;">
             <i class="fas fa-file-excel"></i>
           </div>
-          <h3>Archivos de practica reales</h3>
-          <p>Cada nivel incluye archivos .xlsx descargables para practicar con datos reales y situaciones del dia a dia.</p>
+          <h3>{{ t('Archivos de practica reales', 'Real practice files') }}</h3>
+          <p>{{ t('Cada nivel incluye archivos .xlsx descargables para practicar con datos reales y situaciones del dia a dia.', 'Every level includes downloadable .xlsx files so you practice with real data and everyday, on-the-job scenarios.') }}</p>
         </div>
         <div class="feature-card tilt-card reveal reveal-delay-3">
           <div class="feature-card__icon" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;">
             <i class="fas fa-comments"></i>
           </div>
-          <h3>Feedback personalizado</h3>
-          <p>Entregas tu practica y recibes revision detallada del instructor. No eres un numero, eres un estudiante.</p>
+          <h3>{{ t('Feedback personalizado', 'Personal feedback') }}</h3>
+          <p>{{ t('Entregas tu practica y recibes revision detallada del instructor. No eres un numero, eres un estudiante.', "Submit your practice work and get a detailed review from the instructor. You're not a number — you're a student.") }}</p>
         </div>
         <div class="feature-card tilt-card reveal reveal-delay-4">
           <div class="feature-card__icon" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#9d174d;">
             <i class="fas fa-infinity"></i>
           </div>
-          <h3>Acceso de por vida</h3>
-          <p>Compra una vez, accede siempre. Sin suscripciones mensuales ni fechas de expiracion. Tuyo para siempre.</p>
+          <h3>{{ t('Acceso de por vida', 'Lifetime access') }}</h3>
+          <p>{{ t('Compra una vez, accede siempre. Sin suscripciones mensuales ni fechas de expiracion. Tuyo para siempre.', 'Buy once, keep it forever. No monthly subscriptions, no expiration dates. Yours for good.') }}</p>
         </div>
       </div>
     </section>
@@ -273,9 +278,9 @@
     <!-- ═══════════════ TEMARIO TIMELINE ═══════════════ -->
     <section class="section" id="temario">
       <div class="section__header reveal">
-        <span class="section__eyebrow">Temario completo</span>
-        <h2 class="section__title">5 niveles, 36 modulos</h2>
-        <p class="section__sub">Desde principiante absoluto hasta nivel avanzado con macros y automatizacion.</p>
+        <span class="section__eyebrow">{{ t('Temario completo', 'Full curriculum') }}</span>
+        <h2 class="section__title">{{ t('5 niveles, 36 modulos', '5 levels, 36 modules') }}</h2>
+        <p class="section__sub">{{ t('Desde principiante absoluto hasta nivel avanzado con macros y automatizacion.', 'From total beginner to advanced, with macros and automation.') }}</p>
       </div>
 
       <div class="timeline">
@@ -284,22 +289,22 @@
           <div class="timeline__dot" style="background:{{ lv.color }};">{{ lv.level_num }}</div>
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
             <div>
-              <div class="timeline__title">{{ lv.short }}</div>
-              <div class="timeline__modules">{{ lv.modules|length }} modulos
+              <div class="timeline__title">{{ loc(lv, 'short') }}</div>
+              <div class="timeline__modules">{{ lv.modules|length }} {{ t('modulos', 'modules') }}
                 {% if lk == 'nivel0' %}
-                  · <span style="color:var(--c-success);font-weight:700;">Gratis</span>
+                  · <span style="color:var(--c-success);font-weight:700;">{{ t('Gratis', 'Free') }}</span>
                 {% endif %}
               </div>
             </div>
             {% if lk == 'nivel0' %}
               <span style="background:#dcfce7;color:#166534;font-size:.72rem;font-weight:700;padding:.25rem .7rem;border-radius:8px;">
-                <i class="fas fa-gift"></i> GRATIS
+                <i class="fas fa-gift"></i> {{ t('GRATIS', 'FREE') }}
               </span>
             {% endif %}
           </div>
           <div class="timeline__tags">
             {% for mod in lv.modules %}
-              <span class="timeline__tag">{{ mod.title }}</span>
+              <span class="timeline__tag">{{ loc(mod, 'title') }}</span>
             {% endfor %}
           </div>
         </div>
@@ -310,41 +315,41 @@
     <!-- ═══════════════ COMPARISON TABLE ═══════════════ -->
     <section class="section reveal">
       <div class="section__header">
-        <span class="section__eyebrow">Comparacion</span>
-        <h2 class="section__title">Este curso vs. otros cursos</h2>
+        <span class="section__eyebrow">{{ t('Comparacion', 'Comparison') }}</span>
+        <h2 class="section__title">{{ t('Este curso vs. otros cursos', 'This course vs. the rest') }}</h2>
       </div>
 
       <table class="compare-table">
         <thead>
           <tr>
-            <th>Caracteristica</th>
-            <th style="color:var(--c-primary);">Este curso</th>
-            <th>Otros cursos</th>
+            <th>{{ t('Caracteristica', 'Feature') }}</th>
+            <th style="color:var(--c-primary);">{{ t('Este curso', 'This course') }}</th>
+            <th>{{ t('Otros cursos', 'Other courses') }}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Archivos de practica descargables</td>
+            <td>{{ t('Archivos de practica descargables', 'Downloadable practice files') }}</td>
             <td class="check"><i class="fas fa-check-circle"></i></td>
             <td class="cross"><i class="fas fa-times-circle"></i></td>
           </tr>
           <tr>
-            <td>Revision personalizada del instructor</td>
+            <td>{{ t('Revision personalizada del instructor', 'Personal review from the instructor') }}</td>
             <td class="check"><i class="fas fa-check-circle"></i></td>
             <td class="cross"><i class="fas fa-times-circle"></i></td>
           </tr>
           <tr>
-            <td>Acceso de por vida</td>
+            <td>{{ t('Acceso de por vida', 'Lifetime access') }}</td>
             <td class="check"><i class="fas fa-check-circle"></i></td>
             <td class="cross"><i class="fas fa-times-circle"></i></td>
           </tr>
           <tr>
-            <td>Nivel introductorio gratis</td>
+            <td>{{ t('Nivel introductorio gratis', 'Free introductory level') }}</td>
             <td class="check"><i class="fas fa-check-circle"></i></td>
             <td class="cross"><i class="fas fa-times-circle"></i></td>
           </tr>
           <tr>
-            <td>Precio accesible, sin suscripcion</td>
+            <td>{{ t('Precio accesible, sin suscripcion', 'Affordable price, no subscription') }}</td>
             <td class="check"><i class="fas fa-check-circle"></i></td>
             <td class="cross"><i class="fas fa-times-circle"></i></td>
           </tr>
@@ -355,28 +360,28 @@
     <!-- ═══════════════ TESTIMONIALS ═══════════════ -->
     <section class="section">
       <div class="section__header reveal">
-        <span class="section__eyebrow">Testimonios</span>
-        <h2 class="section__title">Lo que dicen nuestros estudiantes</h2>
+        <span class="section__eyebrow">{{ t('Testimonios', 'Testimonials') }}</span>
+        <h2 class="section__title">{{ t('Lo que dicen nuestros estudiantes', 'What our students say') }}</h2>
       </div>
 
       <div class="testimonial-grid">
         <div class="testimonial-card reveal reveal-delay-1">
           <div class="testimonial-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p class="testimonial-card__text">"Nunca habia entendido las tablas dinamicas hasta este curso. Los ejercicios practicos hacen toda la diferencia."</p>
+          <p class="testimonial-card__text">{{ t('"Nunca habia entendido las tablas dinamicas hasta este curso. Los ejercicios practicos hacen toda la diferencia."', '"I never really understood PivotTables until this course. The hands-on exercises make all the difference."') }}</p>
           <div class="testimonial-card__author">Maria G.</div>
-          <div class="testimonial-card__role">Contadora</div>
+          <div class="testimonial-card__role">{{ t('Contadora', 'Accountant') }}</div>
         </div>
         <div class="testimonial-card reveal reveal-delay-2">
           <div class="testimonial-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p class="testimonial-card__text">"El feedback personalizado es increible. Me corrigieron errores que no sabia que estaba cometiendo."</p>
+          <p class="testimonial-card__text">{{ t('"El feedback personalizado es increible. Me corrigieron errores que no sabia que estaba cometiendo."', '"The personal feedback is incredible. They caught mistakes I had no idea I was making."') }}</p>
           <div class="testimonial-card__author">Carlos R.</div>
-          <div class="testimonial-card__role">Analista de datos</div>
+          <div class="testimonial-card__role">{{ t('Analista de datos', 'Data Analyst') }}</div>
         </div>
         <div class="testimonial-card reveal reveal-delay-3">
           <div class="testimonial-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p class="testimonial-card__text">"Empece sin saber nada de Excel y ahora manejo Power Query en mi trabajo. El mejor curso que he tomado."</p>
+          <p class="testimonial-card__text">{{ t('"Empece sin saber nada de Excel y ahora manejo Power Query en mi trabajo. El mejor curso que he tomado."', "\"I started out knowing nothing about Excel, and now I use Power Query at work. The best course I've ever taken.\"") }}</p>
           <div class="testimonial-card__author">Ana L.</div>
-          <div class="testimonial-card__role">Administradora</div>
+          <div class="testimonial-card__role">{{ t('Administradora', 'Office Manager') }}</div>
         </div>
       </div>
     </section>
@@ -386,33 +391,33 @@
   <!-- ═══════════════ CTA FINAL ═══════════════ -->
   <section class="landing-cta" style="border-radius:0;margin-top:2rem;padding:5rem 2rem;">
     <div style="max-width:800px;margin:0 auto;" class="reveal">
-      <h2 style="font-size:2.5rem;">Empieza gratis, avanza a tu ritmo</h2>
-      <p>El Nivel 0 es completamente gratis. Desbloquea niveles avanzados cuando estes listo.</p>
+      <h2 style="font-size:2.5rem;">{{ t('Empieza gratis, avanza a tu ritmo', 'Start free, learn at your own pace') }}</h2>
+      <p>{{ t('El Nivel 0 es completamente gratis. Desbloquea niveles avanzados cuando estes listo.', "Level 0 is completely free. Unlock the advanced levels whenever you're ready.") }}</p>
 
       <div class="price-cards-mini">
         <div class="price-mini">
-          <div class="price-mini__label">Nivel 0</div>
+          <div class="price-mini__label">{{ t('Nivel 0', 'Level 0') }}</div>
           <div class="price-mini__amount">$0</div>
-          <div class="price-mini__per">Gratis</div>
+          <div class="price-mini__per">{{ t('Gratis', 'Free') }}</div>
         </div>
         <div class="price-mini">
-          <div class="price-mini__label">Por nivel</div>
+          <div class="price-mini__label">{{ t('Por nivel', 'Per level') }}</div>
           <div class="price-mini__amount">$15–$25</div>
           <div class="price-mini__per">USD</div>
         </div>
         <div class="price-mini price-mini--featured">
-          <div class="price-mini__label">Curso completo</div>
+          <div class="price-mini__label">{{ t('Curso completo', 'Full course') }}</div>
           <div class="price-mini__amount">$60</div>
-          <div class="price-mini__per">Ahorra $20</div>
+          <div class="price-mini__per">{{ t('Ahorra $20', 'Save $20') }}</div>
         </div>
       </div>
 
       <div style="display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;">
         <a href="{{ url_for('curso.register') }}" class="btn-white btn btn-lg btn-glow">
-          <i class="fas fa-rocket"></i> Crear cuenta gratis
+          <i class="fas fa-rocket"></i> {{ t('Crear cuenta gratis', 'Create a free account') }}
         </a>
         <a href="{{ url_for('curso.pricing') }}" class="btn btn-lg" style="background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);">
-          Ver todos los planes <i class="fas fa-arrow-right"></i>
+          {{ t('Ver todos los planes', 'See all plans') }} <i class="fas fa-arrow-right"></i>
         </a>
       </div>
     </div>

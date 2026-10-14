@@ -1,12 +1,12 @@
 {% extends "curso/base_curso.html" %}
-{% block title %}Mi Perfil — Excel 365{% endblock %}
+{% block title %}{{ t('Mi Perfil', 'My Profile') }} — Excel 365{% endblock %}
 
 {% block content %}
 <div style="max-width:680px; margin:3rem auto; padding:0 1.5rem;">
 
   <h1 style="font-size:1.6rem; font-weight:800; color:#1a202c; margin-bottom:.25rem;">
     <i class="fas fa-user-circle" style="color:#217346;"></i>
-    Mi perfil
+    {{ t('Mi perfil', 'My profile') }}
   </h1>
   <p style="color:#64748b; margin-bottom:2rem;">
     {{ session.get('curso_email','') }}
@@ -39,10 +39,10 @@
       padding:1.2rem 1.5rem; color:#fff;
     ">
       <h2 style="font-size:1.1rem; font-weight:700; margin:0;">
-        <i class="fas fa-language"></i> Idioma de fórmulas de Excel
+        <i class="fas fa-language"></i> {{ t('Idioma de fórmulas de Excel', 'Excel formula language') }}
       </h2>
       <p style="font-size:.85rem; opacity:.85; margin:.25rem 0 0;">
-        Elige en qué idioma quieres que se generen los archivos .xlsx descargables.
+        {{ t('Elige en qué idioma quieres que se generen los archivos .xlsx descargables.', 'Choose the language for the formulas in downloadable .xlsx files.') }}
       </p>
     </div>
 
@@ -64,7 +64,7 @@
                    style="display:none;"
                    onchange="this.form.submit()">
             <div style="font-size:1.8rem; margin-bottom:.4rem;">🇲🇽</div>
-            <div style="font-weight:700; font-size:1rem; color:#1a202c;">Español</div>
+            <div style="font-weight:700; font-size:1rem; color:#1a202c;">{{ t('Español', 'Spanish') }}</div>
             <div style="font-size:.78rem; color:#64748b; margin-top:.2rem;">
               SUMA, SI, BUSCARX, FILTRAR…
             </div>
@@ -74,7 +74,7 @@
                 background:#217346; color:#fff;
                 font-size:.7rem; font-weight:700; padding:.15rem .6rem;
                 border-radius:99px;
-              ">✓ Activo</div>
+              ">✓ {{ t('Activo', 'Active') }}</div>
             {% endif %}
           </label>
 
@@ -111,11 +111,27 @@
           background:#fffbeb; border:1px solid #fcd34d; border-radius:.6rem;
           padding:.9rem 1.1rem; font-size:.85rem; color:#78350f; line-height:1.6;
         ">
-          <strong><i class="fas fa-info-circle"></i> ¿Por qué importa?</strong><br>
+          <strong><i class="fas fa-info-circle"></i> {{ t('¿Por qué importa?', 'Why does it matter?') }}</strong><br>
+          {% if lang == 'en' %}
+          In Excel installed in <strong>Spanish</strong> you have to use <code>SUMA</code>, <code>SI</code>, <code>BUSCARX</code>, etc.
+          If you use English formulas you’ll get the <code>#¿NOMBRE?</code> / <code>#NAME?</code> error.
+          {% else %}
           En Excel instalado en <strong>español</strong> debes usar <code>SUMA</code>, <code>SI</code>, <code>BUSCARX</code>, etc.
           Si usas fórmulas en inglés verás el error <code>#¿NOMBRE?</code> / <code>#NAME?</code>.
           Los archivos descargados del curso se generarán con las fórmulas en el idioma que elijas aquí.
+          {% endif %}
         </div>
+
+        {% if lang == 'en' %}
+        <div style="
+          background:#eff6ff; border:1px solid #93c5fd; border-radius:.6rem;
+          padding:.9rem 1.1rem; font-size:.85rem; color:#1e3a8a; line-height:1.6; margin-top:1rem;
+        ">
+          <strong><i class="fas fa-globe"></i> English mode</strong><br>
+          While you browse the course in English, downloaded files are always fully in English (text and formulas).
+          This formula preference only applies when you use the Spanish interface.
+        </div>
+        {% endif %}
 
       </form>
 
@@ -129,13 +145,13 @@
   ">
     <div style="padding:1.2rem 1.5rem; border-bottom:1px solid #f1f5f9;">
       <h2 style="font-size:1rem; font-weight:700; color:#1a202c; margin:0;">
-        <i class="fas fa-id-card" style="color:#64748b;"></i> Información de cuenta
+        <i class="fas fa-id-card" style="color:#64748b;"></i> {{ t('Información de cuenta', 'Account information') }}
       </h2>
     </div>
     <div style="padding:1.2rem 1.5rem;">
       <table style="width:100%; font-size:.9rem; border-collapse:collapse;">
         <tr>
-          <td style="padding:.5rem 0; color:#64748b; width:40%;">Usuario</td>
+          <td style="padding:.5rem 0; color:#64748b; width:40%;">{{ t('Usuario', 'Username') }}</td>
           <td style="padding:.5rem 0; font-weight:600; color:#1a202c;">
             {{ session.get('curso_username', '—') }}
           </td>
@@ -147,7 +163,7 @@
           </td>
         </tr>
         <tr>
-          <td style="padding:.5rem 0; color:#64748b; border-top:1px solid #f1f5f9;">Rol</td>
+          <td style="padding:.5rem 0; color:#64748b; border-top:1px solid #f1f5f9;">{{ t('Rol', 'Role') }}</td>
           <td style="padding:.5rem 0; border-top:1px solid #f1f5f9;">
             {% if session.get('curso_is_admin') %}
               <span style="background:#7C3AED;color:#fff;font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:99px;">
@@ -155,19 +171,19 @@
               </span>
             {% else %}
               <span style="background:#217346;color:#fff;font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:99px;">
-                Estudiante
+                {{ t('Estudiante', 'Student') }}
               </span>
             {% endif %}
           </td>
         </tr>
         <tr>
-          <td style="padding:.5rem 0; color:#64748b; border-top:1px solid #f1f5f9;">Fórmulas</td>
+          <td style="padding:.5rem 0; color:#64748b; border-top:1px solid #f1f5f9;">{{ t('Fórmulas', 'Formulas') }}</td>
           <td style="padding:.5rem 0; border-top:1px solid #f1f5f9;">
             <span style="
               background:{% if formula_lang=='es' %}#217346{% else %}#1565c0{% endif %};
               color:#fff; font-size:.72rem; font-weight:700; padding:.2rem .6rem; border-radius:99px;
             ">
-              {% if formula_lang == 'es' %}🇲🇽 Español{% else %}🇺🇸 English{% endif %}
+              {% if formula_lang == 'es' %}🇲🇽 {{ t('Español', 'Spanish') }}{% else %}🇺🇸 English{% endif %}
             </span>
           </td>
         </tr>
@@ -178,7 +194,7 @@
   <div style="text-align:center; margin-top:2rem;">
     <a href="{{ url_for('curso.dashboard') }}"
        style="color:#64748b; font-size:.88rem; text-decoration:none;">
-      ← Volver al Dashboard
+      ← {{ t('Volver al Dashboard', 'Back to Dashboard') }}
     </a>
   </div>
 

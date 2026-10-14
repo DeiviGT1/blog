@@ -643,3 +643,26 @@ a { color: inherit; text-decoration: none; }
   .landing-cta { padding: 2.5rem 1.2rem; }
   .landing-cta .price-big { font-size: 2.5rem; }
 }
+
+/* ── Toggle de idioma ES / EN ─── */
+.lang-toggle {
+  display: inline-flex; padding: 3px; gap: 2px;
+  border: 1px solid var(--c-border); border-radius: 999px;
+  background: var(--c-bg-alt, #f8fafc);
+}
+.lang-toggle__opt {
+  font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+  padding: .28rem .62rem; border-radius: 999px; line-height: 1;
+  color: var(--c-text-muted); text-decoration: none;
+  transition: background .2s, color .2s;
+}
+.lang-toggle__opt:hover { color: var(--c-primary); }
+.lang-toggle__opt.is-active { background: var(--c-primary); color: #fff; }
+
+/* Nav en móvil: con el toggle ya no cabe en una fila → dos filas */
+@media (max-width: 600px) {
+  .curso-nav { flex-wrap: wrap; height: auto; min-height: 60px; padding: .5rem 1rem; row-gap: .4rem; }
+  .curso-nav__links { width: 100%; flex-wrap: wrap; justify-content: space-between; gap: .3rem; }
+  .curso-nav__link { padding: .35rem .5rem; }
+  .curso-nav__logout { padding: .3rem .75rem; }
+}

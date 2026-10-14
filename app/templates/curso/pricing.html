@@ -1,5 +1,5 @@
 {% extends "curso/base_curso.html" %}
-{% block title %}Planes y precios — Excel 365{% endblock %}
+{% block title %}{{ t('Planes y precios — Excel 365', 'Plans & Pricing — Excel 365') }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -98,46 +98,46 @@
 
   <!-- Hero -->
   <div class="pricing-hero-new reveal">
-    <h1>Elige tu plan</h1>
-    <p>El Nivel 0 es gratis para todos. Desbloquea los niveles avanzados para llevar tu Excel al siguiente nivel.</p>
+    <h1>{{ t('Elige tu plan', 'Choose your plan') }}</h1>
+    <p>{{ t('El Nivel 0 es gratis para todos. Desbloquea los niveles avanzados para llevar tu Excel al siguiente nivel.', 'Level 0 is free for everyone. Unlock the advanced levels and take your Excel skills to the next level.') }}</p>
   </div>
 
   <!-- Bundle spotlight -->
   <div class="bundle-spotlight reveal">
-    <div class="bundle-spotlight__badge"><i class="fas fa-star"></i> Mejor valor</div>
+    <div class="bundle-spotlight__badge"><i class="fas fa-star"></i> {{ t('Mejor valor', 'Best value') }}</div>
     {% set b = pricing['bundle'] %}
     <div class="bundle-spotlight__inner">
       <div class="bundle-spotlight__left">
-        <div class="bundle-spotlight__title">{{ b.label }}</div>
-        <div class="bundle-spotlight__sub">Niveles 1 al 4 — {{ b.module_count }} modulos con acceso de por vida</div>
+        <div class="bundle-spotlight__title">{{ loc(b, 'label') }}</div>
+        <div class="bundle-spotlight__sub">{{ t('Niveles 1 al 4', 'Levels 1 to 4') }} — {{ b.module_count }} {{ t('modulos con acceso de por vida', 'modules with lifetime access') }}</div>
         <ul class="bundle-spotlight__features">
-          <li><i class="fas fa-check"></i> Acceso a los 4 niveles completos</li>
-          <li><i class="fas fa-check"></i> {{ b.module_count }} modulos con contenido interactivo</li>
-          <li><i class="fas fa-check"></i> Archivos de practica por nivel</li>
-          <li><i class="fas fa-check"></i> Revision personalizada de entregas</li>
-          <li><i class="fas fa-check"></i> Acceso permanente, sin suscripcion</li>
+          <li><i class="fas fa-check"></i> {{ t('Acceso a los 4 niveles completos', 'Full access to all 4 levels') }}</li>
+          <li><i class="fas fa-check"></i> {{ b.module_count }} {{ t('modulos con contenido interactivo', 'modules of interactive content') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('Archivos de practica por nivel', 'Practice files for every level') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('Revision personalizada de entregas', 'Personal review of your submissions') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('Acceso permanente, sin suscripcion', 'Permanent access, no subscription') }}</li>
         </ul>
       </div>
       <div class="bundle-spotlight__right">
         <div class="bundle-spotlight__price">{{ b.price_display }}</div>
-        <div class="bundle-spotlight__currency">USD · pago unico</div>
-        <div class="bundle-spotlight__savings"><i class="fas fa-tag"></i> Ahorra {{ b.savings }}</div>
+        <div class="bundle-spotlight__currency">USD · {{ t('pago unico', 'one-time payment') }}</div>
+        <div class="bundle-spotlight__savings"><i class="fas fa-tag"></i> {{ t('Ahorra', 'Save') }} {{ b.savings }}</div>
         {% if is_logged_in %}
           {% set all_purchased = 'nivel1' in purchased_levels and 'nivel2' in purchased_levels and 'nivel3' in purchased_levels and 'nivel4' in purchased_levels %}
           {% if all_purchased %}
             <div style="background:rgba(34,197,94,.15);color:#22c55e;padding:.6rem 1.2rem;border-radius:10px;font-size:.88rem;font-weight:600;">
-              <i class="fas fa-check-circle"></i> Ya tienes acceso completo
+              <i class="fas fa-check-circle"></i> {{ t('Ya tienes acceso completo', 'You already have full access') }}
             </div>
           {% else %}
             <form method="POST" action="{{ url_for('curso.checkout', product_id='bundle') }}">
               <button type="submit" class="btn btn-lg" style="background:var(--c-accent);color:#fff;font-weight:700;width:100%;">
-                <i class="fas fa-shopping-cart"></i> Comprar curso completo
+                <i class="fas fa-shopping-cart"></i> {{ t('Comprar curso completo', 'Buy the full course') }}
               </button>
             </form>
           {% endif %}
         {% else %}
           <a href="{{ url_for('curso.register') }}" class="btn btn-lg" style="background:var(--c-accent);color:#fff;font-weight:700;width:100%;">
-            Crear cuenta y comprar
+            {{ t('Crear cuenta y comprar', 'Create account & buy') }}
           </a>
         {% endif %}
       </div>
@@ -145,30 +145,30 @@
   </div>
 
   <!-- Section title -->
-  <h2 class="pricing-section-title reveal">O compra por nivel</h2>
+  <h2 class="pricing-section-title reveal">{{ t('O compra por nivel', 'Or buy one level at a time') }}</h2>
 
   <!-- 5 level cards in one row -->
   <div class="levels-grid">
     <!-- Free tier -->
     <div class="level-price-card level-price-card--free reveal reveal-delay-1">
       <div class="level-price-card__header" style="background:{{ levels.nivel0.color }};">
-        <h3>Nivel 0</h3>
-        <p class="sub">Fundamentos · {{ levels.nivel0.modules|length }} modulos</p>
+        <h3>{{ t('Nivel 0', 'Level 0') }}</h3>
+        <p class="sub">{{ t('Fundamentos', 'Fundamentals') }} · {{ levels.nivel0.modules|length }} {{ t('modulos', 'modules') }}</p>
       </div>
       <div class="level-price-card__body">
-        <div class="level-price-card__price" style="color:var(--c-success);">Gratis</div>
-        <p class="level-price-card__desc">La interfaz, atajos esenciales, estructura de datos, formato y mentalidad Excel.</p>
+        <div class="level-price-card__price" style="color:var(--c-success);">{{ t('Gratis', 'Free') }}</div>
+        <p class="level-price-card__desc">{{ t('La interfaz, atajos esenciales, estructura de datos, formato y mentalidad Excel.', 'The interface, essential shortcuts, data structure, formatting and the Excel mindset.') }}</p>
         <ul class="level-price-card__features">
-          <li><i class="fas fa-check"></i> {{ levels.nivel0.modules|length }} modulos</li>
-          <li><i class="fas fa-check"></i> Archivos de ejemplo</li>
-          <li><i class="fas fa-check"></i> Acceso inmediato</li>
+          <li><i class="fas fa-check"></i> {{ levels.nivel0.modules|length }} {{ t('modulos', 'modules') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('Archivos de ejemplo', 'Sample files') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('Acceso inmediato', 'Instant access') }}</li>
         </ul>
         {% if is_logged_in %}
           <div style="text-align:center;padding:.6rem;background:#dcfce7;color:#166534;border-radius:var(--radius);font-size:.85rem;font-weight:600;">
-            <i class="fas fa-check-circle"></i> Desbloqueado
+            <i class="fas fa-check-circle"></i> {{ t('Desbloqueado', 'Unlocked') }}
           </div>
         {% else %}
-          <a href="{{ url_for('curso.register') }}" class="btn btn-outline btn-full">Registrarme gratis</a>
+          <a href="{{ url_for('curso.register') }}" class="btn btn-outline btn-full">{{ t('Registrarme gratis', 'Sign up free') }}</a>
         {% endif %}
       </div>
     </div>
@@ -177,30 +177,30 @@
     {% for pk, plan in pricing.items() if pk != 'bundle' %}
     <div class="level-price-card reveal reveal-delay-{{ loop.index + 1 }}">
       <div class="level-price-card__header" style="background:{{ plan.color }};">
-        <h3>{{ plan.label }}</h3>
-        <p class="sub">{{ plan.module_count }} modulos</p>
+        <h3>{{ loc(plan, 'label') }}</h3>
+        <p class="sub">{{ plan.module_count }} {{ t('modulos', 'modules') }}</p>
       </div>
       <div class="level-price-card__body">
         <div class="level-price-card__price">{{ plan.price_display }} <span style="font-size:.8rem;font-weight:600;color:var(--c-text-muted);">USD</span></div>
-        <p class="level-price-card__desc">{{ plan.description }}</p>
+        <p class="level-price-card__desc">{{ loc(plan, 'description') }}</p>
         <ul class="level-price-card__features">
-          <li><i class="fas fa-check"></i> {{ plan.module_count }} modulos</li>
-          <li><i class="fas fa-check"></i> Archivos de practica</li>
-          <li><i class="fas fa-check"></i> Revision de entregas</li>
-          <li><i class="fas fa-check"></i> Acceso de por vida</li>
+          <li><i class="fas fa-check"></i> {{ plan.module_count }} {{ t('modulos', 'modules') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('Archivos de practica', 'Practice files') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('Revision de entregas', 'Submission reviews') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('Acceso de por vida', 'Lifetime access') }}</li>
         </ul>
         {% if is_logged_in %}
           {% if pk in purchased_levels %}
             <div style="text-align:center;padding:.6rem;background:#dcfce7;color:#166534;border-radius:var(--radius);font-size:.85rem;font-weight:600;">
-              <i class="fas fa-check-circle"></i> Ya tienes acceso
+              <i class="fas fa-check-circle"></i> {{ t('Ya tienes acceso', 'You already have access') }}
             </div>
           {% else %}
             <form method="POST" action="{{ url_for('curso.checkout', product_id=pk) }}">
-              <button type="submit" class="btn btn-primary btn-full">Comprar</button>
+              <button type="submit" class="btn btn-primary btn-full">{{ t('Comprar', 'Buy now') }}</button>
             </form>
           {% endif %}
         {% else %}
-          <a href="{{ url_for('curso.register') }}" class="btn btn-outline btn-full">Crear cuenta</a>
+          <a href="{{ url_for('curso.register') }}" class="btn btn-outline btn-full">{{ t('Crear cuenta', 'Create account') }}</a>
         {% endif %}
       </div>
     </div>
@@ -209,23 +209,23 @@
 
   <!-- FAQ -->
   <div class="faq-section reveal">
-    <h2>Preguntas frecuentes</h2>
+    <h2>{{ t('Preguntas frecuentes', 'Frequently asked questions') }}</h2>
     <div class="faq-grid">
       <div class="faq-item">
-        <h4>¿El acceso es de por vida?</h4>
-        <p>Si. Una vez que compras un nivel, tienes acceso permanente a todos sus modulos y archivos.</p>
+        <h4>{{ t('¿El acceso es de por vida?', 'Is access really for life?') }}</h4>
+        <p>{{ t('Si. Una vez que compras un nivel, tienes acceso permanente a todos sus modulos y archivos.', 'Yes. Once you buy a level, you get permanent access to all of its modules and files.') }}</p>
       </div>
       <div class="faq-item">
-        <h4>¿Puedo comprar niveles individuales y luego el paquete?</h4>
-        <p>Si, pero te recomendamos el paquete completo desde el inicio para ahorrar $20.</p>
+        <h4>{{ t('¿Puedo comprar niveles individuales y luego el paquete?', 'Can I buy individual levels and get the bundle later?') }}</h4>
+        <p>{{ t('Si, pero te recomendamos el paquete completo desde el inicio para ahorrar $20.', 'Yes, but we recommend getting the full bundle from the start to save $20.') }}</p>
       </div>
       <div class="faq-item">
-        <h4>¿Que metodos de pago aceptan?</h4>
-        <p>Aceptamos tarjetas de credito y debito (Visa, Mastercard, American Express) a traves de Stripe.</p>
+        <h4>{{ t('¿Que metodos de pago aceptan?', 'What payment methods do you accept?') }}</h4>
+        <p>{{ t('Aceptamos tarjetas de credito y debito (Visa, Mastercard, American Express) a traves de Stripe.', 'We accept credit and debit cards (Visa, Mastercard, American Express) through Stripe.') }}</p>
       </div>
       <div class="faq-item">
-        <h4>¿Necesito saber Excel para empezar?</h4>
-        <p>No. El Nivel 0 (gratis) parte desde cero. Los niveles pagados construyen sobre esa base progresivamente.</p>
+        <h4>{{ t('¿Necesito saber Excel para empezar?', 'Do I need to know Excel to get started?') }}</h4>
+        <p>{{ t('No. El Nivel 0 (gratis) parte desde cero. Los niveles pagados construyen sobre esa base progresivamente.', 'No. Level 0 (free) starts from scratch. The paid levels build on that foundation step by step.') }}</p>
       </div>
     </div>
   </div>

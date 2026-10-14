@@ -1,0 +1,40 @@
+import { useState } from "react";
+const V = { 50: "#F9EAED", 100: "#EDCAD0", 200: "#DCA3AD", 300: "#C97A8A", 400: "#B05A6A", 500: "#963B4D", 600: "#7B1D32", 700: "#6A1629", 800: "#520F1E", 900: "#3A0911" };
+const SECTIONS = [{ title: "The Problem It Solves", content: [{ type: "definition_list", items: [{ term: "Without Power Pivot", def: "To combine tables you need XLOOKUP or INDEX+MATCH. With 10 columns from 3 tables, that becomes unmanageable." }, { term: "With Power Pivot", def: "You relate tables directly (like a database) and analyze them with PivotTables, no lookup formulas needed." }, { term: "Volume", def: "The Data Model handles millions of rows that would be impossible on regular worksheets." }] }] }, { title: "Enable It and Add Data", content: [{ type: "definition_list", items: [{ term: "Enable", def: "File > Options > Add-ins > COM Add-ins > check Microsoft Power Pivot for Excel." }, { term: "Add data", def: "Power Pivot > Add to Data Model, or when creating a PivotTable check Add this data to the Data Model." }, { term: "Manage", def: "Power Pivot > Manage opens the Data Model editor with Data View and Diagram View." }] }] }, { title: "Relationships", content: [{ type: "definition_list", items: [{ term: "Create", def: "Power Pivot > Manage > Diagram View. Drag a field from one table onto another to create the relationship." }, { term: "Type", def: "Relationships are one-to-many. Example: a ProductID in Products appears many times in Sales." }, { term: "Result", def: "A PivotTable can use fields from both tables without XLOOKUP." }] }] }, { title: "Intro to DAX", content: [{ type: "definition_list", items: [{ term: "SUM", def: "=SUM(Sales[Amount]). Sums the whole column within the current context. The context is set by the PivotTable's filters." }, { term: "CALCULATE", def: "=CALCULATE(SUM(Sales[Amount]), Products[Category]=\"Electronics\"). Modifies the filter context. The most important function in DAX." }, { term: "SUMX", def: "=SUMX(Sales, Sales[Quantity]*Sales[UnitPrice]). An iterator: goes row by row and sums the result." }, { term: "RELATED", def: "=RELATED(Products[Category]). Pulls a value from a related table. Calculated Columns only." }] }] }, { title: "Measures vs Calculated Columns", content: [{ type: "definition_list", items: [{ term: "Calculated Column", def: "Adds a column to the table. Stored in memory. Calculated row by row. Use it for fixed attributes." }, { term: "Measure", def: "Calculated dynamically based on the PivotTable's context. Use it for reporting metrics." }, { term: "Rule of thumb", def: "If it depends on the report's context, use a Measure. If it's a fixed attribute of each row, use a Calculated Column." }] }] }];
+export default function Module() {
+  const [openSection, setOpenSection] = useState(0);
+  const renderBlock = (block, bi) => {
+    if (block.type === "text") return <p key={bi} style={{ fontSize: 14, color: "var(--color-text-secondary)", margin: bi === 0 ? "0 0 14px" : "14px 0", lineHeight: 1.7 }}>{block.value}</p>;
+    if (block.type === "definition_list") return (<div key={bi} style={{ display: "flex", flexDirection: "column", gap: 10, margin: "10px 0" }}>{block.items.map((item, di) => (<div key={di} style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "10px 14px" }}><div style={{ fontSize: 13, fontWeight: 500, color: V[600], marginBottom: 2 }}>{item.term}</div><div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>{item.def}</div></div>))}</div>);
+    if (block.type === "key_points") return (<div key={bi} style={{ display: "flex", flexDirection: "column", gap: 10, margin: "10px 0" }}>{block.items.map((item, ki) => (<div key={ki} style={{ borderLeft: `2px solid ${V[200]}`, paddingLeft: 14 }}><div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 3 }}>{item.title}</div><div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>{item.text}</div></div>))}</div>);
+    return null;
+  };
+  return (
+    <div style={{ maxWidth: 680, margin: "0 auto", padding: "0.5rem 0 2rem" }}>
+      <div style={{ marginBottom: "1.5rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", padding: "3px 10px", borderRadius: "var(--border-radius-md)", background: V[50], color: V[800] }}>LEVEL 4 — EXCEL PRO</span>
+          <span style={{ fontSize: 12, color: "var(--color-text-tertiary)" }}>Module 3 of 6</span>
+        </div>
+        <h1 style={{ fontSize: 22, fontWeight: 500, color: "var(--color-text-primary)", margin: "0 0 6px" }}>Power Pivot and the Data Model</h1>
+        <p style={{ fontSize: 14, color: "var(--color-text-secondary)", margin: 0, lineHeight: 1.6 }}>Relationships between tables and DAX measures: CALCULATE, SUMX, RELATED. Millions of rows.</p>
+      </div>
+      <div style={{ background: V[50], borderLeft: `3px solid ${V[400]}`, borderRadius: "0 var(--border-radius-md) var(--border-radius-md) 0", padding: "12px 16px", marginBottom: "1.5rem" }}>
+        <div style={{ fontSize: 11, fontWeight: 500, color: V[600], letterSpacing: "0.04em", marginBottom: 2 }}>GOAL</div>
+        <p style={{ fontSize: 13, color: V[800], margin: 0, lineHeight: 1.6 }}>Be able to work with multiple related tables and build analyses with basic DAX.</p>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {SECTIONS.map((s, si) => { const isOpen = openSection === si; return (<div key={si} style={{ borderRadius: "var(--border-radius-md)", border: `0.5px solid ${isOpen ? V[200] : "var(--color-border-tertiary)"}` }}><div onClick={() => setOpenSection(isOpen ? -1 : si)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", cursor: "pointer" }}><div style={{ width: 28, height: 28, minWidth: 28, borderRadius: "50%", background: isOpen ? V[600] : V[50], display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 500, color: isOpen ? "#fff" : V[600] }}>{si + 1}</div><span style={{ flex: 1, fontSize: 15, fontWeight: 500, color: isOpen ? V[800] : "var(--color-text-primary)" }}>{s.title}</span><span style={{ fontSize: 16, color: "var(--color-text-tertiary)", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>&#x25BE;</span></div>{isOpen && <div style={{ padding: "0 16px 16px 56px" }}>{s.content.map((b, bi) => renderBlock(b, bi))}</div>}</div>); })}
+      </div>
+      <div style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-lg)", padding: "1.25rem", marginTop: "1.5rem" }}>
+        <div style={{ fontSize: 14, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 10 }}>Key takeaways</div>
+        {["Power Pivot relates tables without lookup formulas.", "Use Diagram View to create Relationships by dragging fields.", "CALCULATE modifies the filter context. It's the key DAX function.", "SUMX iterates row by row. RELATED pulls data from related tables.", "Measures for dynamic metrics. Calculated Columns for fixed attributes."].map((p, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "6px 0", borderTop: i > 0 ? "0.5px solid var(--color-border-tertiary)" : "none" }}><div style={{ width: 6, height: 6, minWidth: 6, borderRadius: "50%", background: V[400], marginTop: 7 }} /><span style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>{p}</span></div>))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.5rem", paddingTop: "1rem", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
+        <span style={{ fontSize: 13, fontWeight: 500, color: V[600] }}>Previous: Intro to VBA</span>
+        <span style={{ fontSize: 13, fontWeight: 500, color: V[600] }}>Next: Connecting to External Data Sources</span>
+      </div>
+    </div>
+  );
+}

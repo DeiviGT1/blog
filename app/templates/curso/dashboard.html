@@ -201,9 +201,9 @@
   <!-- ══════════ LEFT SIDEBAR ══════════ -->
   <aside class="dash-side">
     <div class="dash-side__greeting">
-      <h2>{{ session.get('curso_username', 'Estudiante') }}</h2>
+      <h2>{{ session.get('curso_username') or t('Estudiante', 'Student') }}</h2>
       <p>
-        {% if is_admin %}Administrador{% else %}Tu progreso{% endif %}
+        {% if is_admin %}{{ t('Administrador', 'Administrator') }}{% else %}{{ t('Tu progreso', 'Your progress') }}{% endif %}
       </p>
     </div>
 
@@ -214,11 +214,11 @@
              data-level="{{ lk }}" onclick="switchLevel('{{ lk }}')">
           <div class="dash-side__level-dot" style="background:{{ lv.color }};"></div>
           <div class="dash-side__level-info">
-            <span class="dash-side__level-name">{{ lv.short }}</span>
-            <span class="dash-side__level-meta">{{ lv.modules|length }} modulos</span>
+            <span class="dash-side__level-name">{{ loc(lv, 'short') }}</span>
+            <span class="dash-side__level-meta">{{ lv.modules|length }} {{ t('módulos', 'modules') }}</span>
           </div>
           {% if lk == 'nivel0' %}
-            <span class="dash-side__level-tag" style="background:#dcfce7;color:#166534;">Gratis</span>
+            <span class="dash-side__level-tag" style="background:#dcfce7;color:#166534;">{{ t('Gratis', 'Free') }}</span>
           {% elif not purchased and not is_admin %}
             <span class="dash-side__level-tag" style="background:var(--c-bg);color:var(--c-text-muted);">
               <i class="fas fa-lock" style="font-size:.5rem;"></i>
@@ -245,8 +245,8 @@
     <div class="dash-panel {% if loop.first %}active{% endif %}" data-panel="{{ lk }}">
 
       <div class="dash-panel__header">
-        <span class="dash-panel__badge" style="background:{{ lv.color }};">Nivel {{ lv.level_num }}</span>
-        <span class="dash-panel__title">{{ lv.title }}</span>
+        <span class="dash-panel__badge" style="background:{{ lv.color }};">{{ t('Nivel', 'Level') }} {{ lv.level_num }}</span>
+        <span class="dash-panel__title">{{ loc(lv, 'title') }}</span>
       </div>
 
       {% if level_purchased or is_admin %}
@@ -260,14 +260,14 @@
                {% if not enabled %}onclick="return false;"{% endif %}>
               <div class="dash-mcard__num">{{ loop.index }}</div>
               <div class="dash-mcard__info">
-                <div class="dash-mcard__title">{{ mod.title }}</div>
-                <div class="dash-mcard__sub">Modulo {{ loop.index }} de {{ lv.modules|length }}</div>
+                <div class="dash-mcard__title">{{ loc(mod, 'title') }}</div>
+                <div class="dash-mcard__sub">{{ t('Módulo', 'Module') }} {{ loop.index }} {{ t('de', 'of') }} {{ lv.modules|length }}</div>
               </div>
               {% if enabled %}
                 {% if submitted %}
-                  <span class="dash-mcard__badge dash-mcard__badge--submitted"><i class="fas fa-check"></i> Entregado</span>
+                  <span class="dash-mcard__badge dash-mcard__badge--submitted"><i class="fas fa-check"></i> {{ t('Entregado', 'Submitted') }}</span>
                 {% else %}
-                  <span class="dash-mcard__badge dash-mcard__badge--available">Disponible</span>
+                  <span class="dash-mcard__badge dash-mcard__badge--available">{{ t('Disponible', 'Available') }}</span>
                 {% endif %}
                 <span class="dash-mcard__arrow"><i class="fas fa-chevron-right"></i></span>
               {% else %}
@@ -280,11 +280,11 @@
         <!-- Files & practice -->
         <div class="dash-filesrow">
           <div class="dash-filesrow__left">
-            <span class="dash-filesrow__label"><i class="fas fa-folder-open"></i> Archivos</span>
+            <span class="dash-filesrow__label"><i class="fas fa-folder-open"></i> {{ t('Archivos', 'Files') }}</span>
             {% for xlsx in lv.xlsx %}
               <a href="{{ url_for('curso.modulo', module_id=lv.modules[0].id) }}"
-                 class="btn btn-outline btn-sm" title="Disponible dentro del modulo">
-                <i class="fas fa-file-excel"></i> {{ xlsx.replace('_', ' ').replace('.xlsx', '') }}
+                 class="btn btn-outline btn-sm" title="{{ t('Disponible dentro del módulo', 'Available inside the module') }}">
+                <i class="fas fa-file-excel"></i> {{ t(xlsx.replace('_', ' ').replace('.xlsx', ''), xlsx.replace('nivel', 'Level ').replace('_ejemplos', ' examples').replace('_practica', ' practice').replace('.xlsx', '')) }}
               </a>
             {% endfor %}
           </div>
@@ -293,12 +293,12 @@
             {% set ya_entregado = practica_id in submitted_modules %}
             {% if ya_entregado %}
               <span style="font-size:.8rem;color:var(--c-success);font-weight:600;">
-                <i class="fas fa-check-circle"></i> Practica entregada
+                <i class="fas fa-check-circle"></i> {{ t('Práctica entregada', 'Practice submitted') }}
               </span>
               <form method="POST" action="{{ url_for('curso.submit', module_id=practica_id) }}"
                     enctype="multipart/form-data" style="display:inline;">
                 <label class="btn btn-outline btn-sm" style="cursor:pointer;">
-                  <i class="fas fa-redo"></i> Reenviar
+                  <i class="fas fa-redo"></i> {{ t('Reenviar', 'Resubmit') }}
                   <input type="file" name="file" accept=".xlsx,.xls,.xlsm"
                          style="display:none;" onchange="this.closest('form').submit()">
                 </label>
@@ -307,7 +307,7 @@
               <form method="POST" action="{{ url_for('curso.submit', module_id=practica_id) }}"
                     enctype="multipart/form-data" style="display:inline-flex;align-items:center;gap:.5rem;">
                 <label class="btn btn-primary btn-sm" style="cursor:pointer;">
-                  <i class="fas fa-upload"></i> Entregar practica
+                  <i class="fas fa-upload"></i> {{ t('Entregar práctica', 'Submit practice') }}
                   <input type="file" name="file" accept=".xlsx,.xls,.xlsm"
                          style="display:none;" onchange="this.closest('form').submit()">
                 </label>
@@ -320,17 +320,17 @@
         <!-- Locked level -->
         <div class="dash-locked-panel">
           <div class="dash-locked-panel__icon"><i class="fas fa-lock"></i></div>
-          <div class="dash-locked-panel__title">Nivel bloqueado</div>
+          <div class="dash-locked-panel__title">{{ t('Nivel bloqueado', 'Locked level') }}</div>
           <div class="dash-locked-panel__sub">
-            Desbloquea {{ lv.modules|length }} modulos con ejercicios practicos y revision personalizada del instructor.
+            {{ t('Desbloquea', 'Unlock') }} {{ lv.modules|length }} {{ t('módulos con ejercicios prácticos y revisión personalizada del instructor.', 'modules with hands-on exercises and personalized instructor feedback.') }}
           </div>
           <div class="dash-locked-panel__modules">
             {% for mod in lv.modules %}
-              <span class="dash-locked-panel__mod">{{ mod.title }}</span>
+              <span class="dash-locked-panel__mod">{{ loc(mod, 'title') }}</span>
             {% endfor %}
           </div>
           <a href="{{ url_for('curso.pricing') }}" class="btn btn-primary">
-            <i class="fas fa-lock-open"></i> Ver planes
+            <i class="fas fa-lock-open"></i> {{ t('Ver planes', 'See plans') }}
           </a>
         </div>
       {% endif %}
@@ -349,12 +349,12 @@
       {% if unpurchased|length > 1 %}
         <div class="dash-bundle-bar">
           <div>
-            <strong><i class="fas fa-bolt"></i> Curso completo — $60 USD</strong>
-            <p>Ahorra $20 comprando los 4 niveles juntos.</p>
+            <strong><i class="fas fa-bolt"></i> {{ t('Curso completo', 'Full course') }} — $60 USD</strong>
+            <p>{{ t('Ahorra $20 comprando los 4 niveles juntos.', 'Save $20 by buying all 4 levels together.') }}</p>
           </div>
           <form method="POST" action="{{ url_for('curso.checkout', product_id='bundle') }}">
             <button type="submit" class="btn" style="background:var(--c-accent);color:#fff;font-weight:700;">
-              <i class="fas fa-shopping-cart"></i> Comprar
+              <i class="fas fa-shopping-cart"></i> {{ t('Comprar', 'Buy') }}
             </button>
           </form>
         </div>

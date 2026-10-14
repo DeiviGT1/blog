@@ -1,9 +1,9 @@
 {% extends "curso/base_curso.html" %}
-{% block title %}Autenticando...{% endblock %}
+{% block title %}{{ t('Autenticando...', 'Signing in...') }}{% endblock %}
 
 {% block content %}
 <main class="curso-main" style="text-align:center;padding-top:4rem;">
-  <p style="font-size:1.1rem;color:var(--c-text-muted);">Completando inicio de sesión con Google…</p>
+  <p style="font-size:1.1rem;color:var(--c-text-muted);">{{ t('Completando inicio de sesión con Google…', 'Completing Google sign-in…') }}</p>
 </main>
 {% endblock %}
 
