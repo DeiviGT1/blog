@@ -19,6 +19,8 @@ from openpyxl.chart.series import SeriesLabel
 
 # ── Formula name maps ─────────────────────────────────────────────────────────
 
+import re
+
 FORMULAS = {
     "es": {
         "SUM":        "SUMA",
@@ -107,6 +109,40 @@ FORMULAS = {
         ]
     }
 }
+
+
+# ── Fórmulas SIEMPRE en inglés dentro del archivo ────────────────────────────
+# Un .xlsx guarda las fórmulas en inglés; Excel las traduce al idioma de cada
+# usuario al abrirlo. Si se escribe "=SUMA(...)" en el archivo, Excel (incluso
+# en español) muestra #¿NOMBRE?. Por eso las celdas con fórmula se pasan a
+# inglés al final; los TEXTOS de instrucciones sí nombran las funciones en el
+# idioma elegido (con f()).
+
+_ES_TO_EN = {es.upper(): en for en, es in FORMULAS["es"].items()}
+_FUNC_TOKEN = re.compile(r'"[^"]*"|(?<![A-Za-z0-9_.])([A-Za-zÁÉÍÓÚÑáéíóúñ][A-Za-zÁÉÍÓÚÑáéíóúñ0-9_.]*)(?=\()')
+
+
+def to_english_formula(formula: str) -> str:
+    def sub(m):
+        if m.group(1) is None:  # texto entre comillas: no se toca
+            return m.group(0)
+        return _ES_TO_EN.get(m.group(1).upper(), m.group(1))
+    return _FUNC_TOKEN.sub(sub, formula)
+
+
+# Celdas que empiezan con "=" pero son texto explicativo, no fórmulas.
+_DISPLAY_ONLY = re.compile(r"←|^=\s+\(")
+
+
+def _formulas_to_english(wb):
+    for ws in wb.worksheets:
+        for row in ws.iter_rows():
+            for c in row:
+                if isinstance(c.value, str) and c.value.startswith("="):
+                    if _DISPLAY_ONLY.search(c.value):
+                        c.data_type = "s"  # muestra una fórmula como texto (p. ej. "= (igual)")
+                    else:
+                        c.value = to_english_formula(c.value)
 
 
 def f(lang, name):
@@ -1271,6 +1307,7 @@ def generate_excel(level_key: str, file_type: str, lang: str = "es") -> bytes:
     wb.active.sheet_properties.tabColor = color
 
     gen_fn(wb, lang)
+    _formulas_to_english(wb)
 
     # Add a README sheet at the end
     ws_readme = wb.create_sheet("ℹ️ Instructions")

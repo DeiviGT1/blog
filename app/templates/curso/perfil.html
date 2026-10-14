@@ -42,7 +42,7 @@
         <i class="fas fa-language"></i> {{ t('Idioma de fórmulas de Excel', 'Excel formula language') }}
       </h2>
       <p style="font-size:.85rem; opacity:.85; margin:.25rem 0 0;">
-        {{ t('Elige en qué idioma quieres que se generen los archivos .xlsx descargables.', 'Choose the language for the formulas in downloadable .xlsx files.') }}
+        {{ t('Elige cómo se nombran las funciones en las instrucciones de los archivos descargables.', 'Choose how functions are named in the instructions of downloadable files.') }}
       </p>
     </div>
 
@@ -111,14 +111,15 @@
           background:#fffbeb; border:1px solid #fcd34d; border-radius:.6rem;
           padding:.9rem 1.1rem; font-size:.85rem; color:#78350f; line-height:1.6;
         ">
-          <strong><i class="fas fa-info-circle"></i> {{ t('¿Por qué importa?', 'Why does it matter?') }}</strong><br>
+          <strong><i class="fas fa-info-circle"></i> {{ t('Funciona en cualquier Excel', 'Works in any Excel') }}</strong><br>
           {% if lang == 'en' %}
-          In Excel installed in <strong>Spanish</strong> you have to use <code>SUMA</code>, <code>SI</code>, <code>BUSCARX</code>, etc.
-          If you use English formulas you’ll get the <code>#¿NOMBRE?</code> / <code>#NAME?</code> error.
+          Course files work in Excel in English and in Spanish: Excel translates the formulas automatically when you
+          open them (<code>SUM</code> shows up as <code>SUMA</code> in Spanish Excel). This option only changes how
+          functions are named in the written instructions.
           {% else %}
-          En Excel instalado en <strong>español</strong> debes usar <code>SUMA</code>, <code>SI</code>, <code>BUSCARX</code>, etc.
-          Si usas fórmulas en inglés verás el error <code>#¿NOMBRE?</code> / <code>#NAME?</code>.
-          Los archivos descargados del curso se generarán con las fórmulas en el idioma que elijas aquí.
+          Los archivos del curso funcionan en Excel en español y en inglés: Excel traduce las fórmulas solo al
+          abrirlos (<code>SUM</code> aparece como <code>SUMA</code> en Excel en español). Esta opción solo cambia cómo
+          se nombran las funciones en las instrucciones escritas.
           {% endif %}
         </div>
 
