@@ -278,6 +278,18 @@ def _unlock_levels_for_user(user_id: str, level_keys: list):
             bulk_set_level_permissions(user_id, mids, True, None)
 
 
+def _accessible_levels(user_id: str) -> set:
+    """Niveles que el usuario puede usar: comprados, gratis o con algún módulo
+    habilitado por el admin. El admin los ve todos."""
+    if session.get("curso_is_admin"):
+        return set(LEVELS)
+    from app.python.supabase_client import get_user_permissions
+    enabled = get_user_permissions(user_id)
+    levels = _get_purchased_levels(user_id)
+    levels |= {lk for lk, lv in LEVELS.items() if any(m["id"] in enabled for m in lv["modules"])}
+    return levels
+
+
 # ── Input validation helpers ──────────────────────────────────────────────────
 
 def _valid_uuid(value: str) -> bool:
@@ -300,10 +312,36 @@ def require_login(f):
     return decorated
 
 
+PROFILE_RECHECK_SECONDS = 600
+
+
+def _refresh_profile(force: bool = False) -> bool:
+    """Vuelve a leer el perfil de la base cada 10 min (o siempre con force):
+    un usuario revocado o un admin degradado pierde el acceso sin esperar a que
+    cierre sesión. Devuelve False si la sesión ya no es válida."""
+    import time
+    now = int(time.time())
+    if not force and now - session.get("curso_checked_at", 0) < PROFILE_RECHECK_SECONDS:
+        return True
+    try:
+        from app.python.supabase_client import get_profile
+        profile = get_profile(session["curso_user_id"])
+    except Exception:
+        logger.exception("No se pudo revalidar el perfil")
+        return not force  # si la base falla, no se tumba a todos; el admin sí se exige
+    if not profile:
+        _clear_session()
+        return False
+    session["curso_is_admin"]    = bool(profile.get("is_admin"))
+    session["curso_is_approved"] = bool(profile.get("is_approved"))
+    session["curso_checked_at"]  = now
+    return True
+
+
 def require_approved(f):
     @functools.wraps(f)
     def decorated(*args, **kwargs):
-        if not session.get("curso_user_id"):
+        if not session.get("curso_user_id") or not _refresh_profile():
             return redirect(url_for("curso.login"))
         if not session.get("curso_is_admin") and not session.get("curso_is_approved"):
             return redirect(url_for("curso.pending"))
@@ -314,7 +352,8 @@ def require_approved(f):
 def require_admin(f):
     @functools.wraps(f)
     def decorated(*args, **kwargs):
-        if not session.get("curso_is_admin"):
+        if not session.get("curso_user_id") or not _refresh_profile(force=True) \
+                or not session.get("curso_is_admin"):
             abort(403)
         return f(*args, **kwargs)
     return decorated
@@ -328,7 +367,8 @@ def _save_session(user_id, email, username, is_admin, is_approved, access_token)
     session["curso_username"]    = username
     session["curso_is_admin"]    = is_admin
     session["curso_is_approved"] = is_approved
-    session["curso_access_token"]= access_token
+    session["curso_checked_at"]  = 0
+    session.permanent = True  # expira (PERMANENT_SESSION_LIFETIME), no vive para siempre
     # Cache formula language preference so we don't hit DB on every download
     try:
         from app.python.supabase_client import get_formula_lang
@@ -351,23 +391,25 @@ def _after_auth(user, access_token):
         set_admin, get_all_permissions_for_user, bulk_set_level_permissions,
     )
     user_id  = user.id
-    email    = user.email
+    email    = user.email or ""
     username = (user.user_metadata or {}).get("username") or \
                (user.user_metadata or {}).get("full_name") or \
-               email.split("@")[0]
+               (email.split("@")[0] if email else "estudiante")
 
     profile = get_profile(user_id)
 
-    admin_email = current_app.config.get("ADMIN_EMAIL", "")
-    is_admin    = email == admin_email or (profile and profile.get("is_admin", False))
-    # Auto-approve all users — payment model replaces manual admin gating
-    is_approved = True
+    admin_email = (current_app.config.get("ADMIN_EMAIL") or "").strip().lower()
+    # El correo de admin solo cuenta si está confirmado (base compartida con otras apps)
+    is_admin    = bool(admin_email and email.lower() == admin_email and getattr(user, "email_confirmed_at", None)) \
+                  or bool(profile and profile.get("is_admin", False))
 
     if not profile:
+        # Cuentas nuevas quedan aprobadas: el pago reemplaza la aprobación manual
+        is_approved = True
         create_or_update_profile(user_id, email, username, is_admin, is_approved)
     else:
-        if not profile.get("is_approved"):
-            approve_user(user_id)
+        # Si el admin revocó el acceso, se respeta (antes se re-aprobaba en cada login)
+        is_approved = bool(profile.get("is_approved")) or is_admin
         if is_admin and not profile.get("is_admin"):
             set_admin(user_id, True)
 
@@ -390,7 +432,7 @@ def _after_auth(user, access_token):
                 bulk_set_level_permissions(user_id, lk_new, True, None)
 
     _save_session(user_id, email, username, is_admin, is_approved, access_token)
-    return True  # Always approved
+    return is_approved
 
 
 # ── JSX transformer ───────────────────────────────────────────────────────────
@@ -489,25 +531,58 @@ def forgot_password():
             pass  # Don't reveal whether the email exists
         flash(tr("Si ese correo está registrado, recibirás un enlace para restablecer tu contraseña.", "If that email is registered, you'll receive a link to reset your password."), "success")
         return redirect(url_for("curso.login"))
+    if request.args.get("expired"):
+        flash(tr("Enlace de recuperación inválido o expirado. Pide uno nuevo.", "Invalid or expired reset link. Request a new one."), "error")
     return render_template("curso/forgot_password.html")
 
 
 @curso_bp.route("/auth/reset-callback")
 def reset_callback():
-    """Supabase redirects here after the user clicks the reset link in their email."""
+    """Supabase manda aquí al usuario desde el correo de recuperación. El enlace
+    puede traer el token de tres formas, según la configuración de Supabase:
+      ?token_hash=…&type=recovery  (plantilla de correo personalizada)
+      ?code=…                      (PKCE)
+      #access_token=…              (flujo implícito: el hash solo lo ve el navegador)
+    """
+    from app.python.supabase_client import get_client
+    token_hash = request.args.get("token_hash")
     code = request.args.get("code")
-    if not code:
+    try:
+        if token_hash:
+            resp = get_client().auth.verify_otp({"token_hash": token_hash, "type": "recovery"})
+            session["curso_reset_token"] = resp.session.access_token
+            return redirect(url_for("curso.reset_password"))
+        if code:
+            resp = get_client().auth.exchange_code_for_session({
+                "auth_code": code, "code_verifier": session.pop("curso_pkce_verifier", None)})
+            session["curso_reset_token"] = resp.session.access_token
+            return redirect(url_for("curso.reset_password"))
+    except Exception:
+        logger.exception("reset_callback: enlace inválido")
         flash(tr("Enlace de recuperación inválido o expirado.", "Invalid or expired reset link."), "error")
-        return redirect(url_for("curso.login"))
-    # Store code in session and send user to the form
-    session["curso_reset_code"] = code
-    return redirect(url_for("curso.reset_password"))
+        return redirect(url_for("curso.forgot_password"))
+    # Sin parámetros: el token viene en el hash → lo lee el navegador
+    return render_template("curso/reset_callback.html")
+
+
+@curso_bp.route("/auth/reset-session", methods=["POST"])
+def reset_session():
+    """Recibe el access_token de recuperación que el navegador sacó del hash."""
+    data  = request.get_json(silent=True) or {}
+    token = data.get("access_token", "")
+    if data.get("type") != "recovery" or not token:
+        return {"ok": False}, 400
+    from app.python.supabase_client import get_user_from_token
+    if not get_user_from_token(token):
+        return {"ok": False}, 401
+    session["curso_reset_token"] = token
+    return {"ok": True}
 
 
 @curso_bp.route("/reset-password", methods=["GET", "POST"])
 def reset_password():
-    code = session.get("curso_reset_code")
-    if not code:
+    token = session.get("curso_reset_token")
+    if not token:
         flash(tr("Enlace de recuperación inválido o expirado.", "Invalid or expired reset link."), "error")
         return redirect(url_for("curso.login"))
 
@@ -521,16 +596,15 @@ def reset_password():
             flash(tr("Las contraseñas no coinciden.", "Passwords don't match."), "error")
             return render_template("curso/reset_password.html")
         try:
-            from app.python.supabase_client import get_client, update_user_password
-            sb   = get_client()
-            resp = sb.auth.exchange_code_for_session({"auth_code": code})
-            update_user_password(resp.session.access_token, password)
-            session.pop("curso_reset_code", None)
+            from app.python.supabase_client import update_user_password
+            update_user_password(token, password)
+            session.pop("curso_reset_token", None)
             flash(tr("¡Contraseña actualizada! Ya puedes iniciar sesión.", "Password updated! You can log in now."), "success")
             return redirect(url_for("curso.login"))
-        except Exception as e:
+        except Exception:
+            logger.exception("reset_password falló")
             flash(tr("El enlace expiró o ya fue usado. Solicita uno nuevo.", "The link expired or was already used. Request a new one."), "error")
-            session.pop("curso_reset_code", None)
+            session.pop("curso_reset_token", None)
             return redirect(url_for("curso.forgot_password"))
 
     return render_template("curso/reset_password.html")
@@ -556,16 +630,15 @@ def register():
         try:
             from app.python.supabase_client import sign_up
             sign_up(email, password, username)
-            # Store credentials for post-verification login
-            session["curso_verify_email"]    = email
-            session["curso_verify_password"] = password
+            session["curso_verify_email"] = email
             return redirect(url_for("curso.verify_email"))
         except Exception as e:
             msg = str(e)
             if "already registered" in msg or "already exists" in msg:
                 flash(tr("Este correo ya esta registrado.", "This email is already registered."), "error")
             else:
-                flash(tr("Error al crear la cuenta: ", "Error creating account: ") + str(msg), "error")
+                logger.exception("register falló")
+                flash(tr("No se pudo crear la cuenta. Revisa los datos e intenta de nuevo.", "Couldn't create the account. Check your details and try again."), "error")
 
     return render_template("curso/register.html")
 
@@ -585,18 +658,13 @@ def verify_email():
             from app.python.supabase_client import verify_email_otp
             resp = verify_email_otp(email, token)
             # OTP verified — user is now confirmed, sign them in
-            password = session.pop("curso_verify_password", "")
             session.pop("curso_verify_email", None)
             if resp.user and resp.session:
                 _after_auth(resp.user, resp.session.access_token)
                 flash(tr("¡Cuenta verificada! El Nivel 0 ya esta desbloqueado.", "Account verified! Level 0 is now unlocked."), "success")
                 return redirect(url_for("curso.dashboard"))
-            # Fallback: sign in with password if OTP didn't return session
-            from app.python.supabase_client import sign_in
-            login_resp = sign_in(email, password)
-            _after_auth(login_resp.user, login_resp.session.access_token)
-            flash(tr("¡Cuenta verificada! El Nivel 0 ya esta desbloqueado.", "Account verified! Level 0 is now unlocked."), "success")
-            return redirect(url_for("curso.dashboard"))
+            flash(tr("¡Cuenta verificada! Inicia sesión para entrar.", "Account verified! Log in to continue."), "success")
+            return redirect(url_for("curso.login"))
         except Exception as e:
             msg = str(e).lower()
             if "expired" in msg or "invalid" in msg:
@@ -651,8 +719,9 @@ def auth_callback():
             if approved:
                 return redirect(url_for("curso.dashboard"))
             return redirect(url_for("curso.pending"))
-        except Exception as e:
-            flash(tr("Error de autenticación: ", "Authentication error: ") + str(e), "error")
+        except Exception:
+            logger.exception("auth_callback falló")
+            flash(tr("No se pudo iniciar sesión con Google. Intenta de nuevo.", "Couldn't sign in with Google. Please try again."), "error")
             return redirect(url_for("curso.login"))
 
     # Fallback — token in URL hash (implicit flow), handled by JS
@@ -716,6 +785,7 @@ def dashboard():
         enabled_modules=enabled,
         submitted_modules=submitted_modules,
         latest_practice=latest_practice,
+        bundle_offer=_bundle_offer(purchased),
         purchased_levels=purchased,
         is_admin=is_admin,
         pricing=PRICING,
@@ -737,7 +807,8 @@ def modulo(module_id):
         return redirect(url_for("curso.dashboard"))
 
     # Load and transform JSX
-    modulos_dir = os.path.join(current_app.root_path, "static", "curso", "modulos")
+    # Fuera de /static a propósito: el contenido pagado solo sale por esta ruta
+    modulos_dir = os.path.join(current_app.root_path, "private", "curso", "modulos")
     jsx_path = os.path.join(modulos_dir, f"{module_id}.jsx")
     if get_lang() == "en":
         en_path = os.path.join(modulos_dir + "_en", f"{module_id}.jsx")
@@ -802,6 +873,9 @@ def descargar(filename):
     if m:
         level_key = m.group(1).lower()
         file_type = m.group(2).lower()
+        if level_key not in _accessible_levels(session["curso_user_id"]):
+            flash(tr("Este nivel no está desbloqueado en tu cuenta.", "This level isn't unlocked on your account."), "warning")
+            return redirect(url_for("curso.pricing"))
         from app.python.supabase_client import get_formula_lang
         if get_lang() == "en":
             # Interfaz en inglés → archivo 100% en inglés (textos y fórmulas)
@@ -825,10 +899,7 @@ def descargar(filename):
             mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={"Content-Disposition": f'attachment; filename="{download_name}"'},
         )
-    # Fallback: serve pre-existing static file
-    safe = secure_filename(filename)
-    directory = os.path.join(current_app.root_path, "static", "curso", "archivos")
-    return send_from_directory(directory, safe, as_attachment=True)
+    abort(404)
 
 
 @curso_bp.route("/perfil", methods=["GET", "POST"])
@@ -867,6 +938,16 @@ def submit(module_id):
     # Determine where to redirect after submit
     back_url = url_for("curso.dashboard") if is_practica else url_for("curso.modulo", module_id=module_id)
 
+    user_id = session["curso_user_id"]
+    if is_practica:
+        allowed = level_prefix in _accessible_levels(user_id)
+    else:
+        from app.python.supabase_client import get_user_permissions
+        allowed = session.get("curso_is_admin") or module_id in get_user_permissions(user_id)
+    if not allowed:
+        flash(tr("Este nivel no está desbloqueado en tu cuenta.", "This level isn't unlocked on your account."), "warning")
+        return redirect(url_for("curso.dashboard"))
+
     file = request.files.get("file")
     if not file or file.filename == "":
         flash(tr("Selecciona un archivo.", "Select a file."), "error")
@@ -878,10 +959,10 @@ def submit(module_id):
         flash(tr("Solo se aceptan archivos Excel (.xlsx, .xls, .xlsm).", "Only Excel files are accepted (.xlsx, .xls, .xlsm)."), "error")
         return redirect(back_url)
 
-    MAX_BYTES = 10 * 1024 * 1024  # 10 MB
+    MAX_BYTES = 4 * 1024 * 1024  # Vercel corta las peticiones a 4.5 MB
     file_bytes = file.read()
     if len(file_bytes) > MAX_BYTES:
-        flash(tr("El archivo supera el límite de 10 MB.", "The file exceeds the 10 MB limit."), "error")
+        flash(tr("El archivo supera el límite de 4 MB.", "The file exceeds the 4 MB limit."), "error")
         return redirect(back_url)
 
     # Corrección automática (solo prácticas de nivel). Nunca bloquea la entrega.
@@ -895,11 +976,11 @@ def submit(module_id):
 
     try:
         from app.python.supabase_client import upload_submission_file, create_submission
-        user_id   = session["curso_user_id"]
         path      = upload_submission_file(user_id, module_id, filename, file_bytes)
         rows      = create_submission(user_id, module_id, path, filename, auto_result)
-    except Exception as e:
-        flash(tr("Error al subir el archivo: ", "Error uploading file: ") + str(e), "error")
+    except Exception:
+        logger.exception("submit: no se pudo guardar la entrega de %s", user_id)
+        flash(tr("No se pudo subir el archivo. Intenta de nuevo.", "Couldn't upload the file. Please try again."), "error")
         return redirect(back_url)
 
     if auto_result and rows:
@@ -943,9 +1024,27 @@ def pricing():
         pricing=PRICING,
         levels=LEVELS,
         purchased_levels=purchased,
+        bundle_offer=_bundle_offer(purchased) if user_id else None,
         is_logged_in=bool(user_id),
         stripe_pub_key=os.getenv("STRIPE_PUBLISHABLE_KEY", ""),
     )
+
+
+def _bundle_offer(purchased: set) -> dict | None:
+    """Precio del curso completo para ESTE usuario: nunca más caro que comprar
+    por separado los niveles que le faltan. None si no le conviene."""
+    missing = [f"nivel{i}" for i in range(1, 5) if f"nivel{i}" not in purchased]
+    separate = sum(PRICING[lk]["amount"] for lk in missing)
+    amount = min(PRICING["bundle"]["amount"], separate)
+    savings = separate - amount
+    if len(missing) < 2 or savings <= 0:
+        return None
+    return {
+        "amount": amount,
+        "price_display": f"${amount // 100}",
+        "savings": f"${savings // 100}",
+        "levels": missing,
+    }
 
 
 @curso_bp.route("/checkout/<product_id>", methods=["POST"])
@@ -960,16 +1059,46 @@ def checkout(product_id):
     email   = session.get("curso_email", "")
     plan    = PRICING[product_id]
 
-    # Don't allow purchasing already-owned levels
-    purchased = _get_purchased_levels(user_id)
+    from app.python.supabase_client import (
+        create_purchase, get_recent_pending_purchases, get_user_purchases,
+    )
+    # Lo ya comprado. Si la base falla NO se vende (podría cobrar dos veces).
+    try:
+        get_user_purchases(user_id, strict=True)
+        purchased = _get_purchased_levels(user_id)
+    except Exception:
+        logger.exception("checkout: no se pudo leer compras de %s", user_id)
+        flash(tr("Error al iniciar el pago. Intenta de nuevo.", "Couldn't start the payment. Please try again."), "error")
+        return redirect(url_for("curso.pricing"))
+
     if product_id != "bundle" and product_id in purchased:
         flash(tr("Ya tienes acceso a este nivel.", "You already have access to this level."), "info")
         return redirect(url_for("curso.dashboard"))
-    if product_id == "bundle" and all(
-        f"nivel{i}" in purchased for i in range(1, 5)
-    ):
-        flash(tr("Ya tienes acceso a todos los niveles.", "You already have access to all levels."), "info")
-        return redirect(url_for("curso.dashboard"))
+    amount = plan["amount"]
+    if product_id == "bundle":
+        if all(f"nivel{i}" in purchased for i in range(1, 5)):
+            flash(tr("Ya tienes acceso a todos los niveles.", "You already have access to all levels."), "info")
+            return redirect(url_for("curso.dashboard"))
+        offer = _bundle_offer(purchased)
+        if not offer:
+            flash(tr("Te sale mejor comprar por separado los niveles que te faltan.",
+                     "It's cheaper to buy the levels you're missing separately."), "info")
+            return redirect(url_for("curso.pricing"))
+        amount = offer["amount"]
+
+    # Si ya abrió un pago para lo mismo hace poco, se reusa (evita pagar dos veces)
+    try:
+        for p in get_recent_pending_purchases(user_id, product_id):
+            old = stripe.checkout.Session.retrieve(p["stripe_session_id"])
+            if old.status == "open" and old.amount_total == amount:
+                return redirect(old.url, code=303)
+            if old.status == "complete":
+                _fulfill_checkout(old)
+                flash(tr("Ese pago ya se había completado: ya tienes acceso.",
+                         "That payment was already completed: you have access."), "info")
+                return redirect(url_for("curso.dashboard"))
+    except Exception:
+        logger.exception("checkout: no se pudo revisar pagos pendientes")
 
     base_url = os.getenv("BASE_URL", "").rstrip("/")
     success  = f"{base_url}/curso/checkout/success?session_id={{CHECKOUT_SESSION_ID}}" \
@@ -978,7 +1107,6 @@ def checkout(product_id):
                else url_for("curso.pricing", _external=True)
 
     try:
-        from app.python.supabase_client import create_purchase
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             mode="payment",
@@ -986,7 +1114,7 @@ def checkout(product_id):
             line_items=[{
                 "price_data": {
                     "currency": "usd",
-                    "unit_amount": plan["amount"],
+                    "unit_amount": amount,
                     "product_data": {
                         "name": loc(plan, "label"),
                         "description": loc(plan, "description"),
@@ -1001,60 +1129,105 @@ def checkout(product_id):
             success_url=success,
             cancel_url=cancel,
         )
-        # Record pending purchase
-        create_purchase(user_id, product_id, plan["amount"], checkout_session.id)
+        create_purchase(user_id, product_id, amount, checkout_session.id)
         return redirect(checkout_session.url, code=303)
-
-    except stripe.error.StripeError as e:
+    except Exception as e:
         logger.error("Stripe checkout error: %s", e)
         flash(tr("Error al iniciar el pago. Intenta de nuevo.", "Couldn't start the payment. Please try again."), "error")
         return redirect(url_for("curso.pricing"))
 
 
+def _sess_get(obj, key, default=None):
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    return getattr(obj, key, default)
+
+
+def _fulfill_checkout(sess) -> bool:
+    """Cumple una compra pagada. Idempotente: se puede llamar desde el webhook,
+    sus reintentos y la página de éxito sin dar nada dos veces. Si algo falla
+    lanza excepción (el webhook devuelve 500 y Stripe reintenta)."""
+    meta    = _sess_get(sess, "metadata") or {}
+    user_id = _sess_get(meta, "user_id")
+    product = _sess_get(meta, "product")
+    sess_id = _sess_get(sess, "id", "")
+    pi      = _sess_get(sess, "payment_intent") or ""
+    if _sess_get(sess, "payment_status") != "paid":
+        return False
+    if not user_id or product not in PRICING:
+        logger.warning("Checkout sin metadata válida: session=%s", sess_id)
+        return False
+
+    from app.python.supabase_client import complete_purchase, upsert_completed_purchase
+    if not complete_purchase(sess_id, pi):
+        # No había fila 'pending' (ya completada o se perdió): se asegura la fila
+        upsert_completed_purchase(user_id, product, _sess_get(sess, "amount_total") or 0, sess_id, pi)
+    _unlock_levels_for_user(user_id, PRICING[product]["levels"])  # upsert: idempotente
+    logger.info("Pago cumplido: user=%s product=%s session=%s", user_id, product, sess_id)
+    return True
+
+
+def _revoke_payment(payment_intent: str):
+    """Reembolso o disputa: la compra deja de contar y se cierran los niveles
+    que ya no cubre ninguna otra compra."""
+    from app.python.supabase_client import (
+        set_purchase_status_by_payment_intent, get_user_purchases, bulk_set_level_permissions,
+    )
+    rows = set_purchase_status_by_payment_intent(payment_intent, "refunded")
+    for row in rows:
+        user_id = row["user_id"]
+        still = _get_purchased_levels(user_id)
+        for lk in PRICING.get(row["product"], {}).get("levels", []):
+            if lk not in still and lk in LEVELS:
+                bulk_set_level_permissions(user_id, [m["id"] for m in LEVELS[lk]["modules"]], False, None)
+        logger.warning("Compra revocada: user=%s product=%s pi=%s", user_id, row["product"], payment_intent)
+
+
 @curso_bp.route("/checkout/success")
 @require_approved
 def checkout_success():
-    """Landing page after successful Stripe payment."""
+    """Después de pagar: confirma con Stripe y cumple la compra sin esperar al webhook."""
     stripe_session_id = request.args.get("session_id", "")
-    return render_template("curso/checkout_success.html", session_id=stripe_session_id)
+    status = "pending"
+    if stripe_session_id.startswith("cs_"):
+        try:
+            _init_stripe()
+            sess = stripe.checkout.Session.retrieve(stripe_session_id)
+            owner = _sess_get(_sess_get(sess, "metadata") or {}, "user_id")
+            if owner == session["curso_user_id"] and _fulfill_checkout(sess):
+                status = "paid"
+        except Exception:
+            logger.exception("checkout_success: no se pudo confirmar %s", stripe_session_id)
+    return render_template("curso/checkout_success.html", session_id=stripe_session_id, status=status)
 
 
 @curso_bp.route("/webhook/stripe", methods=["POST"])
 def stripe_webhook():
-    """Stripe webhook — processes completed payments and unlocks modules."""
+    """Stripe webhook — cumple pagos y revoca reembolsos/disputas."""
     _init_stripe()
-    payload   = request.get_data()
-    sig       = request.headers.get("Stripe-Signature", "")
-    secret    = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+    payload = request.get_data()
+    sig     = request.headers.get("Stripe-Signature", "")
+    secret  = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+    if not secret:
+        logger.error("STRIPE_WEBHOOK_SECRET no configurada")
+        abort(500)
 
-    # Verify signature
     try:
         event = stripe.Webhook.construct_event(payload, sig, secret)
     except (ValueError, stripe.error.SignatureVerificationError) as e:
         logger.warning("Stripe webhook signature failed: %s", e)
         abort(400)
 
-    # Only handle completed checkout sessions
-    if event["type"] == "checkout.session.completed":
-        sess     = event["data"]["object"]
-        meta     = sess.metadata or {}
-        user_id  = meta.get("user_id") if isinstance(meta, dict) else getattr(meta, "user_id", None)
-        product  = meta.get("product") if isinstance(meta, dict) else getattr(meta, "product", None)
-        sess_id  = sess.id if hasattr(sess, "id") else sess.get("id", "")
-        pi       = sess.payment_intent if hasattr(sess, "payment_intent") else sess.get("payment_intent", "")
-
-        if user_id and product and product in PRICING:
-            from app.python.supabase_client import complete_purchase
-            purchase = complete_purchase(sess_id, pi)
-            if purchase:
-                # Unlock the purchased level modules
-                level_keys = PRICING[product]["levels"]
-                _unlock_levels_for_user(user_id, level_keys)
-                logger.info("Payment OK: user=%s product=%s", user_id, product)
-            else:
-                logger.warning("Purchase not found or already completed: session=%s", sess_id)
-        else:
-            logger.warning("Webhook missing metadata: session=%s", sess_id)
+    etype = event["type"]
+    obj   = event["data"]["object"]
+    if etype in ("checkout.session.completed", "checkout.session.async_payment_succeeded"):
+        _fulfill_checkout(obj)  # si falla → 500 → Stripe reintenta
+    elif etype == "charge.refunded":
+        if _sess_get(obj, "refunded") and _sess_get(obj, "payment_intent"):
+            _revoke_payment(_sess_get(obj, "payment_intent"))
+    elif etype == "charge.dispute.created":
+        if _sess_get(obj, "payment_intent"):
+            _revoke_payment(_sess_get(obj, "payment_intent"))
 
     return jsonify({"status": "ok"}), 200
 

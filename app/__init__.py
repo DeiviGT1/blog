@@ -16,8 +16,10 @@ def create_app():
     # Cookies seguras en producción
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-    if os.getenv("FLASK_ENV") == "production":
+    if os.getenv("FLASK_ENV") == "production" or os.getenv("VERCEL"):
         app.config['SESSION_COOKIE_SECURE'] = True   # solo HTTPS
+    from datetime import timedelta
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=14)
 
     @app.context_processor
     def _inject_globals():

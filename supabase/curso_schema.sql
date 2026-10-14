@@ -83,3 +83,17 @@ alter table public.curso_submissions
   add column if not exists auto_score  smallint,
   add column if not exists auto_result jsonb,
   add column if not exists graded_at   timestamptz;
+
+-- 2026-10-14 · endurecimiento. La app usa SOLO la service role para datos del
+-- curso; anon/authenticated no necesitan privilegios de tabla (RLS sin
+-- políticas ya los bloquea, esto cierra también TRUNCATE y futuros errores).
+revoke all on public.curso_profiles, public.curso_purchases,
+  public.curso_module_permissions, public.curso_submissions from anon, authenticated;
+
+update storage.buckets
+   set file_size_limit = 5242880,
+       allowed_mime_types = array[
+         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+         'application/vnd.ms-excel.sheet.macroEnabled.12',
+         'application/vnd.ms-excel', 'application/octet-stream']
+ where id = 'course-submissions';

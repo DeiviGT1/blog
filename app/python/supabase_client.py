@@ -1,4 +1,5 @@
 # app/python/supabase_client.py
+import logging
 import os
 import secrets
 import hashlib
@@ -10,6 +11,8 @@ SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
 
+
+logger = logging.getLogger(__name__)
 
 def get_client() -> Client:
     """Public client — uses anon key. Good for user-scoped auth operations."""
@@ -54,10 +57,16 @@ def send_password_reset(email: str, redirect_to: str):
 
 
 def update_user_password(access_token: str, new_password: str):
-    """Update the password for the user identified by access_token."""
-    sb = get_client()
-    sb.auth.set_session(access_token, "")   # attach token to this client instance
-    sb.auth.update_user({"password": new_password})
+    """Cambia la contraseña del usuario dueño del access_token (API REST de
+    Supabase Auth; set_session exige un refresh token que aquí no hay)."""
+    import requests
+    r = requests.put(
+        f"{SUPABASE_URL}/auth/v1/user",
+        headers={"apikey": SUPABASE_ANON_KEY, "Authorization": f"Bearer {access_token}"},
+        json={"password": new_password},
+        timeout=15,
+    )
+    r.raise_for_status()
 
 
 def verify_email_otp(email: str, token: str):
@@ -336,8 +345,56 @@ def complete_purchase(stripe_session_id: str,
     return result.data[0] if result.data else None
 
 
-def get_user_purchases(user_id: str) -> list:
-    """Return all completed purchases for a user."""
+def get_purchase_by_session(stripe_session_id: str) -> dict | None:
+    sb = get_admin_client()
+    result = (
+        sb.table("curso_purchases").select("*")
+        .eq("stripe_session_id", stripe_session_id).limit(1).execute()
+    )
+    return (result.data or [None])[0]
+
+
+def upsert_completed_purchase(user_id: str, product: str, amount_cents: int,
+                              stripe_session_id: str, stripe_payment_intent: str):
+    """Deja la compra en 'completed' aunque no exista la fila 'pending' (idempotente)."""
+    import datetime
+    sb = get_admin_client()
+    sb.table("curso_purchases").upsert({
+        "user_id": user_id,
+        "product": product,
+        "amount_cents": amount_cents,
+        "currency": "usd",
+        "stripe_session_id": stripe_session_id,
+        "stripe_payment_intent": stripe_payment_intent,
+        "status": "completed",
+        "completed_at": datetime.datetime.utcnow().isoformat(),
+    }, on_conflict="stripe_session_id").execute()
+
+
+def get_recent_pending_purchases(user_id: str, product: str, hours: int = 24) -> list:
+    import datetime
+    since = (datetime.datetime.utcnow() - datetime.timedelta(hours=hours)).isoformat()
+    sb = get_admin_client()
+    result = (
+        sb.table("curso_purchases").select("*")
+        .eq("user_id", user_id).eq("product", product).eq("status", "pending")
+        .gte("created_at", since).order("created_at", desc=True).execute()
+    )
+    return result.data or []
+
+
+def set_purchase_status_by_payment_intent(payment_intent: str, status: str) -> list:
+    sb = get_admin_client()
+    result = (
+        sb.table("curso_purchases").update({"status": status})
+        .eq("stripe_payment_intent", payment_intent).eq("status", "completed").execute()
+    )
+    return result.data or []
+
+
+def get_user_purchases(user_id: str, strict: bool = False) -> list:
+    """Return all completed purchases for a user.
+    strict=True propaga los errores (para no vender dos veces si la base falla)."""
     try:
         sb = get_admin_client()
         result = (
@@ -350,7 +407,9 @@ def get_user_purchases(user_id: str) -> list:
         )
         return result.data or []
     except Exception:
-        # Table may not exist yet — don't break auth flow
+        if strict:
+            raise
+        logger.exception("get_user_purchases falló")
         return []
 
 

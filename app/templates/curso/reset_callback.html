@@ -1,0 +1,27 @@
+{% extends "curso/base_curso.html" %}
+{% block title %}{{ t('Recuperar contraseña', 'Reset password') }} — Excel 365{% endblock %}
+{% block content %}
+<main class="curso-main" style="text-align:center;padding-top:4rem;">
+  <p style="font-size:1.05rem;color:var(--c-text-muted);">{{ t('Verificando tu enlace…', 'Checking your link…') }}</p>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+  // El enlace de recuperación trae el token en el hash (#access_token=…&type=recovery):
+  // el servidor no lo ve, así que se lo enviamos.
+  (async function () {
+    var params = new URLSearchParams(window.location.hash.substring(1));
+    var fail = "{{ url_for('curso.forgot_password') }}?expired=1";
+    var token = params.get("access_token");
+    if (!token || params.get("type") !== "recovery") { window.location.replace(fail); return; }
+    try {
+      var res = await fetch("{{ url_for('curso.reset_session') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ access_token: token, type: "recovery" }),
+      });
+      window.location.replace(res.ok ? "{{ url_for('curso.reset_password') }}" : fail);
+    } catch (e) { window.location.replace(fail); }
+  })();
+</script>
+{% endblock %}

@@ -4,11 +4,19 @@
 {% block content %}
 <main class="curso-main curso-main--narrow" style="padding-top:3rem;">
   <div class="auth-card" style="text-align:center;">
+    {% if status == 'paid' %}
     <div style="font-size:3.5rem;margin-bottom:1rem;">🎉</div>
     <h1 style="margin-bottom:.5rem;">{{ t('¡Pago exitoso!', 'Payment successful!') }}</h1>
     <p class="subtitle" style="margin-bottom:1.5rem;">
-      {{ t('Tu compra fue procesada correctamente. Los modulos ya estan desbloqueados en tu dashboard.', 'Your purchase was processed successfully. The modules are now unlocked in your dashboard.') }}
+      {{ t('Tu compra fue procesada correctamente. Los módulos ya están desbloqueados en tu dashboard.', 'Your purchase was processed successfully. The modules are now unlocked in your dashboard.') }}
     </p>
+    {% else %}
+    <div style="font-size:3.5rem;margin-bottom:1rem;">⏳</div>
+    <h1 style="margin-bottom:.5rem;">{{ t('Estamos confirmando tu pago', 'We’re confirming your payment') }}</h1>
+    <p class="subtitle" style="margin-bottom:1.5rem;">
+      {{ t('Suele tardar unos segundos. Recarga esta página en un momento; si en unos minutos no ves tus módulos, escríbenos y lo resolvemos.', 'It usually takes a few seconds. Reload this page in a moment; if your modules don’t show up in a few minutes, contact us and we’ll sort it out.') }}
+    </p>
+    {% endif %}
     <a href="{{ url_for('curso.dashboard') }}" class="btn btn-primary btn-full">
       <i class="fas fa-arrow-right"></i> {{ t('Ir a mi dashboard', 'Go to my dashboard') }}
     </a>
