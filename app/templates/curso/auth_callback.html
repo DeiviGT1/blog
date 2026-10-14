@@ -16,7 +16,8 @@
     const token  = params.get("access_token");
 
     if (!token) {
-      window.location.href = "{{ url_for('curso.login') }}";
+      // Enlace de confirmación vencido o ya usado
+      window.location.href = "{{ url_for('curso.login') }}" + (params.get("error") ? "?link=expired" : "");
       return;
     }
 

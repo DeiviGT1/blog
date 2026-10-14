@@ -41,12 +41,12 @@
         <td style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;">
           {% if not p.is_admin %}
             {% if not p.is_approved %}
-              <form method="POST" action="{{ url_for('curso.admin_aprobar', user_id=p.id) }}">
+              <form method="POST" action="{{ url_for('curso.admin_aprobar', user_id=p.id) }}">{{ csrf_field() }}
                 <button class="btn btn-success btn-sm">✓ Aprobar</button>
               </form>
             {% else %}
               <form method="POST" action="{{ url_for('curso.admin_revocar', user_id=p.id) }}"
-                    onsubmit="return confirm('¿Revocar acceso a este usuario?');">
+                    onsubmit="return confirm('¿Revocar acceso a este usuario?');">{{ csrf_field() }}
                 <button class="btn btn-danger btn-sm">✗ Revocar</button>
               </form>
             {% endif %}

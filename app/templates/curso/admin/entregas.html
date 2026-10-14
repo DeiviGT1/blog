@@ -87,7 +87,7 @@
 <div id="review-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
   <div style="background:var(--c-bg);border-radius:var(--radius-lg);padding:2rem;width:100%;max-width:480px;box-shadow:var(--shadow-lg);">
     <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1.2rem;">Revisar entrega</h2>
-    <form id="review-form" method="POST">
+    <form id="review-form" method="POST">{{ csrf_field() }}
       <div class="form-group">
         <label>Calificación</label>
         <input type="text" name="grade" id="review-grade" placeholder="Ej: Excelente, 8/10, Aprobado…" />

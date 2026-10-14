@@ -90,10 +90,13 @@ def env(monkeypatch):
     return types.SimpleNamespace(db=db, c=client, app=app)
 
 
+CSRF = "tok-test"
+
+
 def login(c, uid=UID, admin=False):
     with c.session_transaction() as s:
         s.update(curso_user_id=uid, curso_email="a@b.c", curso_username="a",
-                 curso_is_admin=admin, curso_is_approved=True, curso_checked_at=0)
+                 curso_is_admin=admin, curso_is_approved=True, curso_checked_at=0, csrf_token=CSRF)
 
 
 # ── Contenido pagado ─────────────────────────────────────────────────────────
@@ -124,7 +127,7 @@ def test_download_requires_level(env):
 
 def test_submit_requires_level(env):
     login(env.c)
-    data = {"file": (io.BytesIO(b"x"), "a.xlsx")}
+    data = {"file": (io.BytesIO(b"x"), "a.xlsx"), "csrf_token": CSRF}
     r = env.c.post("/curso/submit/nivel3_practica", data=data, content_type="multipart/form-data")
     assert r.status_code == 302 and not env.db.subs
 
@@ -145,8 +148,10 @@ def test_revoked_user_and_demoted_admin(env, monkeypatch):
 
 def test_register_does_not_store_password(env, monkeypatch):
     monkeypatch.setattr(sc, "sign_up", lambda *a: None)
+    with env.c.session_transaction() as s:
+        s["csrf_token"] = CSRF
     r = env.c.post("/curso/register", data=dict(email="n@x.com", password="SuperSecret123",
-                                               confirm="SuperSecret123", username="n"))
+                                               confirm="SuperSecret123", username="n", csrf_token=CSRF))
     assert r.status_code == 302
     with env.c.session_transaction() as s:
         assert "SuperSecret123" not in json.dumps(dict(s))
@@ -233,7 +238,7 @@ def test_checkout_reuses_open_session(env, monkeypatch):
                         lambda sid: types.SimpleNamespace(status="open", amount_total=1500, url="https://stripe/cs_open"))
     created = []
     monkeypatch.setattr(cr.stripe.checkout.Session, "create", lambda **k: created.append(k))
-    r = env.c.post("/curso/checkout/nivel1")
+    r = env.c.post("/curso/checkout/nivel1", data={"csrf_token": CSRF})
     assert r.headers["Location"] == "https://stripe/cs_open" and not created
 
 
@@ -246,5 +251,44 @@ def test_reset_password_hash_flow(env, monkeypatch):
     assert env.c.post("/curso/auth/reset-session", json={"access_token": "good", "type": "recovery"}).status_code == 200
     changed = []
     monkeypatch.setattr(sc, "update_user_password", lambda tok, pw: changed.append((tok, pw)))
-    r = env.c.post("/curso/reset-password", data={"password": "NuevaClave123", "confirm": "NuevaClave123"})
+    with env.c.session_transaction() as s:
+        s["csrf_token"] = CSRF
+    r = env.c.post("/curso/reset-password", data={"password": "NuevaClave123", "confirm": "NuevaClave123",
+                                                  "csrf_token": CSRF})
     assert r.status_code == 302 and changed == [("good", "NuevaClave123")]
+
+
+# ── CSRF, logout y admin ─────────────────────────────────────────────────────
+
+def test_csrf_blocks_post_without_token(env, monkeypatch):
+    login(env.c)
+    created = []
+    monkeypatch.setattr(cr.stripe.checkout.Session, "create", lambda **k: created.append(k))
+    r = env.c.post("/curso/checkout/nivel1")
+    assert r.status_code == 302 and not created
+    r = env.c.post("/curso/checkout/nivel1", data={"csrf_token": "otro"})
+    assert not created
+    # JSON desde otro origen
+    assert env.c.post("/curso/auth/reset-session", json={"access_token": "x", "type": "recovery"},
+                      headers={"Origin": "https://evil.example"}).status_code == 403
+
+
+def test_logout_only_by_post(env):
+    login(env.c)
+    env.c.get("/curso/logout")
+    with env.c.session_transaction() as s:
+        assert s.get("curso_user_id") == UID
+    env.c.post("/curso/logout", data={"csrf_token": CSRF})
+    with env.c.session_transaction() as s:
+        assert "curso_user_id" not in s
+
+
+def test_admin_grants_full_course(env, monkeypatch):
+    monkeypatch.setattr(sc, "set_module_permission", lambda *a: None)
+    login(env.c, ADMIN, admin=True)
+    r = env.c.post(f"/curso/admin/usuarios/{UID}/modulos", data={"action": "enable_all", "csrf_token": CSRF})
+    assert r.status_code == 302
+    for lk in ("nivel1", "nivel2", "nivel3", "nivel4"):
+        assert set(nivel_mids(lk)) <= env.db.get_user_permissions(UID)
+    login(env.c)
+    assert env.c.get("/curso/descargar/nivel4_practica.xlsx").status_code == 200

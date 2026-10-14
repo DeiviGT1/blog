@@ -48,7 +48,7 @@
 
     <div style="padding:1.5rem;">
 
-      <form method="POST" action="{{ url_for('curso.perfil') }}">
+      <form method="POST" action="{{ url_for('curso.perfil') }}">{{ csrf_field() }}
 
         <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
 

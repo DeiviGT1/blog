@@ -44,7 +44,9 @@
           <i class="fas fa-user-circle"></i>
           {{ session.get('curso_username', '') }}
         </a>
-        <a class="curso-nav__logout" href="{{ url_for('curso.logout') }}">{{ t('Salir', 'Log out') }}</a>
+        <form method="POST" action="{{ url_for('curso.logout') }}" style="display:inline;">{{ csrf_field() }}
+          <button type="submit" class="curso-nav__logout">{{ t('Salir', 'Log out') }}</button>
+        </form>
       {% else %}
         <a class="curso-nav__link {% if request.endpoint == 'curso.pricing' %}active{% endif %}"
            href="{{ url_for('curso.pricing') }}">{{ t('Precios', 'Pricing') }}</a>

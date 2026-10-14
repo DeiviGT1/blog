@@ -65,7 +65,7 @@
           </td>
           <td>
             <form method="POST" action="{{ url_for('curso.admin_aprobar', user_id=p.id) }}"
-                  style="display:inline;">
+                  style="display:inline;">{{ csrf_field() }}
               <button class="btn btn-success btn-sm">✓ Aprobar</button>
             </form>
             <a class="btn btn-outline btn-sm"

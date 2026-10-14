@@ -10,7 +10,17 @@
       </h1>
       <p style="font-size:.87rem;color:var(--c-text-muted);">{{ profile.email }}</p>
     </div>
-    <a class="btn btn-outline btn-sm" href="{{ url_for('curso.admin_usuarios') }}">← Usuarios</a>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+      <form method="POST">{{ csrf_field() }}
+        <input type="hidden" name="action" value="enable_all" />
+        <button class="btn btn-success btn-sm"><i class="fas fa-gift"></i> Dar curso completo</button>
+      </form>
+      <form method="POST">{{ csrf_field() }}
+        <input type="hidden" name="action" value="disable_all" />
+        <button class="btn btn-danger btn-sm">Quitar niveles 1–4</button>
+      </form>
+      <a class="btn btn-outline btn-sm" href="{{ url_for('curso.admin_usuarios') }}">← Usuarios</a>
+    </div>
   </div>
 
   {% for lk, lv in levels.items() %}
@@ -22,12 +32,12 @@
         {{ lv.short }}
       </h2>
       <div style="display:flex;gap:.5rem;">
-        <form method="POST">
+        <form method="POST">{{ csrf_field() }}
           <input type="hidden" name="action"    value="enable_level" />
           <input type="hidden" name="level_key" value="{{ lk }}" />
           <button class="btn btn-success btn-sm">Habilitar todo</button>
         </form>
-        <form method="POST">
+        <form method="POST">{{ csrf_field() }}
           <input type="hidden" name="action"    value="disable_level" />
           <input type="hidden" name="level_key" value="{{ lk }}" />
           <button class="btn btn-danger btn-sm">Deshabilitar todo</button>
@@ -40,7 +50,7 @@
         {% set is_enabled = perm_map.get(mod.id, False) %}
         <div class="perm-card">
           <span class="perm-card__title">{{ mod.title }}</span>
-          <form method="POST" style="display:inline;">
+          <form method="POST" style="display:inline;">{{ csrf_field() }}
             <input type="hidden" name="action"    value="toggle" />
             <input type="hidden" name="module_id" value="{{ mod.id }}" />
             <input type="hidden" name="enabled"   value="{{ 'false' if is_enabled else 'true' }}" />

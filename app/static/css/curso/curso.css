@@ -677,3 +677,4 @@ a { color: inherit; text-decoration: none; }
 .score-chip i { font-size: .65rem; }
 .score-chip--pass  { color: #15803d; background: #f0fdf4; }
 .score-chip--retry { color: #b45309; background: #fffbeb; }
+button.curso-nav__logout { background: none; font-family: inherit; cursor: pointer; line-height: inherit; }

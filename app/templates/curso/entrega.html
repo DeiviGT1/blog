@@ -103,7 +103,7 @@
         {% endif %}
       </p>
       <div class="res-head__actions">
-        <form method="POST" action="{{ url_for('curso.submit', module_id=sub.module_id) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ url_for('curso.submit', module_id=sub.module_id) }}" enctype="multipart/form-data">{{ csrf_field() }}
           <label class="btn btn-primary btn-sm" style="cursor:pointer;">
             <i class="fas fa-upload"></i> {{ t('Entregar de nuevo', 'Resubmit') }}
             <input type="file" name="file" accept=".xlsx,.xlsm" style="display:none;" onchange="this.closest('form').submit()">

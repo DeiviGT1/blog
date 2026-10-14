@@ -18,7 +18,9 @@
       {{ t('¿Tienes preguntas? Escríbeme a', 'Questions? Email me at') }}
       <a href="mailto:josedago1163@gmail.com" style="color:var(--c-primary);font-weight:600;">josedago1163@gmail.com</a>
     </p>
-    <a class="btn btn-outline" style="margin-top:1.5rem;" href="{{ url_for('curso.logout') }}">{{ t('Cerrar sesión', 'Log out') }}</a>
+    <form method="POST" action="{{ url_for('curso.logout') }}" style="margin-top:1.5rem;">{{ csrf_field() }}
+      <button type="submit" class="btn btn-outline">{{ t('Cerrar sesión', 'Log out') }}</button>
+    </form>
   </div>
 </main>
 {% endblock %}

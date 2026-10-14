@@ -7,7 +7,7 @@
     <h1>{{ t('Crea tu cuenta', 'Create your account') }}</h1>
     <p class="subtitle">{{ t('El Nivel 0 se desbloquea gratis al registrarte.', 'Level 0 unlocks for free when you sign up.') }}</p>
 
-    <form method="POST" action="{{ url_for('curso.register') }}">
+    <form method="POST" action="{{ url_for('curso.register') }}">{{ csrf_field() }}
       <div class="form-group">
         <label for="username">{{ t('Nombre', 'Name') }}</label>
         <input type="text" id="username" name="username" placeholder="{{ t('Tu nombre', 'Your name') }}" required minlength="2" autocomplete="name" />

@@ -134,7 +134,7 @@
               {{ t('Ya tienes parte del curso: te sale mejor comprar los niveles que te faltan.', 'You already own part of the course: buying the missing levels is cheaper.') }}
             </div>
           {% else %}
-            <form method="POST" action="{{ url_for('curso.checkout', product_id='bundle') }}">
+            <form method="POST" action="{{ url_for('curso.checkout', product_id='bundle') }}">{{ csrf_field() }}
               <button type="submit" class="btn btn-lg" style="background:var(--c-accent);color:#fff;font-weight:700;width:100%;">
                 <i class="fas fa-shopping-cart"></i> {{ t('Comprar curso completo', 'Buy the full course') }}
               </button>
@@ -200,7 +200,7 @@
               <i class="fas fa-check-circle"></i> {{ t('Ya tienes acceso', 'You already have access') }}
             </div>
           {% else %}
-            <form method="POST" action="{{ url_for('curso.checkout', product_id=pk) }}">
+            <form method="POST" action="{{ url_for('curso.checkout', product_id=pk) }}">{{ csrf_field() }}
               <button type="submit" class="btn btn-primary btn-full">{{ t('Comprar', 'Buy now') }}</button>
             </form>
           {% endif %}

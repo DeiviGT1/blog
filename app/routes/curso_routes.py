@@ -161,9 +161,47 @@ def _lang_from_query():
         session["ui_lang"] = lang
 
 
+# ── CSRF ──────────────────────────────────────────────────────────────────────
+# Todo POST del curso lleva un token de la sesión ({{ csrf_field() }} en cada
+# formulario). El webhook de Stripe va firmado; los dos endpoints JSON que
+# llama el propio navegador exigen mismo origen.
+
+CSRF_EXEMPT = {"curso.stripe_webhook"}
+CSRF_JSON   = {"curso.auth_session", "curso.reset_session"}
+
+
+def csrf_token() -> str:
+    if "csrf_token" not in session:
+        import secrets
+        session["csrf_token"] = secrets.token_urlsafe(32)
+    return session["csrf_token"]
+
+
+def csrf_field():
+    from markupsafe import Markup
+    return Markup(f'<input type="hidden" name="csrf_token" value="{csrf_token()}">')
+
+
+@curso_bp.before_request
+def _csrf_protect():
+    if request.method != "POST" or request.endpoint in CSRF_EXEMPT:
+        return None
+    if request.endpoint in CSRF_JSON:
+        origin = request.headers.get("Origin")
+        if origin and origin.rstrip("/") != request.host_url.rstrip("/"):
+            abort(403)
+        return None
+    import hmac
+    sent = request.form.get("csrf_token", "")
+    if not sent or not hmac.compare_digest(sent, session.get("csrf_token", "")):
+        flash(tr("La página expiró. Intenta de nuevo.", "The page expired. Please try again."), "warning")
+        return redirect(request.referrer or url_for("curso.landing"))
+    return None
+
+
 @curso_bp.context_processor
 def _inject_i18n():
-    return {"lang": get_lang(), "t": tr, "loc": loc}
+    return {"lang": get_lang(), "t": tr, "loc": loc, "csrf_field": csrf_field}
 
 
 @curso_bp.route("/idioma/<code>")
@@ -511,6 +549,9 @@ def login():
             else:
                 flash(tr("No se pudo iniciar sesión. Intenta de nuevo.", "Could not log in. Please try again."), "error")
 
+    if request.args.get("link") == "expired":
+        flash(tr("El enlace venció o ya se usó. Si ya confirmaste tu correo, inicia sesión; si no, regístrate de nuevo para recibir otro.",
+                 "The link expired or was already used. If you already confirmed your email, log in; otherwise sign up again to get a new one."), "warning")
     return render_template("curso/login.html")
 
 
@@ -629,7 +670,7 @@ def register():
             return render_template("curso/register.html")
         try:
             from app.python.supabase_client import sign_up
-            sign_up(email, password, username)
+            sign_up(email, password, username, _auth_callback_url())
             session["curso_verify_email"] = email
             return redirect(url_for("curso.verify_email"))
         except Exception as e:
@@ -683,11 +724,16 @@ def resend_verification():
         return redirect(url_for("curso.register"))
     try:
         from app.python.supabase_client import resend_confirmation
-        resend_confirmation(email)
+        resend_confirmation(email, _auth_callback_url())
         flash(tr("Codigo reenviado. Revisa tu correo.", "Code resent. Check your email."), "success")
     except Exception:
         flash(tr("No se pudo reenviar. Espera unos minutos e intenta de nuevo.", "Could not resend. Wait a few minutes and try again."), "error")
     return redirect(url_for("curso.verify_email"))
+
+
+def _auth_callback_url() -> str:
+    base_url = os.getenv("BASE_URL", "").rstrip("/")
+    return f"{base_url}/curso/auth/callback" if base_url else url_for("curso.auth_callback", _external=True)
 
 
 @curso_bp.route("/auth/google")
@@ -740,13 +786,17 @@ def auth_session():
     if not user:
         return {"ok": False, "error": "invalid token"}, 401
     approved = _after_auth(user, access_token)
+    session.pop("curso_verify_email", None)
     return {"ok": True, "approved": approved}
 
 
-@curso_bp.route("/logout")
+@curso_bp.route("/logout", methods=["GET", "POST"])
 def logout():
-    _clear_session()
-    return redirect(url_for("curso.landing"))
+    # Solo POST (con CSRF) cierra sesión: un enlace o imagen ajena no puede sacarte
+    if request.method == "POST":
+        _clear_session()
+        return redirect(url_for("curso.landing"))
+    return redirect(url_for("curso.dashboard") if session.get("curso_user_id") else url_for("curso.landing"))
 
 
 @curso_bp.route("/pending")
@@ -1304,6 +1354,12 @@ def admin_modulos_usuario(user_id):
                 abort(400)
             enabled = request.form.get("enabled") == "true"
             set_module_permission(user_id, mod_id, enabled, admin_id)
+
+        elif action in ("enable_all", "disable_all"):
+            # Curso completo de un clic (los niveles 1-4; el 0 siempre es gratis)
+            enabled = action == "enable_all"
+            for lk in ("nivel1", "nivel2", "nivel3", "nivel4"):
+                bulk_set_level_permissions(user_id, [m["id"] for m in LEVELS[lk]["modules"]], enabled, admin_id)
 
         elif action in ("enable_level", "disable_level"):
             level_key = request.form.get("level_key")

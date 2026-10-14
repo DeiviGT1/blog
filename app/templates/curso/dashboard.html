@@ -305,7 +305,7 @@
               </span>
               {% endif %}
               <form method="POST" action="{{ url_for('curso.submit', module_id=practica_id) }}"
-                    enctype="multipart/form-data" style="display:inline;">
+                    enctype="multipart/form-data" style="display:inline;">{{ csrf_field() }}
                 <label class="btn btn-outline btn-sm" style="cursor:pointer;">
                   <i class="fas fa-redo"></i> {{ t('Reenviar', 'Resubmit') }}
                   <input type="file" name="file" accept=".xlsx,.xls,.xlsm"
@@ -314,7 +314,7 @@
               </form>
             {% else %}
               <form method="POST" action="{{ url_for('curso.submit', module_id=practica_id) }}"
-                    enctype="multipart/form-data" style="display:inline-flex;align-items:center;gap:.5rem;">
+                    enctype="multipart/form-data" style="display:inline-flex;align-items:center;gap:.5rem;">{{ csrf_field() }}
                 <label class="btn btn-primary btn-sm" style="cursor:pointer;">
                   <i class="fas fa-upload"></i> {{ t('Entregar práctica', 'Submit practice') }}
                   <input type="file" name="file" accept=".xlsx,.xls,.xlsm"
@@ -354,7 +354,7 @@
           <strong><i class="fas fa-bolt"></i> {% if bundle_offer.levels|length == 4 %}{{ t('Curso completo', 'Full course') }}{% else %}{{ t('Los', 'The') }} {{ bundle_offer.levels|length }} {{ t('niveles que te faltan', 'levels you’re missing') }}{% endif %} — {{ bundle_offer.price_display }} USD</strong>
           <p>{{ t('Ahorras', 'You save') }} {{ bundle_offer.savings }} {{ t('frente a comprarlos por separado.', 'compared with buying them separately.') }}</p>
         </div>
-        <form method="POST" action="{{ url_for('curso.checkout', product_id='bundle') }}">
+        <form method="POST" action="{{ url_for('curso.checkout', product_id='bundle') }}">{{ csrf_field() }}
           <button type="submit" class="btn" style="background:var(--c-accent);color:#fff;font-weight:700;">
             <i class="fas fa-shopping-cart"></i> {{ t('Comprar', 'Buy') }}
           </button>

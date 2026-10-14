@@ -26,13 +26,14 @@ def get_admin_client() -> Client:
 
 # ── Auth helpers ────────────────────────────────────────────────────────────
 
-def sign_up(email: str, password: str, username: str):
+def sign_up(email: str, password: str, username: str, redirect_to: str | None = None):
+    """El correo de confirmación trae un ENLACE (plantilla {{ .ConfirmationURL }}):
+    redirect_to es a dónde vuelve el usuario al abrirlo (con el token en el #)."""
     sb = get_client()
-    return sb.auth.sign_up({
-        "email": email,
-        "password": password,
-        "options": {"data": {"username": username}},
-    })
+    options = {"data": {"username": username}}
+    if redirect_to:
+        options["email_redirect_to"] = redirect_to
+    return sb.auth.sign_up({"email": email, "password": password, "options": options})
 
 
 def sign_in(email: str, password: str):
@@ -75,10 +76,13 @@ def verify_email_otp(email: str, token: str):
     return sb.auth.verify_otp({"email": email, "token": token, "type": "signup"})
 
 
-def resend_confirmation(email: str):
+def resend_confirmation(email: str, redirect_to: str | None = None):
     """Resend the signup confirmation email."""
     sb = get_client()
-    sb.auth.resend({"type": "signup", "email": email})
+    payload = {"type": "signup", "email": email}
+    if redirect_to:
+        payload["options"] = {"email_redirect_to": redirect_to}
+    sb.auth.resend(payload)
 
 
 def generate_pkce_pair() -> tuple[str, str]:

@@ -7,34 +7,20 @@
     <div style="font-size:3rem;margin-bottom:.8rem;">📧</div>
     <h1>{{ t('Verifica tu correo', 'Verify your email') }}</h1>
     <p class="subtitle">
-      {{ t('Enviamos un codigo de 6 digitos a', 'We sent a 6-digit code to') }}<br>
+      {{ t('Te enviamos un enlace de confirmación a', 'We sent a confirmation link to') }}<br>
       <strong style="color:var(--c-text);">{{ email }}</strong>
     </p>
-
-    <form method="POST" action="{{ url_for('curso.verify_email') }}" style="margin-top:1.5rem;">
-      <div class="form-group">
-        <label for="token">{{ t('Codigo de verificacion', 'Verification code') }}</label>
-        <input type="text"
-               id="token"
-               name="token"
-               placeholder="123456"
-               required
-               maxlength="8"
-               pattern="[0-9]{6,8}"
-               inputmode="numeric"
-               autocomplete="one-time-code"
-               style="text-align:center;font-size:1.5rem;letter-spacing:.5rem;font-weight:700;" />
-      </div>
-      <button type="submit" class="btn btn-primary btn-full">{{ t('Verificar', 'Verify') }}</button>
-    </form>
+    <p style="font-size:.9rem;color:var(--c-text-muted);line-height:1.6;margin-top:1rem;">
+      {{ t('Ábrelo desde este mismo dispositivo y entrarás directo al curso con el Nivel 0 desbloqueado.', 'Open it on this same device and you’ll go straight into the course with Level 0 unlocked.') }}
+    </p>
 
     <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--c-border);">
       <p style="font-size:.85rem;color:var(--c-text-muted);margin-bottom:.8rem;">
         {{ t('¿No recibiste el correo? Revisa tu carpeta de spam.', 'Didn’t get the email? Check your spam folder.') }}
       </p>
-      <form method="POST" action="{{ url_for('curso.resend_verification') }}" style="display:inline;">
+      <form method="POST" action="{{ url_for('curso.resend_verification') }}" style="display:inline;">{{ csrf_field() }}
         <button type="submit" class="btn btn-outline btn-sm">
-          <i class="fas fa-redo"></i> {{ t('Reenviar codigo', 'Resend code') }}
+          <i class="fas fa-redo"></i> {{ t('Reenviar enlace', 'Resend link') }}
         </button>
       </form>
     </div>
