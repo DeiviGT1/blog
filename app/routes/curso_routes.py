@@ -691,6 +691,22 @@ def modulo(module_id):
     )
 
 
+@curso_bp.route("/keepalive")
+def keepalive():
+    """Vercel Cron: una consulta ligera diaria para que Supabase (plan gratis)
+    no pause el proyecto por inactividad."""
+    secret = os.getenv("CRON_SECRET", "")
+    if secret and request.headers.get("Authorization") != f"Bearer {secret}":
+        abort(401)
+    try:
+        from app.python.supabase_client import get_admin_client
+        get_admin_client().table("curso_profiles").select("id").limit(1).execute()
+        return jsonify(ok=True)
+    except Exception as e:
+        logger.error("keepalive falló: %s", e)
+        return jsonify(ok=False), 500
+
+
 @curso_bp.route("/descargar/<filename>")
 @require_approved
 def descargar(filename):
@@ -966,7 +982,7 @@ def admin_revocar(user_id):
         flash("No puedes revocarte a ti mismo.", "error")
         return redirect(url_for("curso.admin_usuarios"))
     from app.python.supabase_client import get_admin_client
-    get_admin_client().table("profiles").update({"is_approved": False}).eq("id", user_id).execute()
+    get_admin_client().table("curso_profiles").update({"is_approved": False}).eq("id", user_id).execute()
     flash("Acceso revocado.", "success")
     return redirect(url_for("curso.admin_usuarios"))
 

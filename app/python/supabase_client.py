@@ -98,14 +98,14 @@ def google_oauth_url(redirect_to: str, code_challenge: str) -> str:
 
 def get_profile(user_id: str) -> dict | None:
     sb = get_admin_client()
-    result = sb.table("profiles").select("*").eq("id", user_id).maybe_single().execute()
+    result = sb.table("curso_profiles").select("*").eq("id", user_id).maybe_single().execute()
     return result.data if result else None
 
 
 def create_or_update_profile(user_id: str, email: str, username: str,
                               is_admin: bool = False, is_approved: bool = False):
     sb = get_admin_client()
-    sb.table("profiles").upsert({
+    sb.table("curso_profiles").upsert({
         "id": user_id,
         "email": email,
         "username": username,
@@ -119,7 +119,7 @@ def update_formula_lang(user_id: str, lang: str):
     if lang not in ("es", "en"):
         lang = "es"
     sb = get_admin_client()
-    sb.table("profiles").update({"formula_lang": lang}).eq("id", user_id).execute()
+    sb.table("curso_profiles").update({"formula_lang": lang}).eq("id", user_id).execute()
 
 
 def get_formula_lang(user_id: str) -> str:
@@ -135,17 +135,17 @@ def get_formula_lang(user_id: str) -> str:
 
 def approve_user(user_id: str):
     sb = get_admin_client()
-    sb.table("profiles").update({"is_approved": True}).eq("id", user_id).execute()
+    sb.table("curso_profiles").update({"is_approved": True}).eq("id", user_id).execute()
 
 
 def set_admin(user_id: str, value: bool = True):
     sb = get_admin_client()
-    sb.table("profiles").update({"is_admin": value}).eq("id", user_id).execute()
+    sb.table("curso_profiles").update({"is_admin": value}).eq("id", user_id).execute()
 
 
 def get_all_profiles() -> list:
     sb = get_admin_client()
-    result = sb.table("profiles").select("*").order("created_at", desc=True).execute()
+    result = sb.table("curso_profiles").select("*").order("created_at", desc=True).execute()
     return result.data or []
 
 
@@ -155,7 +155,7 @@ def get_user_permissions(user_id: str) -> set:
     """Return a set of enabled module_ids for a user."""
     sb = get_admin_client()
     result = (
-        sb.table("module_permissions")
+        sb.table("curso_module_permissions")
         .select("module_id")
         .eq("user_id", user_id)
         .eq("enabled", True)
@@ -167,7 +167,7 @@ def get_user_permissions(user_id: str) -> set:
 def get_all_permissions_for_user(user_id: str) -> list:
     sb = get_admin_client()
     result = (
-        sb.table("module_permissions")
+        sb.table("curso_module_permissions")
         .select("*")
         .eq("user_id", user_id)
         .execute()
@@ -178,7 +178,7 @@ def get_all_permissions_for_user(user_id: str) -> list:
 def set_module_permission(user_id: str, module_id: str, enabled: bool,
                           granted_by: str | None = None):
     sb = get_admin_client()
-    sb.table("module_permissions").upsert(
+    sb.table("curso_module_permissions").upsert(
         {
             "user_id": user_id,
             "module_id": module_id,
@@ -197,7 +197,7 @@ def bulk_set_level_permissions(user_id: str, module_ids: list[str],
          "enabled": enabled, "granted_by": granted_by}
         for mid in module_ids
     ]
-    sb.table("module_permissions").upsert(
+    sb.table("curso_module_permissions").upsert(
         rows, on_conflict="user_id,module_id"
     ).execute()
 
@@ -207,7 +207,7 @@ def bulk_set_level_permissions(user_id: str, module_ids: list[str],
 def create_submission(user_id: str, module_id: str,
                       file_path: str, original_filename: str):
     sb = get_admin_client()
-    result = sb.table("submissions").insert({
+    result = sb.table("curso_submissions").insert({
         "user_id": user_id,
         "module_id": module_id,
         "file_path": file_path,
@@ -219,7 +219,7 @@ def create_submission(user_id: str, module_id: str,
 def get_user_submissions(user_id: str) -> list:
     sb = get_admin_client()
     result = (
-        sb.table("submissions")
+        sb.table("curso_submissions")
         .select("*")
         .eq("user_id", user_id)
         .order("uploaded_at", desc=True)
@@ -232,8 +232,8 @@ def get_all_submissions() -> list:
     sb = get_admin_client()
     # Use explicit FK hint because submissions has two FKs to profiles
     result = (
-        sb.table("submissions")
-        .select("*, profiles!submissions_user_id_fkey(email, username)")
+        sb.table("curso_submissions")
+        .select("*, profiles:curso_profiles!curso_submissions_user_id_fkey(email, username)")
         .order("uploaded_at", desc=True)
         .execute()
     )
@@ -244,7 +244,7 @@ def update_submission_review(submission_id: str, grade: str,
                               feedback: str, reviewed_by: str):
     sb = get_admin_client()
     import datetime
-    sb.table("submissions").update({
+    sb.table("curso_submissions").update({
         "grade": grade,
         "feedback": feedback,
         "reviewed": True,
@@ -285,7 +285,7 @@ def get_submission_download_url(file_path: str) -> str:
 def create_purchase(user_id: str, product: str, amount_cents: int,
                     stripe_session_id: str) -> dict:
     sb = get_admin_client()
-    result = sb.table("purchases").insert({
+    result = sb.table("curso_purchases").insert({
         "user_id": user_id,
         "product": product,
         "amount_cents": amount_cents,
@@ -302,7 +302,7 @@ def complete_purchase(stripe_session_id: str,
     import datetime
     sb = get_admin_client()
     result = (
-        sb.table("purchases")
+        sb.table("curso_purchases")
         .update({
             "status": "completed",
             "stripe_payment_intent": stripe_payment_intent,
@@ -320,7 +320,7 @@ def get_user_purchases(user_id: str) -> list:
     try:
         sb = get_admin_client()
         result = (
-            sb.table("purchases")
+            sb.table("curso_purchases")
             .select("*")
             .eq("user_id", user_id)
             .eq("status", "completed")
@@ -338,8 +338,8 @@ def get_all_purchases() -> list:
     try:
         sb = get_admin_client()
         result = (
-            sb.table("purchases")
-            .select("*, profiles!purchases_user_id_fkey(email, username)")
+            sb.table("curso_purchases")
+            .select("*, profiles:curso_profiles!curso_purchases_user_id_fkey(email, username)")
             .order("created_at", desc=True)
             .execute()
         )

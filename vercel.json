@@ -11,5 +11,11 @@
         "src": "/(.*)",
         "dest": "run.py"
       }
+    ],
+    "crons": [
+      {
+        "path": "/curso/keepalive",
+        "schedule": "0 12 * * *"
+      }
     ]
   }
