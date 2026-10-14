@@ -599,7 +599,7 @@ def _nivel1_practica(wb, lang):
 
     # Exercise 2
     section_title(ws, 29, 1, "EXERCISE 2: Conditional formulas", "2E7D32")
-    note_cell(ws, 30, 1, "Add a 'Commission' column in column H. The commission is 5% if the sale > 2000, otherwise 2%.")
+    note_cell(ws, 30, 1, "Calculate the commission in the yellow cells with IF: 5% if the sale > 2000, otherwise 2%.")
     header_row(ws, 31, ["Row","Sale Total (ref)",f"{F('IF')} formula for commission","Result"], "43A047")
     for i, row_num in enumerate(range(6, 16), 32):
         data_cell(ws, i, 1, row_num)
@@ -1014,8 +1014,8 @@ def _nivel3_practica(wb, lang):
     c_filt = data_cell(ws, 33, 2, "")
     c_filt.fill = PatternFill("solid", fgColor="FFF176")
     expected_filter = f'={F("FILTER")}($A$6:$H$15,$F$6:$F$15<$G$6:$G$15,"No products below minimum")'
-    ws.cell(row=34, column=1, value="Answer:").font = bold_font(10, "388E3C")
-    ws.cell(row=34, column=2, value=expected_filter).font = Font(name="Courier New", size=9, color="388E3C")
+    ws.cell(row=38, column=1, value="Answer:").font = bold_font(10, "388E3C")
+    ws.cell(row=38, column=2, value=expected_filter).font = Font(name="Courier New", size=9, color="388E3C")
 
     col_width(ws, "A", 14); col_width(ws, "B", 24); col_width(ws, "C", 18)
     col_width(ws, "D", 10); col_width(ws, "E", 10); col_width(ws, "F", 10)

@@ -1,0 +1,153 @@
+{% extends "curso/base_curso.html" %}
+{% block title %}{{ t('Corrección', 'Results') }} — Excel 365{% endblock %}
+
+{% block extra_head %}
+<style>
+  .res-head {
+    display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap;
+    padding: 1.6rem; border: 1px solid var(--c-border); border-radius: var(--radius-lg);
+    background: var(--c-bg-alt); margin-bottom: 1.4rem;
+  }
+  .res-ring {
+    --p: 0; --col: #15803d;
+    width: 112px; height: 112px; border-radius: 50%; flex-shrink: 0;
+    background: conic-gradient(var(--col) calc(var(--p) * 1%), var(--c-border) 0);
+    display: grid; place-items: center;
+  }
+  .res-ring__in {
+    width: 88px; height: 88px; border-radius: 50%; background: var(--c-bg-alt);
+    display: grid; place-items: center; font-size: 1.6rem; font-weight: 900; color: var(--c-text);
+  }
+  .res-head__txt { flex: 1; min-width: 220px; }
+  .res-head__txt h1 { font-size: 1.35rem; font-weight: 800; margin-bottom: .3rem; }
+  .res-head__txt p { color: var(--c-text-muted); font-size: .9rem; line-height: 1.55; }
+  .res-head__actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .9rem; }
+
+  .res-warn {
+    display: flex; gap: .6rem; align-items: flex-start;
+    background: #fffbeb; border: 1px solid #fde68a; color: #92400e;
+    border-radius: var(--radius); padding: .7rem .9rem; font-size: .85rem; margin-bottom: .6rem;
+  }
+  .res-ex { border: 1px solid var(--c-border); border-radius: var(--radius-lg); margin-bottom: 1rem; overflow: hidden; }
+  .res-ex__head {
+    display: flex; justify-content: space-between; align-items: center; gap: .8rem;
+    padding: .85rem 1.1rem; background: var(--c-bg); border-bottom: 1px solid var(--c-border);
+  }
+  .res-ex__title { font-weight: 700; font-size: .95rem; }
+  .res-ex__count { font-size: .78rem; font-weight: 700; color: var(--c-text-muted); white-space: nowrap; }
+  .res-ex__note { padding: .8rem 1.1rem; font-size: .85rem; color: var(--c-text-muted); }
+  .res-item {
+    display: grid; grid-template-columns: 22px 1fr auto; gap: .2rem .7rem;
+    padding: .7rem 1.1rem; border-top: 1px solid var(--c-border); align-items: start;
+  }
+  .res-item:first-of-type { border-top: 0; }
+  .res-item__icon { font-size: .95rem; padding-top: .1rem; }
+  .res-item--ok .res-item__icon { color: #16a34a; }
+  .res-item--partial .res-item__icon { color: #d97706; }
+  .res-item--fail .res-item__icon { color: #dc2626; }
+  .res-item--unverified .res-item__icon { color: #64748b; }
+  .res-item__label { font-size: .88rem; font-weight: 600; color: var(--c-text); }
+  .res-item__cell {
+    font-family: ui-monospace, Menlo, monospace; font-size: .72rem; color: var(--c-text-muted);
+    border: 1px solid var(--c-border); border-radius: 5px; padding: .05rem .35rem; align-self: center;
+  }
+  .res-item__msg { grid-column: 2 / 4; font-size: .82rem; color: var(--c-text-muted); line-height: 1.5; }
+  .res-item__vals { grid-column: 2 / 4; font-size: .78rem; color: var(--c-text-muted); }
+  .res-item__vals code { font-size: .78rem; color: var(--c-text); }
+  @media (max-width: 600px) {
+    .res-head { padding: 1.1rem; gap: 1rem; }
+    .res-ring { width: 88px; height: 88px; } .res-ring__in { width: 68px; height: 68px; font-size: 1.25rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% set score = result.score %}
+{% set passed = result.passed %}
+<main class="curso-main">
+  <div style="margin-bottom:.8rem;">
+    <a href="{{ url_for('curso.dashboard') }}" class="btn btn-outline btn-sm">
+      <i class="fas fa-arrow-left"></i> Dashboard
+    </a>
+  </div>
+
+  <section class="res-head">
+    {% if score is not none %}
+      <div class="res-ring" style="--p: {{ score }}; --col: {% if passed %}#16a34a{% else %}#d97706{% endif %};"
+           role="img" aria-label="{{ score }}%">
+        <div class="res-ring__in">{{ score }}%</div>
+      </div>
+    {% endif %}
+    <div class="res-head__txt">
+      <h1>
+        {% if result.status != 'graded' %}
+          {{ t('No pudimos corregirla automáticamente', 'We couldn’t grade it automatically') }}
+        {% elif passed and score == 100 %}
+          {{ t('¡Perfecta!', 'Perfect!') }}
+        {% elif passed %}
+          {{ t('¡Práctica aprobada!', 'Practice passed!') }}
+        {% else %}
+          {{ t('Vas bien, te falta poco', 'Good progress — almost there') }}
+        {% endif %}
+      </h1>
+      <p>
+        {% if level %}{{ loc(level, 'title') }} · {% endif %}
+        {% if result.status == 'graded' %}
+          {% set all_items = result.exercises|map(attribute='items')|sum(start=[]) %}
+          {% set n_ok = all_items|selectattr('status', 'equalto', 'ok')|list|length %}
+          {% set n_half = all_items|selectattr('status', 'equalto', 'partial')|list|length %}
+          {{ n_ok }} {{ t('de', 'of') }} {{ result.total }} {{ t('correctas', 'correct') }}{% if n_half %}, {{ n_half }} {{ t('a medias', 'partly right') }}{% endif %}.
+          {% if not passed %}{{ t('Corrige lo marcado y vuelve a entregarla: se aprueba con 70%.', 'Fix what’s marked and resubmit: 70% passes.') }}{% endif %}
+        {% else %}
+          {{ t('Tu archivo quedó guardado y el instructor lo revisará.', 'Your file was saved and the instructor will review it.') }}
+        {% endif %}
+      </p>
+      <div class="res-head__actions">
+        <form method="POST" action="{{ url_for('curso.submit', module_id=sub.module_id) }}" enctype="multipart/form-data">
+          <label class="btn btn-primary btn-sm" style="cursor:pointer;">
+            <i class="fas fa-upload"></i> {{ t('Entregar de nuevo', 'Resubmit') }}
+            <input type="file" name="file" accept=".xlsx,.xlsm" style="display:none;" onchange="this.closest('form').submit()">
+          </label>
+        </form>
+        <a class="btn btn-outline btn-sm" href="{{ url_for('curso.descargar', filename=level_key ~ '_practica.xlsx') }}">
+          <i class="fas fa-download"></i> {{ t('Descargar la práctica', 'Download the practice file') }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {% for w in result.warnings %}
+    <div class="res-warn"><i class="fas fa-triangle-exclamation" style="margin-top:.15rem;"></i><span>{{ w[lang] }}</span></div>
+  {% endfor %}
+
+  {% for ex in result.exercises %}
+    {% set n_ok = ex["items"]|selectattr('status', 'equalto', 'ok')|list|length %}
+    <section class="res-ex">
+      <div class="res-ex__head">
+        <span class="res-ex__title">{{ ex.title[lang] }}</span>
+        {% if ex["items"] %}<span class="res-ex__count">{{ n_ok }}/{{ ex["items"]|length }}</span>{% endif %}
+      </div>
+      {% if ex.note %}<div class="res-ex__note">{{ ex.note[lang] }}</div>{% endif %}
+      {% for it in ex["items"] %}
+        <div class="res-item res-item--{{ it.status }}">
+          <span class="res-item__icon">
+            {% if it.status == 'ok' %}<i class="fas fa-circle-check"></i>
+            {% elif it.status == 'partial' %}<i class="fas fa-circle-half-stroke"></i>
+            {% elif it.status == 'fail' %}<i class="fas fa-circle-xmark"></i>
+            {% else %}<i class="fas fa-circle-question"></i>{% endif %}
+          </span>
+          <span class="res-item__label">{{ it.label[lang] }}</span>
+          {% if it.cell %}<span class="res-item__cell">{{ it.cell }}</span>{% else %}<span></span>{% endif %}
+          {% if it.msg %}<span class="res-item__msg">{{ it.msg[lang] }}</span>{% endif %}
+          {% if it.status in ('fail', 'partial') and it.expected is not none %}
+            <span class="res-item__vals">
+              {% if it.got is not none %}{{ t('Tu resultado', 'Your result') }}: <code>{{ it.got }}</code> · {% endif %}
+              {{ t('Esperado', 'Expected') }}: <code>{{ it.expected }}</code>
+            </span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </section>
+  {% endfor %}
+</main>
+{% endblock %}

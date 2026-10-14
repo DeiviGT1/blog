@@ -292,9 +292,18 @@
             {% set practica_id = lk + '_practica' %}
             {% set ya_entregado = practica_id in submitted_modules %}
             {% if ya_entregado %}
+              {% set last = latest_practice.get(practica_id) %}
+              {% if last and last.auto_score is not none %}
+                <a href="{{ url_for('curso.entrega', sub_id=last.id) }}"
+                   class="score-chip {% if last.auto_score >= 70 %}score-chip--pass{% else %}score-chip--retry{% endif %}">
+                  <strong>{{ last.auto_score }}%</strong>
+                  {{ t('Ver corrección', 'See results') }} <i class="fas fa-chevron-right"></i>
+                </a>
+              {% else %}
               <span style="font-size:.8rem;color:var(--c-success);font-weight:600;">
                 <i class="fas fa-check-circle"></i> {{ t('Práctica entregada', 'Practice submitted') }}
               </span>
+              {% endif %}
               <form method="POST" action="{{ url_for('curso.submit', module_id=practica_id) }}"
                     enctype="multipart/form-data" style="display:inline;">
                 <label class="btn btn-outline btn-sm" style="cursor:pointer;">

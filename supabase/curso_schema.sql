@@ -40,6 +40,10 @@ create table if not exists public.curso_submissions (
   reviewed          boolean not null default false,
   reviewed_by       uuid,
   reviewed_at       timestamptz,
+  -- Corrector automático de prácticas (app/python/practice_grader.py)
+  auto_score        smallint,
+  auto_result       jsonb,
+  graded_at         timestamptz,
   constraint curso_submissions_user_id_fkey
     foreign key (user_id) references public.curso_profiles(id) on delete cascade,
   constraint curso_submissions_reviewed_by_fkey
@@ -73,3 +77,9 @@ alter table public.curso_purchases          enable row level security;
 insert into storage.buckets (id, name, public)
 values ('course-submissions', 'course-submissions', false)
 on conflict (id) do nothing;
+
+-- 2026-10-14 · corrector automático (para bases creadas antes de este cambio)
+alter table public.curso_submissions
+  add column if not exists auto_score  smallint,
+  add column if not exists auto_result jsonb,
+  add column if not exists graded_at   timestamptz;

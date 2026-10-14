@@ -699,6 +699,11 @@ def dashboard():
     enabled    = get_user_permissions(user_id) if not is_admin else ALL_MODULE_IDS
     submissions = get_user_submissions(user_id)
     submitted_modules = {s["module_id"] for s in submissions}
+    # Última entrega de cada práctica (vienen ordenadas de la más reciente a la más vieja)
+    latest_practice = {}
+    for s in submissions:
+        if s["module_id"].endswith("_practica"):
+            latest_practice.setdefault(s["module_id"], s)
     purchased  = {"nivel0", "nivel1", "nivel2", "nivel3", "nivel4"} if is_admin \
                  else _get_purchased_levels(user_id)
     # Treat a level as unlocked if the admin granted any module in it
@@ -710,6 +715,7 @@ def dashboard():
         levels=LEVELS,
         enabled_modules=enabled,
         submitted_modules=submitted_modules,
+        latest_practice=latest_practice,
         purchased_levels=purchased,
         is_admin=is_admin,
         pricing=PRICING,
@@ -878,16 +884,51 @@ def submit(module_id):
         flash(tr("El archivo supera el límite de 10 MB.", "The file exceeds the 10 MB limit."), "error")
         return redirect(back_url)
 
+    # Corrección automática (solo prácticas de nivel). Nunca bloquea la entrega.
+    auto_result = None
+    if is_practica:
+        try:
+            from app.python.practice_grader import grade_practice
+            auto_result = grade_practice(file_bytes, level_prefix, filename, get_lang())
+        except Exception:
+            logger.exception("practice_grader falló para %s", module_id)
+
     try:
         from app.python.supabase_client import upload_submission_file, create_submission
         user_id   = session["curso_user_id"]
         path      = upload_submission_file(user_id, module_id, filename, file_bytes)
-        create_submission(user_id, module_id, path, filename)
-        flash(tr("¡Entrega enviada correctamente!", "Assignment submitted!"), "success")
+        rows      = create_submission(user_id, module_id, path, filename, auto_result)
     except Exception as e:
         flash(tr("Error al subir el archivo: ", "Error uploading file: ") + str(e), "error")
+        return redirect(back_url)
 
+    if auto_result and rows:
+        return redirect(url_for("curso.entrega", sub_id=rows[0]["id"]))
+    flash(tr("¡Entrega enviada correctamente!", "Assignment submitted!"), "success")
     return redirect(back_url)
+
+
+@curso_bp.route("/entrega/<sub_id>")
+@require_approved
+def entrega(sub_id):
+    """Resultado de la corrección automática de una práctica."""
+    if not _valid_uuid(sub_id):
+        abort(404)
+    from app.python.supabase_client import get_submission
+    sub = get_submission(sub_id)
+    if not sub or (sub["user_id"] != session["curso_user_id"] and not session.get("curso_is_admin")):
+        abort(404)
+    result = sub.get("auto_result")
+    if not result:
+        return redirect(url_for("curso.dashboard"))
+    level_key = sub["module_id"].replace("_practica", "")
+    return render_template(
+        "curso/entrega.html",
+        sub=sub,
+        result=result,
+        level=LEVELS.get(level_key),
+        level_key=level_key,
+    )
 
 
 # ── Payment routes ────────────────────────────────────────────────────────────

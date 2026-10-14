@@ -205,15 +205,36 @@ def bulk_set_level_permissions(user_id: str, module_ids: list[str],
 # ── Submission helpers ────────────────────────────────────────────────────────
 
 def create_submission(user_id: str, module_id: str,
-                      file_path: str, original_filename: str):
+                      file_path: str, original_filename: str,
+                      auto_result: dict | None = None):
     sb = get_admin_client()
-    result = sb.table("curso_submissions").insert({
+    row = {
         "user_id": user_id,
         "module_id": module_id,
         "file_path": file_path,
         "original_filename": original_filename,
-    }).execute()
+    }
+    if auto_result is not None:
+        import datetime
+        row.update({
+            "auto_score": auto_result.get("score"),
+            "auto_result": auto_result,
+            "graded_at": datetime.datetime.utcnow().isoformat(),
+        })
+    result = sb.table("curso_submissions").insert(row).execute()
     return result.data
+
+
+def get_submission(submission_id: str) -> dict | None:
+    sb = get_admin_client()
+    result = (
+        sb.table("curso_submissions")
+        .select("*")
+        .eq("id", submission_id)
+        .limit(1)
+        .execute()
+    )
+    return (result.data or [None])[0]
 
 
 def get_user_submissions(user_id: str) -> list:

@@ -17,6 +17,7 @@
         <th>Archivo</th>
         <th>Fecha</th>
         <th>Estado</th>
+        <th>Auto</th>
         <th>Calificación</th>
         <th>Acciones</th>
       </tr>
@@ -55,6 +56,14 @@
           {% else %}
             <span class="badge badge-pending">Pendiente</span>
           {% endif %}
+        </td>
+        <td>
+          {% if s.auto_score is not none %}
+            <a href="{{ url_for('curso.entrega', sub_id=s.id) }}"
+               class="score-chip {% if s.auto_score >= 70 %}score-chip--pass{% else %}score-chip--retry{% endif %}"><strong>{{ s.auto_score }}%</strong></a>
+          {% elif s.auto_result %}
+            <a href="{{ url_for('curso.entrega', sub_id=s.id) }}" style="font-size:.8rem;">sin nota</a>
+          {% else %}—{% endif %}
         </td>
         <td>{{ s.grade or '—' }}</td>
         <td>
