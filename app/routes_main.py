@@ -24,7 +24,9 @@ def register_routes(app):
     from .routes.brisa_sites_routes import brisa_sites_bp
     from .routes.meper_routes import meper_bp
     from .routes.peli_routes import peli_bp
+    from .routes.semana_routes import semana_bp
     from .routes.trabajo_a_routes import trabajo_a_bp
+    from .routes.closet_routes import closet_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(openai_bp)
@@ -38,4 +40,6 @@ def register_routes(app):
     app.register_blueprint(brisa_sites_bp)
     app.register_blueprint(meper_bp)
     app.register_blueprint(peli_bp)
+    app.register_blueprint(semana_bp)
     app.register_blueprint(trabajo_a_bp)
+    app.register_blueprint(closet_bp)

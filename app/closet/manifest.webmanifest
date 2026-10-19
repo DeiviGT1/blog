@@ -1,0 +1,11 @@
+{
+  "name": "Closet",
+  "short_name": "Closet",
+  "start_url": "/closet/",
+  "scope": "/closet/",
+  "display": "standalone",
+  "background_color": "#EAEBE5",
+  "theme_color": "#EAEBE5",
+  "lang": "es",
+  "icons": [{ "src": "/closet/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
