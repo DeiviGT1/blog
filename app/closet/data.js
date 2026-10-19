@@ -57,6 +57,7 @@ window.CLOSET_DATA = (() => {
     if (/estampad|gr[aá]fic|floral|tropical|hawai/.test(t)) f = Math.max(1, f - 1);
     if (/cuero|piel/.test(t) && type === 'chaqueta') f = 3;
     if (/cuero|piel|minimal/.test(t) && type === 'tenis') f = 2;
+    if (/manga larga/.test(t)) w = Math.max(w, 2);
     if (/polar|lana|merino/.test(t)) w = Math.max(w, 4);
     return { formality: f, warmth: w };
   };
@@ -86,6 +87,8 @@ window.CLOSET_DATA = (() => {
     item('i4',  'camiseta', 'gris',    { lastWorn: 1, wearCount: 18 }),
     item('i7',  'camisa',   'blanco',  { name: 'Camisa blanca de lino', lastWorn: 9, wearCount: 15, material: 'lino' }),
     item('i10', 'camisa',   'cafe',    { name: 'Camisa de cuadros café', lastWorn: 60, wearCount: 2, material: 'franela' }),
+    item('i31', 'camiseta', 'negro',   { name: 'Camiseta negra manga larga', lastWorn: 20, wearCount: 6, material: 'algodón' }),
+    item('i37', 'camiseta', 'negro',   { name: 'Camiseta estampada', lastWorn: 3, wearCount: 12 }),
     // abajo
     item('i11', 'pantalon', 'indigo',  { name: 'Jean índigo', lastWorn: 1, wearCount: 40, material: 'denim' }),
     item('i12', 'pantalon', 'negro',   { name: 'Jean negro', lastWorn: 6, wearCount: 19, material: 'denim' }),
@@ -93,6 +96,7 @@ window.CLOSET_DATA = (() => {
     // zapatos
     item('i18', 'tenis',    'blanco',  { lastWorn: 1, wearCount: 52, material: 'cuero' }),
     item('i19', 'tenis',    'negro',   { lastWorn: 12, wearCount: 9 }),
+    item('i34', 'tenis',    'marino',  { name: 'Tenis para correr', lastWorn: 2, wearCount: 30 }),
     // capas
     item('i22', 'chaqueta', 'denimcl', { name: 'Chaqueta denim', lastWorn: 25, wearCount: 7 }),
     item('i24', 'chaqueta', 'negro',   { name: 'Bomber negra', lastWorn: 40, wearCount: 5 }),
@@ -103,6 +107,7 @@ window.CLOSET_DATA = (() => {
     item('c28', 'camiseta', 'crudo',   { ghost: true, q: 'off white t-shirt' }),
     item('c31', 'chaqueta', 'cafe',    { ghost: true, name: 'Chaqueta de cuero café', q: 'brown leather jacket', material: 'cuero' }),
     item('c34', 'camisa',   'oliva',   { ghost: true, q: 'olive green shirt' }),
+    item('c41', 'tenis',    'blanco',  { ghost: true, name: 'Tenis blancos minimalistas', q: 'white minimalist leather sneakers', material: 'cuero' }),
   ];
 
   // Dónde comprar: marcas con tienda física en cada mall y su buscador online

@@ -53,3 +53,16 @@ en estos dos bancos; ahí conviene fotografiar las prendas o usar un banco de pa
 ## Recorte de fondo (2026-10-19)
 
 Los PNG de esta carpeta son estas fotos con el fondo quitado (rembg/U²-Net). Se descartaron por recorte fallido: c27, c29, i3, i6, i13. Los JPG originales no se versionan.
+
+
+## Segunda tanda (2026-10-19, casual/deporte)
+
+| Archivo | Prenda pedida | URL de la página | Autor | Exacta / aproximada |
+|---|---|---|---|---|
+| i31.jpg | Buzo/hoodie negro | https://unsplash.com/photos/A7f7XRKgUWc | Ryan Hoffman (@ryanhoffman007) | **Aproximada**: camiseta negra de manga larga (cuello redondo, sin capucha) con "705." pequeño en el pecho; colgada en gancho de madera sobre fondo blanco puro. |
+| i33.jpg | Camiseta deportiva negra/gris oscuro | https://unsplash.com/photos/6Nub980bI3I | Ryan Hoffman (@ryanhoffman007) | **Aproximada**: camiseta negra de algodón (no dry-fit) con sello "705" en el pecho; en gancho de madera sobre fondo blanco puro. |
+| i34.jpg | Tenis para correr | https://unsplash.com/photos/x-uaiiEkC-w | Gabre Cameron | **Exacta**: Puma de running negro con suela blanca, un solo zapato de perfil, fondo gris muy claro uniforme. |
+| i37.jpg | Camiseta con estampado/gráfico | https://unsplash.com/photos/oji95IY7V8U | Alex Haigh | **Exacta**: camiseta negra con gráfico grande "3 / KIIKII Osaka Japan", extendida sobre fondo blanco puro. |
+| c41.jpg | Tenis blancos minimalistas | https://unsplash.com/photos/XZ3EmAIWuz0 | Trendest Studio | **Aproximada**: tenis blanco de perfil "levitando" sobre fondo blanco, pero con talón negro con monograma (no es 100 % liso tipo Stan Smith/Common Projects). |
+
+Se usaron i31, i34, i37 y c41 (recortadas igual). i33 se descartó por repetir la camiseta negra. Sin foto libre sobre blanco: buzo, jogger, short deportivo, camisa estampada.
