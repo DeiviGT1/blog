@@ -112,7 +112,7 @@ window.CLOSET_ENGINE = (() => {
 
   function build(items, opts) {
     const { occasion, weather, withItem = null, neglected = false, votes = {}, seed = 7, limit = 400 } = opts;
-    const pool = items.filter(i => i.status === 'limpia' || i.ghost);
+    const pool = items;
     const by = cat => pool.filter(i => i.cat === cat);
     const layers = [null, ...by('layer')];
     const rnd = seeded(seed);
