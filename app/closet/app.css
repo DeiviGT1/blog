@@ -318,3 +318,41 @@ input.name:focus { outline: none; border-color: var(--accent); }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .lay .piece { opacity: 1; }
 }
+
+.fits { margin: 10px 0 14px; font-size: 15px; color: var(--ink-2); }
+.fits b { color: var(--ink); font-weight: 600; }
+
+/* Perfil */
+.me { display: grid; place-items: center; position: fixed; top: calc(12px + env(safe-area-inset-top)); right: 14px; z-index: 15; width: 40px; height: 40px; border-radius: 50%;
+  background: var(--paper-2); color: var(--ink); transition: background .2s, transform .15s; }
+.me svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.me.on { background: var(--ink); color: var(--paper); }
+.me:active { transform: scale(.92); }
+.form { padding: 0 16px 32px; max-width: 560px; }
+.form h2 { margin-left: 0; margin-right: 0; }
+.form h2 small { font-size: .5em; font-weight: 500; color: var(--ink-2); }
+.field { display: block; margin: 12px 0; }
+.field > span { display: block; font-size: 13px; font-weight: 500; color: var(--ink-2); margin-bottom: 4px; }
+.field input, .field textarea { width: 100%; border: 0; border-bottom: 1.5px solid var(--line); background: transparent; padding: 8px 0; font-size: 18px; font-weight: 500; font-variation-settings: "opsz" 20, "wdth" 94; border-radius: 0; }
+.field textarea { font-size: 15px; font-weight: 400; line-height: 1.4; resize: vertical; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+.field .seg { margin: 4px 0 0; max-width: none; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+@media (min-width: 900px) { .me { display: none; } .form { padding: 0 0 48px; } }
+.field input::placeholder, .field textarea::placeholder, input.name::placeholder { color: var(--ink-2); opacity: .4; }
+.form h2 small { margin-left: 8px; }
+
+/* Puerta de entrada */
+body.gated .tabs, body.gated .side, body.gated .me { display: none; }
+.gate { min-height: 100dvh; display: grid; align-content: center; gap: 14px; padding: 24px 20px; max-width: 420px; margin: 0 auto; }
+.brand-big { font-size: 64px; }
+.gate .lead { margin: 0 0 10px; }
+.gate-form { display: grid; gap: 10px; }
+.gate-form input, .invite-form input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--sheet); color: #1B2230; font-size: 16px; }
+.gate-form input:focus, .invite-form input:focus { outline: none; border-color: var(--accent); }
+.gate .err { min-height: 1.4em; margin: 0; color: var(--no); font-weight: 500; }
+.link { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; font-size: 14px; text-align: left; }
+.invite { margin-top: 20px; }
+.invite-form { display: flex; gap: 8px; margin-top: 10px; }
+.invite-form input { flex: 1; }
+.v-perfil .ghost-btn { margin-top: 24px; }

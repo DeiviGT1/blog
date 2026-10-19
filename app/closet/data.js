@@ -36,6 +36,29 @@ window.CLOSET_DATA = (() => {
     tenis:    { shape: 'g-tenis',    cat: 'shoes',  label: 'Tenis',    g: 'p',  en: 'sneakers' },
     mocasin:  { shape: 'g-mocasin',  cat: 'shoes',  label: 'Mocasín',  g: 'm',  en: 'loafers' },
     bota:     { shape: 'g-bota',     cat: 'shoes',  label: 'Botas',    g: 'fp', en: 'boots' },
+    buzo:     { shape: 'g-sueter',   cat: 'layer',  label: 'Buzo',     g: 'm',  en: 'hoodie' },
+    jogger:   { shape: 'g-pantalon', cat: 'bottom', label: 'Jogger',   g: 'm',  en: 'joggers' },
+  };
+
+  // Formalidad (1 playa … 5 traje) y abrigo (1 calor … 5 abrigo) salen solos
+  // del tipo de prenda, el nombre y el material. Nadie los ajusta a mano.
+  const BASE = {
+    camiseta: [1, 1], polo: [2, 1], camisa: [3, 2], sueter: [3, 4], chaqueta: [2, 3], blazer: [4, 3],
+    pantalon: [3, 2], short: [1, 1], tenis: [1, 1], mocasin: [4, 1], bota: [3, 3], buzo: [1, 3], jogger: [1, 2],
+  };
+  const autoProfile = (type, name = '', material = '') => {
+    let [f, w] = BASE[type] || [2, 2];
+    const t = `${name} ${material}`.toLowerCase();
+    if (/jean|denim/.test(t)) f = type === 'pantalon' ? 2 : f;
+    if (/vestir|lana fr|sastre/.test(t)) f = 4;
+    if (/chino/.test(t)) f = 3;
+    if (/lino/.test(t) && type === 'camisa') { f = 2; w = 1; }
+    if (/deportiv|dry|running|correr|gym|entrenar/.test(t)) f = 1;
+    if (/estampad|gr[aá]fic|floral|tropical|hawai/.test(t)) f = Math.max(1, f - 1);
+    if (/cuero|piel/.test(t) && type === 'chaqueta') f = 3;
+    if (/cuero|piel|minimal/.test(t) && type === 'tenis') f = 2;
+    if (/polar|lana|merino/.test(t)) w = Math.max(w, 4);
+    return { formality: f, warmth: w };
   };
   const colorName = (c, g) => (g === 'f' && c.f) || (g === 'p' && c.p) || (g === 'fp' && c.fp) || c.name;
   const itemName = (s, c) => `${s.label} ${colorName(c, s.g)}`;
@@ -48,8 +71,7 @@ window.CLOSET_DATA = (() => {
       name: o.name || itemName(S[type], C[color]),
       q: o.q || `${color} ${S[type].en}`,
       photo: `img/${id}.png`,
-      formality: o.formality ?? 2,   // 1 playa … 5 traje
-      warmth: o.warmth ?? 2,         // 1 calor … 5 abrigo
+      ...autoProfile(type, o.name || '', o.material || ''),
       lastWorn: o.lastWorn ?? null,  // días desde la última vez
       wearCount: o.wearCount ?? 0,
       material: o.material || '',
@@ -59,33 +81,28 @@ window.CLOSET_DATA = (() => {
 
   const items = [
     // arriba
-    item('i1',  'camiseta', 'blanco',  { formality: 1, warmth: 1, lastWorn: 2, wearCount: 31, material: 'algodón' }),
-    item('i2',  'camiseta', 'negro',   { formality: 2, warmth: 1, lastWorn: 5, wearCount: 24, material: 'algodón' }),
-    item('i4',  'camiseta', 'gris',    { formality: 1, warmth: 1, lastWorn: 1, wearCount: 18 }),
-    item('i7',  'camisa',   'blanco',  { name: 'Camisa blanca de lino', formality: 3, warmth: 1, lastWorn: 9, wearCount: 15, material: 'lino' }),
-    item('i10', 'camisa',   'cafe',    { name: 'Camisa de cuadros café', formality: 2, warmth: 2, lastWorn: 60, wearCount: 2, material: 'franela' }),
+    item('i1',  'camiseta', 'blanco',  { lastWorn: 2, wearCount: 31, material: 'algodón' }),
+    item('i2',  'camiseta', 'negro',   { lastWorn: 5, wearCount: 24, material: 'algodón' }),
+    item('i4',  'camiseta', 'gris',    { lastWorn: 1, wearCount: 18 }),
+    item('i7',  'camisa',   'blanco',  { name: 'Camisa blanca de lino', lastWorn: 9, wearCount: 15, material: 'lino' }),
+    item('i10', 'camisa',   'cafe',    { name: 'Camisa de cuadros café', lastWorn: 60, wearCount: 2, material: 'franela' }),
     // abajo
-    item('i11', 'pantalon', 'indigo',  { name: 'Jean índigo', formality: 2, warmth: 2, lastWorn: 1, wearCount: 40, material: 'denim' }),
-    item('i12', 'pantalon', 'negro',   { name: 'Jean negro', formality: 3, warmth: 2, lastWorn: 6, wearCount: 19, material: 'denim' }),
-    item('i16', 'short',    'caqui',   { formality: 1, warmth: 1, lastWorn: 8, wearCount: 14 }),
+    item('i11', 'pantalon', 'indigo',  { name: 'Jean índigo', lastWorn: 1, wearCount: 40, material: 'denim' }),
+    item('i12', 'pantalon', 'negro',   { name: 'Jean negro', lastWorn: 6, wearCount: 19, material: 'denim' }),
+    item('i16', 'short',    'caqui',   { lastWorn: 8, wearCount: 14 }),
     // zapatos
-    item('i18', 'tenis',    'blanco',  { formality: 2, warmth: 1, lastWorn: 1, wearCount: 52, material: 'cuero' }),
-    item('i19', 'tenis',    'negro',   { formality: 2, warmth: 1, lastWorn: 12, wearCount: 9 }),
-    item('i20', 'mocasin',  'cafe',    { formality: 4, warmth: 1, lastWorn: 4, wearCount: 20, material: 'ante' }),
-    item('i21', 'bota',     'cafe',    { formality: 3, warmth: 3, lastWorn: 90, wearCount: 3, material: 'cuero' }),
+    item('i18', 'tenis',    'blanco',  { lastWorn: 1, wearCount: 52, material: 'cuero' }),
+    item('i19', 'tenis',    'negro',   { lastWorn: 12, wearCount: 9 }),
     // capas
-    item('i22', 'chaqueta', 'denimcl', { name: 'Chaqueta denim', formality: 2, warmth: 3, lastWorn: 25, wearCount: 7 }),
-    item('i23', 'blazer',   'marino',  { formality: 4, warmth: 3, lastWorn: 10, wearCount: 9, material: 'lana' }),
-    item('i24', 'chaqueta', 'negro',   { name: 'Bomber negra', formality: 2, warmth: 3, lastWorn: 40, wearCount: 5 }),
+    item('i22', 'chaqueta', 'denimcl', { name: 'Chaqueta denim', lastWorn: 25, wearCount: 7 }),
+    item('i24', 'chaqueta', 'negro',   { name: 'Bomber negra', lastWorn: 40, wearCount: 5 }),
   ];
 
   // Prendas que NO tienes. Comprar mide cuántos outfits nuevos abre cada una.
   const catalog = [
-    item('c28', 'camiseta', 'crudo',   { ghost: true, q: 'off white t-shirt', formality: 2, warmth: 1 }),
-    item('c30', 'mocasin',  'negro',   { ghost: true, q: 'black loafers', formality: 4, warmth: 1 }),
-    item('c31', 'chaqueta', 'cafe',    { ghost: true, name: 'Chaqueta de cuero café', q: 'brown leather jacket', formality: 3, warmth: 3 }),
-    item('c34', 'camisa',   'oliva',   { ghost: true, q: 'olive green shirt', formality: 3, warmth: 2 }),
-    item('c36', 'bota',     'negro',   { ghost: true, q: 'black chelsea boots', formality: 3, warmth: 3 }),
+    item('c28', 'camiseta', 'crudo',   { ghost: true, q: 'off white t-shirt' }),
+    item('c31', 'chaqueta', 'cafe',    { ghost: true, name: 'Chaqueta de cuero café', q: 'brown leather jacket', material: 'cuero' }),
+    item('c34', 'camisa',   'oliva',   { ghost: true, q: 'olive green shirt' }),
   ];
 
   // Dónde comprar: marcas con tienda física en cada mall y su buscador online
@@ -97,13 +114,15 @@ window.CLOSET_DATA = (() => {
   ];
   const brands = STORES.brands;
 
+  // Formal "pero no tanto": oficina relajada; el centro es casual, salida y deporte.
   const occasions = [
-    { id: 'casual',  label: 'Casual',  formality: [1, 3] },
-    { id: 'oficina', label: 'Oficina', formality: [3, 4] },
-    { id: 'salida',  label: 'Salida',  formality: [2, 4] },
-    { id: 'cita',    label: 'Cita',    formality: [3, 4] },
+    { id: 'casual',  label: 'Casual',  formality: [1, 2] },
+    { id: 'salida',  label: 'Salida',  formality: [1, 3] },
+    { id: 'oficina', label: 'Oficina', formality: [2, 3] },
     { id: 'deporte', label: 'Deporte', formality: [1, 1] },
   ];
+  // Para qué ocasiones sirve una prenda (lo que muestra la ficha).
+  const fitsFor = (it) => occasions.filter(o => it.formality >= o.formality[0] - 1 && it.formality <= o.formality[1] && (o.id !== 'deporte' || it.formality === 1)).map(o => o.label.toLowerCase());
 
   // "hoy" se reemplaza por el clima real (Open-Meteo) en la versión final.
   const weathers = [
@@ -113,5 +132,5 @@ window.CLOSET_DATA = (() => {
     { id: 'lluvia', label: 'Lluvia',   temp: 22, rain: true,  desc: 'lluvia',    phrase: 'un día de lluvia' },
   ];
 
-  return { items, catalog, malls, brands, occasions, weathers, colors: C, shapes: S, itemName, colorName };
+  return { items, catalog, malls, brands, occasions, weathers, colors: C, shapes: S, itemName, colorName, autoProfile, fitsFor };
 })();

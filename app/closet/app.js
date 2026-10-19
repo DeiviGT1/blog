@@ -27,16 +27,60 @@
   const KEY = 'closet.v2';
   const fresh = () => ({
     votes: {}, saved: [], worn: [], wishlist: [], overrides: {}, added: [],
-    prefs: { size: 'M', mall: 'any', brands: [] },
+    prefs: { mall: 'any', brands: [] },
+    // Lo que la IA va a saber de ti: se llena una vez, se usa en todo.
+    profile: { name: '', height: '', weight: '', build: '', fit: 'regular', top: '', waist: '', inseam: '', shoe: '',
+      chest: '', hips: '', city: 'Hollywood, FL', styles: ['casual', 'deporte', 'salida'], notes: '' },
     filters: { occasion: 'casual', weather: 'hoy', withItem: null, neglected: false },
     seed: Math.floor(Math.random() * 1e6),
   });
   let state;
   try { state = { ...fresh(), ...JSON.parse(localStorage.getItem(KEY) || 'null') }; } catch { state = fresh(); }
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+  state.profile = { ...fresh().profile, ...(state.profile || {}) };
 
-  const wardrobe = () => [...D.items, ...state.added]
-    .map(i => ({ ...i, ...(state.overrides[i.id] || {}) }))
+  // ── Servidor ──────────────────────────────────────────────────────────
+  // Todo lo que no sea una prenda propia viaja como un solo documento; las
+  // prendas propias (fotos) van a closet_items. Local sigue como caché.
+  let me = null, pushT = null;
+  const api = async (method, path, body, isForm = false) => {
+    const r = await fetch('/closet/api' + path, { method, credentials: 'same-origin',
+      headers: isForm || body == null ? {} : { 'Content-Type': 'application/json' },
+      body: body == null ? undefined : isForm ? body : JSON.stringify(body) });
+    let data = null; try { data = await r.json(); } catch {}
+    if (!r.ok) { const e = new Error((data && data.error) || `HTTP ${r.status}`); e.status = r.status; e.data = data; throw e; }
+    return data;
+  };
+  const pushState = () => {
+    clearTimeout(pushT);
+    pushT = setTimeout(() => { if (me) api('PUT', '/state', { ...state, added: undefined }).catch(e => { if (e.status === 401) gate(); }); }, 600);
+  };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} pushState(); };
+
+  // Prenda propia que viene del servidor → forma que usa la app.
+  const fromServer = it => {
+    const shape = D.shapes[it.type] || { shape: 'g-camiseta', label: it.type, g: 'm', en: it.type };
+    const lastWorn = it.last_worn ? Math.max(0, Math.round((Date.now() - new Date(it.last_worn)) / 864e5)) : null;
+    return { id: it.id, type: it.type, cat: it.cat, shape: shape.shape, label: shape.label, g: shape.g, en: shape.en,
+      color: it.color && it.color.hex ? it.color : { hex: '#888', name: '', family: 'neutral' }, name: it.name, q: '',
+      material: it.material || '', formality: it.formality, warmth: it.warmth, removed: !!it.removed,
+      lastWorn, wearCount: it.wear_count || 0, photo: it.photo || null, own: true };
+  };
+  // Cambios a una prenda propia: al servidor directo (y al caché local).
+  const persistItem = (id, patch) => {
+    const it = state.added.find(x => x.id === id);
+    if (it) Object.assign(it, patch);
+    const out = {};
+    if ('name' in patch) out.name = patch.name;
+    if ('formality' in patch) out.formality = patch.formality;
+    if ('warmth' in patch) out.warmth = patch.warmth;
+    if ('removed' in patch) out.removed = patch.removed;
+    if ('wearCount' in patch) out.wear_count = patch.wearCount;
+    if (patch.lastWorn === 0) out.last_worn = 'today';
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
+    if (me && it) api('PATCH', `/items/${id}`, out).catch(() => toast('No se pudo guardar el cambio'));
+  };
+
+  const wardrobe = () => [...D.items.map(i => ({ ...i, ...(state.overrides[i.id] || {}) })), ...state.added]
     .filter(i => !i.removed);
   const wished = () => D.catalog.filter(c => state.wishlist.includes(c.id));
   const feedItems = () => [...wardrobe(), ...wished()];
@@ -102,6 +146,7 @@
   const app = $('#app');
   const views = {};
   function go(v) {
+    $('#sheet-root').innerHTML = '';
     document.querySelectorAll('[data-view]').forEach(t => t.classList.toggle('on', t.dataset.view === v));
     app.innerHTML = '';
     app.append(views[v]());
@@ -180,7 +225,11 @@
     const btnWorn = h('button', { class: `act wide ${worn ? 'on' : ''}`, onclick: () => {
       if (state.worn.some(x => x.key === o.key && x.date === today())) return toast('Ya está anotado para hoy');
       state.worn.unshift({ key: o.key, date: today() });
-      o.parts.forEach(p => { if (!p.ghost) { const ov = state.overrides[p.id] || {}; ov.lastWorn = 0; ov.wearCount = (p.wearCount || 0) + 1; state.overrides[p.id] = ov; } });
+      o.parts.forEach(p => {
+        if (p.ghost) return;
+        if (p.own) persistItem(p.id, { lastWorn: 0, wearCount: (p.wearCount || 0) + 1 });
+        else { const ov = state.overrides[p.id] || {}; ov.lastWorn = 0; ov.wearCount = (p.wearCount || 0) + 1; state.overrides[p.id] = ov; }
+      });
       save(); btnWorn.classList.add('on'); toast('Anotado para hoy');
     } }, svg('i-explorar'), 'Me lo puse');
 
@@ -249,17 +298,14 @@
   };
 
   function itemSheet(it) {
-    const ov = state.overrides[it.id] || (state.overrides[it.id] = {});
-    const set = (k, v) => { ov[k] = v; save(); };
-    const range = (label, k, lo, hi, cur) => h('label', { class: 'range' }, h('span', {}, label, ' ', h('b', {}, cur)),
-      h('input', { type: 'range', min: lo, max: hi, value: cur, oninput: e => { set(k, +e.target.value); e.target.previousSibling.querySelector('b').textContent = e.target.value; } }));
+    const ov = it.own ? {} : (state.overrides[it.id] || (state.overrides[it.id] = {}));
+    const set = (k, v) => { if (it.own) persistItem(it.id, { [k]: v }); else { ov[k] = v; save(); } };
     const close = sheet(h('div', { class: 'item-sheet' },
       piece(it, 'settled big'),
-      h('input', { class: 'name', value: it.name, 'aria-label': 'Nombre', onchange: e => set('name', e.target.value) }),
+      h('input', { class: 'name', value: it.name, 'aria-label': 'Nombre', onchange: e => { const pr = D.autoProfile(it.type, e.target.value, it.material); set('name', e.target.value); set('formality', pr.formality); set('warmth', pr.warmth); close(); itemSheet({ ...it, ...ov, name: e.target.value, ...pr }); } }),
       h('p', { class: 'sub' }, `${it.label}, ${D.colorName(it.color, it.g)}${it.material ? ', ' + it.material : ''}. `,
         it.lastWorn == null ? 'Sin estrenar.' : it.lastWorn === 0 ? 'Puesta hoy.' : `Hace ${it.lastWorn} días, ${it.wearCount} veces.`),
-      range('Formalidad', 'formality', 1, 5, it.formality),
-      range('Abrigo', 'warmth', 1, 5, it.warmth),
+      h('p', { class: 'fits' }, 'Va para ', h('b', {}, D.fitsFor(it).join(', ') || 'casi nada'), '.'),
       h('button', { class: 'btn', onclick: () => { state.filters.withItem = it.id; save(); close(); go('explorar'); } }, 'Ver outfits con esta'),
       h('button', { class: 'btn ghost-btn', onclick: () => { set('removed', true); close(); toast('Quitada del armario'); go('armario'); } }, 'Quitar del armario')));
   }
@@ -297,7 +343,7 @@
       stage.classList.add('peeled');
       await wait(reduced ? 0 : 900);
       status.textContent = 'Mirando colores y tipo';
-      const draft = { color: nearest(color), type: null, formality: 2, warmth: 2, name: '' };
+      const draft = { color: nearest(color), type: null, name: '' };
       await wait(reduced ? 0 : 500);
       status.textContent = '';
       const tagline = h('div', { class: 'tags' });
@@ -309,15 +355,25 @@
       const pick = h('div', { class: 'chips wrap' }, ...Object.entries(D.shapes).map(([id, s]) => chip(s.label, false, e => {
         Object.assign(draft, { type: id, cat: s.cat, shape: s.shape, label: s.label, g: s.g, en: s.en, name: D.itemName(s, draft.color) });
         [...pick.children].forEach(c => c.classList.toggle('on', c === e.currentTarget));
-        nameI.value = draft.name; rest.hidden = false;
+        nameI.value = draft.name; rest.hidden = false; refit();
       })));
-      const rangeI = (label, k) => h('label', { class: 'range' }, h('span', {}, label, ' ', h('b', {}, '2')),
-        h('input', { type: 'range', min: 1, max: 5, value: 2, oninput: e => { draft[k] = +e.target.value; e.target.previousSibling.querySelector('b').textContent = e.target.value; } }));
-      const rest = h('div', { hidden: true }, nameI, rangeI('Formalidad', 'formality'), rangeI('Abrigo', 'warmth'),
-        h('button', { class: 'btn', onclick: () => {
-          state.added.push({ id: 'a' + Date.now(), type: draft.type, cat: draft.cat, shape: draft.shape, label: draft.label, g: draft.g, en: draft.en,
-            color: draft.color, name: draft.name || D.itemName(D.shapes[draft.type], draft.color), q: '', formality: draft.formality, warmth: draft.warmth,
-            lastWorn: null, wearCount: 0, photo: dataUrl, material: '' });
+      const fits = h('p', { class: 'fits' });
+      const refit = () => { const pr = D.autoProfile(draft.type, nameI.value, ''); fits.replaceChildren('Va para ', h('b', {}, D.fitsFor(pr).join(', ') || 'casi nada'), '.'); };
+      nameI.addEventListener('input', refit);
+      const rest = h('div', { hidden: true }, nameI, fits,
+        h('button', { class: 'btn', onclick: async (e) => {
+          const btn = e.currentTarget; btn.disabled = true; btn.textContent = 'Guardando';
+          const meta = { type: draft.type, cat: draft.cat, color: draft.color, name: draft.name || D.itemName(D.shapes[draft.type], draft.color),
+            material: '', ...D.autoProfile(draft.type, draft.name, '') };
+          try {
+            const blob = await (await fetch(dataUrl)).blob();
+            const fd = new FormData(); fd.append('item', JSON.stringify(meta)); fd.append('photo', blob, 'prenda.jpg');
+            const { item } = await api('POST', '/items', fd, true);
+            state.added.push(fromServer(item));
+          } catch (err) {
+            if (err.status === 401) return gate();
+            toast('No se pudo guardar: ' + err.message); btn.disabled = false; btn.textContent = 'Guardar en el armario'; return;
+          }
           save(); toast('Ya está en tu armario'); armFilter = 'todo'; go('armario');
         } }, 'Guardar en el armario'));
       form.append(pick, rest);
@@ -404,15 +460,79 @@
         h('h2', { class: 'display' }, 'Tu lista'),
         ...wl.map(it => h('div', { class: 'wish-row' }, piece(it, 'settled'), h('span', {}, it.name),
           h('button', { class: 'mini', onclick: () => { state.wishlist = state.wishlist.filter(x => x !== it.id); if (state.filters.withItem === it.id) state.filters.withItem = null; save(); go('comprar'); } }, 'Quitar'),
-          h('button', { class: 'mini on', onclick: () => {
+          h('button', { class: 'mini on', onclick: async () => {
+            try {
+              const { item } = await api('POST', '/items', { type: it.type, cat: it.cat, color: it.color, name: it.name, material: it.material,
+                formality: it.formality, warmth: it.warmth, sample_photo: it.photo });
+              state.added.push(fromServer(item));
+            } catch (err) { if (err.status === 401) return gate(); return toast('No se pudo guardar: ' + err.message); }
             state.wishlist = state.wishlist.filter(x => x !== it.id);
-            state.added.push({ ...it, id: 'a' + Date.now(), ghost: false, lastWorn: null, wearCount: 0 });
             if (state.filters.withItem === it.id) state.filters.withItem = null;
             save(); toast('Ya está en tu armario'); go('comprar');
           } }, 'La compré')))) : null,
       h('div', { class: 'prefs' },
-        h('h2', { class: 'display' }, 'Tu talla'),
-        h('div', { class: 'seg', role: 'group', 'aria-label': 'Talla' }, ...['S', 'M', 'L', 'XL'].map(s => h('button', { class: s === state.prefs.size ? 'on' : '', onclick: () => setP('size', s) }, s)))));
+        h('h2', { class: 'display' }, 'Tus tallas'),
+        h('p', { class: 'sub' }, sizesLine() || 'Todavía no están en tu perfil.'),
+        h('button', { class: 'btn ghost-btn', onclick: () => go('perfil') }, sizesLine() ? 'Editar perfil' : 'Completar perfil')));
+  };
+
+  // ── Perfil ──────────────────────────────────────────────────────────────
+  const P = () => state.profile;
+  function sizesLine() {
+    const p = P(); const parts = [];
+    if (p.top) parts.push(`camiseta ${p.top}`);
+    if (p.waist) parts.push(`pantalón ${p.waist}${p.inseam ? '×' + p.inseam : ''}`);
+    if (p.shoe) parts.push(`calzado ${p.shoe} US`);
+    return parts.join(', ');
+  }
+  views.perfil = () => {
+    const p = P();
+    const setP = (k, v) => { p[k] = v; save(); };
+    const field = (label, k, attrs = {}) => h('label', { class: 'field' }, h('span', {}, label),
+      h('input', { value: p[k] ?? '', ...attrs, onchange: e => setP(k, e.target.value.trim()) }));
+    const seg = (label, k, opts) => h('div', { class: 'field' }, h('span', {}, label),
+      h('div', { class: 'seg', role: 'group', 'aria-label': label }, ...opts.map(([v, l]) => h('button', { class: p[k] === v ? 'on' : '', onclick: e => {
+        setP(k, v); [...e.currentTarget.parentNode.children].forEach(b => b.classList.toggle('on', b === e.currentTarget)); } }, l))));
+    const multi = (label, k, opts) => h('div', { class: 'field' }, h('span', {}, label),
+      h('div', { class: 'chips wrap' }, ...opts.map(([v, l]) => chip(l, p[k].includes(v), e => {
+        const set = new Set(p[k]); set.has(v) ? set.delete(v) : set.add(v); setP(k, [...set]); e.currentTarget.classList.toggle('on'); }))));
+    const imc = p.height && p.weight ? (p.weight / ((p.height / 100) ** 2)).toFixed(1) : null;
+
+    return h('div', { class: 'view v-perfil' },
+      h('header', { class: 'head' },
+        h('h1', { class: 'display' }, 'Tu ', h('em', {}, 'perfil'), '.'),
+        h('p', { class: 'lead' }, 'Se llena una vez. Con esto la app y la IA recomiendan sobre tu cuerpo y tus tallas reales, no sobre un promedio.')),
+      h('div', { class: 'form' },
+        h('h2', { class: 'display' }, 'Cuerpo'),
+        h('div', { class: 'row2' },
+          field('Estatura (cm)', 'height', { type: 'number', inputmode: 'numeric', min: 120, max: 230, placeholder: '175' }),
+          field('Peso (kg)', 'weight', { type: 'number', inputmode: 'decimal', min: 35, max: 250, placeholder: '78' })),
+        imc ? h('p', { class: 'sub' }, `IMC ${imc}. Es solo un número de referencia; lo que manda es cómo te queda la ropa.`) : null,
+        seg('Contextura', 'build', [['delgado', 'Delgado'], ['medio', 'Medio'], ['atletico', 'Atlético'], ['robusto', 'Robusto']]),
+        seg('Cómo te gusta que quede', 'fit', [['ajustado', 'Ajustado'], ['regular', 'Regular'], ['oversize', 'Oversize']]),
+        h('h2', { class: 'display' }, 'Tallas'),
+        h('div', { class: 'row2' },
+          field('Camiseta / camisa', 'top', { placeholder: 'M' }),
+          field('Calzado (US)', 'shoe', { type: 'number', inputmode: 'decimal', step: 0.5, placeholder: '10' }),
+          field('Pantalón: cintura (in)', 'waist', { type: 'number', inputmode: 'numeric', placeholder: '32' }),
+          field('Pantalón: largo (in)', 'inseam', { type: 'number', inputmode: 'numeric', placeholder: '32' })),
+        h('h2', { class: 'display' }, 'Medidas', h('small', {}, ' opcional')),
+        h('p', { class: 'sub' }, 'Con una cinta métrica, una sola vez. Sirven para saber si un corte te va a quedar o no antes de comprarlo.'),
+        h('div', { class: 'row2' },
+          field('Pecho (cm)', 'chest', { type: 'number', inputmode: 'numeric', placeholder: '98' }),
+          field('Cadera (cm)', 'hips', { type: 'number', inputmode: 'numeric', placeholder: '96' })),
+        h('h2', { class: 'display' }, 'Tu estilo'),
+        multi('Para qué te vistes más', 'styles', [['casual', 'Casual'], ['deporte', 'Deporte'], ['salida', 'Salidas'], ['oficina', 'Oficina relajada']]),
+        field('Ciudad (para el clima)', 'city', { placeholder: 'Hollywood, FL' }),
+        h('label', { class: 'field' }, h('span', {}, 'Lo que la IA debería saber de ti'),
+          h('textarea', { rows: 3, placeholder: 'Ej.: no me gustan los colores muy vivos, sudo fácil, uso gorra casi siempre…', onchange: e => setP('notes', e.target.value.trim()) }, p.notes || '')),
+        h('p', { class: 'sub' }, me ? `Todo se guarda solo en tu cuenta (${me.email}).` : 'Todo se guarda solo.'),
+        me && me.admin ? h('div', { class: 'invite' },
+          h('h2', { class: 'display' }, 'Invitar'),
+          h('p', { class: 'sub' }, 'Cada persona tiene su propio armario. Escribe su correo; luego crea su cuenta desde la pantalla de entrada.'),
+          h('form', { class: 'invite-form', onsubmit: async e => { e.preventDefault(); const inp = e.target.email; try { await api('POST', '/invite', { email: inp.value }); toast('Invitación lista'); inp.value = ''; } catch (err) { toast(err.message); } } },
+            h('input', { name: 'email', type: 'email', required: true, placeholder: 'correo@ejemplo.com' }), h('button', { class: 'btn' }, 'Invitar'))) : null,
+        me ? h('button', { class: 'btn ghost-btn', onclick: async () => { await api('POST', '/logout').catch(() => {}); me = null; try { localStorage.removeItem(KEY); } catch {} location.reload(); } }, 'Cerrar sesión') : null));
   };
 
   // ── Guardados ───────────────────────────────────────────────────────────
@@ -437,5 +557,64 @@
         piece(it, 'settled'), h('span', {}, it.name, h('br'), h('small', {}, it.lastWorn == null ? 'Sin estrenar' : `Hace ${it.lastWorn} días`))))));
   };
 
-  go('explorar');
+  // ── Entrada ───────────────────────────────────────────────────────────
+  function gate(msg) {
+    me = null;
+    document.body.classList.add('gated');
+    $('#sheet-root').innerHTML = '';
+    app.innerHTML = '';
+    let mode = 'login';
+    const err = h('p', { class: 'err' }, msg || '');
+    const email = h('input', { name: 'email', type: 'email', required: true, autocomplete: 'email', placeholder: 'Correo' });
+    const pass = h('input', { name: 'password', type: 'password', required: true, autocomplete: 'current-password', placeholder: 'Contraseña', minlength: 8 });
+    const name = h('input', { name: 'name', type: 'text', autocomplete: 'name', placeholder: 'Tu nombre', hidden: true });
+    const submit = h('button', { class: 'btn big-btn' }, 'Entrar');
+    const toggle = h('button', { type: 'button', class: 'link', onclick: () => {
+      mode = mode === 'login' ? 'register' : 'login'; name.hidden = mode === 'login';
+      submit.textContent = mode === 'login' ? 'Entrar' : 'Crear cuenta'; toggle.textContent = mode === 'login' ? 'Tengo invitación y quiero crear mi cuenta' : 'Ya tengo cuenta'; err.textContent = '';
+    } }, 'Tengo invitación y quiero crear mi cuenta');
+    const form = h('form', { class: 'gate-form', onsubmit: async e => {
+      e.preventDefault(); submit.disabled = true; err.textContent = '';
+      try {
+        if (mode === 'register') { const r = await api('POST', '/register', { email: email.value, password: pass.value, name: name.value }); err.textContent = r.message; }
+        else { me = await api('POST', '/login', { email: email.value, password: pass.value }); await boot(); }
+      } catch (ex) { err.textContent = ex.status === 403 ? 'Esta app es por invitación. Pídele acceso a Jose.' : ex.message; }
+      submit.disabled = false;
+    } }, name, email, pass, submit);
+    app.append(h('div', { class: 'gate' },
+      h('p', { class: 'display brand-big' }, 'Closet'),
+      h('p', { class: 'lead' }, 'Lo que ya tienes, bien puesto. Entra con tu cuenta de josedavidgt.com.'),
+      form, err, toggle,
+      h('a', { class: 'link', href: '/curso/forgot-password' }, 'Olvidé la contraseña')));
+  }
+
+  async function boot() {
+    document.body.classList.remove('gated');
+    let srv;
+    try { srv = await api('GET', '/state'); }
+    catch (e) {
+      if (e.status === 401) return gate();
+      if (e.status === 403) return gate('Esta app es por invitación. Pídele acceso a Jose.');
+      toast('Sin conexión con el servidor: trabajando en local'); go('explorar'); return;
+    }
+    if (srv.doc && Object.keys(srv.doc).length) {
+      state = { ...fresh(), ...srv.doc, added: [] };
+      state.profile = { ...fresh().profile, ...(state.profile || {}) };
+    } else {
+      // Primera vez: lo que había en este navegador sube tal cual.
+      pushState();
+    }
+    state.added = (srv.items || []).map(fromServer);
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
+    go('explorar');
+  }
+
+  (async () => {
+    try { me = await api('GET', '/me'); await boot(); }
+    catch (e) {
+      if (e.status === 403) gate('Esta app es por invitación. Pídele acceso a Jose.');
+      else if (e.status === 401) gate();
+      else { toast('Sin conexión con el servidor: trabajando en local'); go('explorar'); }
+    }
+  })();
 })();
