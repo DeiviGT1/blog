@@ -26,6 +26,7 @@ def register_routes(app):
     from .routes.peli_routes import peli_bp
     from .routes.trabajo_a_routes import trabajo_a_bp
     from .routes.closet_routes import closet_bp
+    from .routes.mario_routes import mario_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(openai_bp)
@@ -41,3 +42,4 @@ def register_routes(app):
     app.register_blueprint(peli_bp)
     app.register_blueprint(trabajo_a_bp)
     app.register_blueprint(closet_bp)
+    app.register_blueprint(mario_bp)
