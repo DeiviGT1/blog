@@ -30,6 +30,7 @@ window.CLOSET_DATA = (() => {
     terracota:{ hex: '#7C4D47', name: 'terracota',   family: 'calido' },
     topo:     { hex: '#897C77', name: 'topo',        family: 'tierra' },
     salvia:   { hex: '#9EAB8F', name: 'verde salvia', family: 'oliva' },
+    arena:    { hex: '#CBB89A', name: 'arena',       family: 'tierra' },
     acero:    { hex: '#4E5464', name: 'azul acero',  family: 'azul' },
     azulrey:  { hex: '#2B2E8C', name: 'azul rey',    family: 'azul' },
   };
@@ -116,7 +117,7 @@ window.CLOSET_DATA = (() => {
     item('j1493', 'camiseta',  'terracota', { name: 'Camiseta terracota lavada', material: 'algodón', hex: '#865451' }),
     item('j1495', 'camiseta',  'acero',     { name: 'Camiseta azul pizarra lavada', material: 'algodón', hex: '#575E77' }),
     item('j1502', 'camiseta',  'gris',      { name: 'Camiseta gris', material: 'algodón', hex: '#838685' }),
-    item('j1501', 'camiseta',  'rosapalo',  { name: 'Camiseta rosa palo raglan', material: 'algodón', hex: '#B9A9A1' }),
+    item('j1501', 'camiseta',  'rosapalo',  { name: 'Camiseta rosa palo raglan', material: 'algodón', hex: '#BBA7B0' }),
     item('j1487', 'camiseta',  'rosado',    { name: 'Camiseta rosada', material: 'algodón', hex: '#E5718E' }),
     item('j1513', 'camiseta',  'rojo',      { name: 'Camiseta roja waffle', material: 'algodón waffle', hex: '#B11C18' }),
     // arriba — con logo o estampado
@@ -149,14 +150,14 @@ window.CLOSET_DATA = (() => {
     // arriba — polos
     item('j1479', 'polo',      'negro',     { name: 'Polo negra adidas', material: 'poliéster', hex: '#3C3D3C' }),
     item('j1480', 'polo',      'grisosc',   { name: 'Polo gris carbón', material: 'poliéster', hex: '#434443' }),
-    item('j1481', 'polo',      'gris',      { name: 'Polo gris Tommy', material: 'piqué', hex: '#8C8B84' }),
+    item('j1481', 'polo',      'caqui',     { name: 'Polo caqui verdoso Tommy', material: 'piqué', hex: '#8F8D6C' }),
     item('j1515', 'polo',      'marino',   { name: 'Polo azul marino Ralph Lauren', material: 'piqué', hex: '#3B3360' }),
     item('j1517', 'polo',      'blanco',    { name: 'Polo blanca Tommy', material: 'piqué', hex: '#D2D2D1' }),
     // arriba — camisas
     item('j1477', 'camisa',    'gris',      { name: 'Camisa gris manga larga', material: 'algodón', hex: '#9E9F9E' }),
     item('j1478', 'camisa',    'lila',      { name: 'Camisa oxford lila', material: 'oxford', hex: '#A19CB1' }),
     item('j1482', 'camisa',    'blanco',    { name: 'Camisa blanca manga larga', material: 'algodón', hex: '#D9D9D8' }),
-    item('j1525', 'camisa',    'celeste',   { name: 'Camisa oxford celeste', material: 'oxford', hex: '#A7A59F' }),
+    item('j1525', 'camisa',    'celeste',   { name: 'Camisa oxford celeste', material: 'oxford', hex: '#97A7B9' }),
     // capas
     item('j1529', 'sueter',    'blanco',    { name: 'Medio cierre blanco', material: 'poliéster', hex: '#D9D9D8' }),
     // abajo
@@ -180,21 +181,28 @@ window.CLOSET_DATA = (() => {
     top: 'Talla S, corte regular o athletic. Largo 66–69 cm; que la costura caiga en el hueso del hombro.',
     shirt: 'Talla S slim. Que no pase de la mitad de la bragueta si la llevas por fuera.',
   };
+  // Sin zapatos: Jose ya los tiene, solo no los ha subido.
   const catalog = [
-    item('c41', 'tenis', 'blanco', { ghost: true, name: 'Tenis blancos minimalistas', q: 'white minimalist leather sneakers', material: 'cuero',
-      tip: 'Suela delgada, no chunky: la suela gruesa se nota más que la altura que te da.' }),
+    // arriba: camisetas que no son la básica de siempre
+    item('g-waffle-crema',  'camiseta', 'crudo',  { ghost: true, name: 'Camiseta waffle crema', q: 'cream waffle knit t-shirt', material: 'algodón waffle', tip: T.top }),
+    item('g-waffle-salvia', 'camiseta', 'salvia', { ghost: true, name: 'Camiseta waffle verde salvia', q: 'sage green waffle t-shirt', material: 'algodón waffle', tip: T.top }),
+    item('g-tee-rayas',     'camiseta', 'crudo',  { ghost: true, name: 'Camiseta de rayas finas crema y marino', q: 'cream navy thin stripe t-shirt', material: 'algodón',
+      tip: T.top + ' Rayas finas (no anchas): a tu estatura las anchas ensanchan.' }),
+    item('g-tee-arena',     'camiseta', 'arena',  { ghost: true, name: 'Camiseta arena de algodón grueso', q: 'sand heavyweight t-shirt regular fit', material: 'algodón', tip: T.top }),
+    item('g-tee-marino',    'camiseta', 'marino', { ghost: true, name: 'Camiseta azul marino', q: 'navy t-shirt regular fit', material: 'algodón', tip: T.top }),
+    item('g-polo-crema',    'polo',     'crudo',  { ghost: true, name: 'Polo de punto crema', q: 'cream knit polo shirt', material: 'punto', tip: T.top }),
+    item('g-polo-marino',   'polo',     'marino', { ghost: true, name: 'Polo de punto azul marino', q: 'navy knit polo shirt', material: 'punto', tip: T.top }),
+    item('g-resort-crema',  'camisa',   'crudo',  { ghost: true, name: 'Camisa manga corta de lino crema', q: 'cream linen camp collar shirt short sleeve', material: 'lino', tip: T.shirt }),
+    item('g-resort-salvia', 'camisa',   'salvia', { ghost: true, name: 'Camisa manga corta de lino salvia', q: 'sage linen camp collar shirt short sleeve', material: 'lino', tip: T.shirt }),
+    // abajo
+    item('g-jean-oscuro',  'pantalon', 'indigo', { ghost: true, name: 'Jean oscuro slim', q: 'dark wash slim jeans 28 inseam', material: 'denim', tip: T.pant }),
     item('g-chino-beige',  'pantalon', 'beige',  { ghost: true, name: 'Chino beige',       q: 'beige slim chino pants', material: 'chino', tip: T.pant }),
-    item('g-chino-oliva',  'pantalon', 'oliva',  { ghost: true, name: 'Chino verde oliva', q: 'olive slim chino pants', material: 'chino', tip: T.pant }),
     item('g-chino-negro',  'pantalon', 'negro',  { ghost: true, name: 'Chino negro',       q: 'black slim chino pants', material: 'chino', tip: T.pant }),
+    item('g-chino-oliva',  'pantalon', 'oliva',  { ghost: true, name: 'Chino verde oliva', q: 'olive slim chino pants', material: 'chino', tip: T.pant }),
+    item('g-lino-crudo',   'pantalon', 'crudo',  { ghost: true, name: 'Pantalón de lino crudo', q: 'natural linen drawstring pants', material: 'lino', tip: T.pant }),
     item('g-short-caqui',  'short',    'caqui',  { ghost: true, name: 'Short chino caqui', q: 'khaki chino shorts 5 inch', material: 'algodón', tip: T.short }),
     item('g-short-marino', 'short',    'marino', { ghost: true, name: 'Short chino azul marino', q: 'navy chino shorts 5 inch', material: 'algodón', tip: T.short }),
-    item('g-polo-crema',   'polo',     'crudo',  { ghost: true, name: 'Polo de punto crema', q: 'cream knit polo shirt', material: 'punto', tip: T.top }),
-    item('g-polo-marino',  'polo',     'marino', { ghost: true, name: 'Polo de punto azul marino', q: 'navy knit polo shirt', material: 'punto', tip: T.top }),
-    item('g-lino-blanca',  'camisa',   'blanco', { ghost: true, name: 'Camisa de lino blanca', q: 'white linen shirt', material: 'lino', tip: T.shirt }),
-    item('g-lino-salvia',  'camisa',   'salvia', { ghost: true, name: 'Camisa de lino verde salvia', q: 'sage green linen shirt', material: 'lino', tip: T.shirt }),
-    item('g-tee-crema',    'camiseta', 'crudo',  { ghost: true, name: 'Camiseta crema de buen algodón', q: 'off white heavyweight t-shirt regular fit', material: 'algodón', tip: T.top }),
-    item('g-tee-marino',   'camiseta', 'marino', { ghost: true, name: 'Camiseta azul marino', q: 'navy t-shirt regular fit', material: 'algodón', tip: T.top }),
-    item('g-sobre-oliva',  'chaqueta', 'oliva',  { ghost: true, name: 'Sobrecamisa oliva', q: 'olive overshirt', material: 'algodón', tip: 'Talla S. Que cierre sin tirar en el pecho y termine en la cadera.' }),
+    item('g-short-oliva',  'short',    'oliva',  { ghost: true, name: 'Short chino oliva', q: 'olive chino shorts 5 inch', material: 'algodón', tip: T.short }),
   ];
 
   // Dónde comprar: marcas con tienda física en cada mall y su buscador online

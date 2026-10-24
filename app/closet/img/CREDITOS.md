@@ -28,6 +28,5 @@ Los PNG de esta carpeta son estas fotos con el fondo quitado (rembg/U²-Net). Se
 
 | Archivo | Prenda pedida | URL de la página | Autor | Exacta / aproximada |
 |---|---|---|---|---|
-| c41.jpg | Tenis blancos minimalistas | https://unsplash.com/photos/XZ3EmAIWuz0 | Trendest Studio | **Aproximada**: tenis blanco de perfil "levitando" sobre fondo blanco, pero con talón negro con monograma (no es 100 % liso tipo Stan Smith/Common Projects). |
 
 Se usaron i31, i34, i37 y c41 (recortadas igual). i33 se descartó por repetir la camiseta negra. Sin foto libre sobre blanco: buzo, jogger, short deportivo, camisa estampada.

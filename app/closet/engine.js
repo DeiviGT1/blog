@@ -185,8 +185,10 @@ window.CLOSET_ENGINE = (() => {
 
   // ¿Ya tienes algo casi igual? Mismo tipo y color que se ve igual (neutros por
   // claridad; colores por tono). Comprar algo repetido no suma.
+  const texture = i => (/waffle/i.test(`${i.name} ${i.material}`) && 'waffle') || (/rayas/i.test(i.name) && 'rayas')
+    || (/lino/i.test(`${i.name} ${i.material}`) && 'lino') || (/punto/i.test(i.material) && 'punto') || 'liso';
   function similar(a, b) {
-    if (a.type !== b.type) return false;
+    if (a.type !== b.type || texture(a) !== texture(b) || (a.style || 'casual') !== (b.style || 'casual')) return false;
     const A = lab(a.color.hex), B = lab(b.color.hex);
     if (A.C < 12 && B.C < 12) return Math.abs(A.L - B.L) < 12;
     if (A.C < 12 || B.C < 12) return false;
@@ -223,10 +225,15 @@ window.CLOSET_ENGINE = (() => {
           for (const p of o.parts) if (forgotten.has(p.id)) revived.add(p.id);
         }
       const twins = items.filter(i => similar(i, g));
+      const newKind = texture(g) !== 'liso' && !items.some(i => texture(i) === texture(g) && i.cat === g.cat);
+      // ¿Trae un color que hoy no tienes en ninguna prenda?
+      const G = lab(g.color.hex);
+      const newColor = G.C > 12 && !items.some(i => { const I = lab(i.color.hex);
+        return I.C > 12 && Math.min(Math.abs(I.h - G.h), 360 - Math.abs(I.h - G.h)) < 30; });
       const unlocks = keys.size;
       // Una capa duplica outfits de días frescos (variantes), y en Florida pesa menos.
-      const score = unlocks * (g.cat === 'layer' ? 0.2 : 1) + revived.size - 25 * twins.length + (noShoes && g.cat === 'shoes' ? 1000 : 0);
-      return { item: g, unlocks, revived: items.filter(i => revived.has(i.id)), twins, needShoes: noShoes && g.cat === 'shoes', score };
+      const score = unlocks * (g.cat === 'layer' ? 0.2 : 1) + revived.size + (newColor ? 6 : 0) + (newKind ? 6 : 0) - 25 * twins.length + (noShoes && g.cat === 'shoes' ? 1000 : 0);
+      return { item: g, unlocks, revived: items.filter(i => revived.has(i.id)), twins, newColor, newKind: newKind && texture(g), needShoes: noShoes && g.cat === 'shoes', score };
     }).filter(r => r.unlocks > 0 && r.twins.length < 2).sort((a, b) => b.score - a.score);
   }
 

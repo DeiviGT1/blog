@@ -415,8 +415,10 @@
   // ── Comprar ─────────────────────────────────────────────────────────────
   views.comprar = () => {
     const items = wardrobe();
+    const want = state.prefs.buyCat || 'todo';
     const gaps = E.gaps(items, D.catalog.filter(c => !state.wishlist.includes(c.id)), D.occasions.slice(0, 3), D.weathers.slice(0, 2), state.votes)
-      .slice(0, 8);
+      .filter(g => want === 'todo' || (want === 'top' ? g.item.cat === 'top' : g.item.cat === 'bottom'))
+      .slice(0, want === 'todo' ? 8 : 12);
     const total = E.countAll(items, D.occasions, D.weathers.slice(0, 2), state.votes);
     const mall = D.malls.find(m => m.id === state.prefs.mall) || D.malls[0];
     const mallBrands = mall.brands.map(id => ({ id, ...D.brands[id] })).filter(b => b.name).sort((a, b) => a.name.localeCompare(b.name));
@@ -429,6 +431,8 @@
     const why = g => {
       if (g.needShoes) return 'No hay zapatos en tu armario: es lo primero.';
       const bits = [];
+      if (g.newKind) bits.push({ rayas: 'no tienes nada de rayas', lino: 'nada de lino en tu armario', punto: 'tejido de punto: se ve más arreglado', waffle: 'textura que casi no tienes' }[g.newKind]);
+      if (g.newColor) bits.push('un color que no tienes');
       if (g.revived.length) bits.push(`le da uso a ${g.revived.length} ${g.revived.length === 1 ? 'prenda que casi no sale' : 'prendas que casi no salen'}`);
       if (g.twins.length) bits.push(`ojo: se parece a tu ${g.twins[0].name.toLowerCase()}`);
       return bits.join(' · ');
@@ -466,6 +470,7 @@
       h('header', { class: 'head' },
         h('h1', { class: 'display' }, 'Lo que te ', h('em', {}, 'falta'), '.'),
         h('p', { class: 'lead' }, `Con lo que tienes se arman ${total} outfits. Cada prenda de abajo abre combinaciones que hoy no existen.`),
+        h('div', { class: 'chips' }, ...[['todo', 'Todo'], ['top', 'Camisetas y camisas'], ['bottom', 'Abajo']].map(([id, label]) => chip(label, want === id, () => setP('buyCat', id)))),
         h('div', { class: 'chips' }, ...D.malls.map(m => chip(m.name, m.id === mall.id, () => setP('mall', m.id)))),
         mallBrands.length > 1 ? h('div', { class: 'chips brands' }, ...mallBrands.map(b => chip(b.name, picked.includes(b.id), () => {
           const s = new Set(state.prefs.brands); s.has(b.id) ? s.delete(b.id) : s.add(b.id); setP('brands', [...s]);
