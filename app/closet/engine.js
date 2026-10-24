@@ -31,20 +31,21 @@ window.CLOSET_ENGINE = (() => {
     return               { layer: 'yes',  maxWarmth: 5, minLayer: 4 };
   }
 
-  function isValid(parts, occ, w) {
+  function isValid(parts, occ, w, optionalShoes = false) {
     const c = climate(w);
     const layer = parts.find(p => p.cat === 'layer');
     const top = parts.find(p => p.cat === 'top');
     const bottom = parts.find(p => p.cat === 'bottom');
     const shoes = parts.find(p => p.cat === 'shoes');
-    if (!top || !bottom || !shoes) return false;
+    // Sin zapatos en el armario, el outfit es arriba + abajo (shoesOptional).
+    if (!top || !bottom || (!shoes && !optionalShoes)) return false;
     if (c.layer === 'no' && layer) return false;
     if (c.layer === 'yes' && !layer) return false;
     if (layer && layer.warmth < c.minLayer) return false;
     if (parts.some(p => p.warmth > c.maxWarmth)) return false;
-    if (w.rain && (shoes.material === 'ante' || bottom.type === 'short')) return false;
+    if (w.rain && ((shoes && shoes.material === 'ante') || bottom.type === 'short')) return false;
     if (bottom.type === 'short' && (w.temp < 24 || occ.formality[1] > 2)) return false;
-    if (occ.id === 'deporte') return parts.every(p => p.formality === 1) && shoes.type === 'tenis';
+    if (occ.id === 'deporte') return parts.every(p => p.formality === 1) && (!shoes || shoes.type === 'tenis');
     const [lo, hi] = occ.formality;
     const fs = parts.map(p => p.formality);
     // Ninguna prenda por encima de la ocasión ni más de un punto por debajo,
@@ -115,14 +116,16 @@ window.CLOSET_ENGINE = (() => {
     const pool = items;
     const by = cat => pool.filter(i => i.cat === cat);
     const layers = [null, ...by('layer')];
+    const shoesOptional = !by('shoes').length;
+    const shoeOpts = shoesOptional ? [null] : by('shoes');
     const rnd = seeded(seed);
     const out = [];
     const seen = new Set();
-    for (const top of by('top')) for (const bottom of by('bottom')) for (const shoes of by('shoes')) for (const layer of layers) {
-      const parts = layer ? [layer, top, bottom, shoes] : [top, bottom, shoes];
+    for (const top of by('top')) for (const bottom of by('bottom')) for (const shoes of shoeOpts) for (const layer of layers) {
+      const parts = [layer, top, bottom, shoes].filter(Boolean);
       if (withItem && !parts.some(p => p.id === withItem)) continue;
       if (neglected && !parts.some(p => !p.ghost && (p.lastWorn == null || p.lastWorn >= 30))) continue;
-      if (!isValid(parts, occasion, weather)) continue;
+      if (!isValid(parts, occasion, weather, shoesOptional)) continue;
       const key = keyOf(parts);
       if (seen.has(key) || votes[key] === 'down') continue;
       seen.add(key);
