@@ -31,6 +31,43 @@ window.CLOSET_ENGINE = (() => {
     return               { layer: 'yes',  maxWarmth: 5, minLayer: 4 };
   }
 
+  // Color medido (hex) → Lab: croma = qué tan "de color" es; tono = cuál.
+  function lab(hex) {
+    const v = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map(c => c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+    const f = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+    const X = f((v[0] * 0.4124 + v[1] * 0.3576 + v[2] * 0.1805) / 0.9505);
+    const Y = f(v[0] * 0.2126 + v[1] * 0.7152 + v[2] * 0.0722);
+    const Z = f((v[0] * 0.0193 + v[1] * 0.1192 + v[2] * 0.9505) / 1.089);
+    const a = 500 * (X - Y), b = 200 * (Y - Z);
+    return { C: Math.hypot(a, b), h: (Math.atan2(b, a) * 180 / Math.PI + 360) % 360 };
+  }
+  // Fuerte = color saturado o estampado de muchos colores (camisetas de fútbol).
+  const loud = p => p.loud || lab(p.color.hex).C > 38;
+  const chromatic = p => p.color.family !== 'denim' && lab(p.color.hex).C > 14;
+  function colorsFit(parts) {
+    const ps = parts.filter(p => p.cat !== 'shoes');
+    if (ps.filter(loud).length > 1) return false;          // nunca dos prendas fuertes
+    const hues = ps.filter(chromatic).map(p => lab(p.color.hex).h);
+    const groups = [];                                      // colores distintos (tonos a >35°)
+    for (const h of hues) if (!groups.some(g => Math.min(Math.abs(g - h), 360 - Math.abs(g - h)) < 35)) groups.push(h);
+    return groups.length <= (ps.some(loud) ? 1 : 2);        // con una fuerte, el resto neutro
+  }
+
+  // Estilos que pueden ir juntos en un outfit (los zapatos no cuentan).
+  const STYLE_OK = {
+    sport: ['sport', 'futbol'], futbol: ['sport', 'futbol', 'casual'],
+    casual: ['casual', 'futbol', 'smart'], smart: ['casual', 'smart'],
+  };
+  function stylesFit(parts, occ) {
+    const st = parts.filter(p => p.cat !== 'shoes').map(p => p.style || 'casual');
+    for (let i = 0; i < st.length; i++) for (let j = i + 1; j < st.length; j++)
+      if (!STYLE_OK[st[i]].includes(st[j])) return false;
+    // Deporte = todo deportivo; fuera de deporte no se sale en ropa de gym.
+    if (occ.id === 'deporte') return st.every(s => s === 'sport' || s === 'futbol') && st.includes('sport');
+    return !st.includes('sport');
+  }
+
   function isValid(parts, occ, w, optionalShoes = false) {
     const c = climate(w);
     const layer = parts.find(p => p.cat === 'layer');
@@ -45,6 +82,8 @@ window.CLOSET_ENGINE = (() => {
     if (parts.some(p => p.warmth > c.maxWarmth)) return false;
     if (w.rain && ((shoes && shoes.material === 'ante') || bottom.type === 'short')) return false;
     if (bottom.type === 'short' && (w.temp < 24 || occ.formality[1] > 2)) return false;
+    if (!stylesFit(parts, occ)) return false;
+    if (!colorsFit(parts)) return false;
     if (occ.id === 'deporte') return parts.every(p => p.formality === 1) && (!shoes || shoes.type === 'tenis');
     const [lo, hi] = occ.formality;
     const fs = parts.map(p => p.formality);

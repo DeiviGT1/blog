@@ -10,6 +10,7 @@ window.CLOSET_DATA = (() => {
     crudo:    { hex: '#E9E2D2', name: 'crudo',       f: 'cruda',  p: 'crudos',  fp: 'crudas',  family: 'neutral' },
     negro:    { hex: '#23232A', name: 'negro',       f: 'negra',  p: 'negros',  fp: 'negras',  family: 'negro' },
     gris:     { hex: '#8E9097', name: 'gris',        family: 'neutral' },
+    grisclaro:{ hex: '#BCBBBC', name: 'gris claro',  family: 'neutral' },
     grisosc:  { hex: '#4A4D56', name: 'gris oscuro', family: 'neutral' },
     marino:   { hex: '#243352', name: 'azul marino', family: 'marino' },
     celeste:  { hex: '#A9C4DE', name: 'celeste',     family: 'azul' },
@@ -71,6 +72,16 @@ window.CLOSET_DATA = (() => {
     if (/medio cierre/.test(t)) { f = 2; w = 3; }
     return { formality: f, warmth: w };
   };
+  // Estilo: lo deportivo solo va con lo deportivo (una dry-fit con chino o una
+  // polo con short de gym se ve raro). Las de fútbol van con las dos cosas.
+  const styleOf = (type, name = '', material = '') => {
+    const t = `${name} ${material}`.toLowerCase();
+    if (/del dim|colombia/.test(t)) return 'futbol';
+    if (/deportiv|dry|running|gym/.test(t) || (type === 'short' && /poliéster|nylon/.test(t))) return 'sport';
+    if (['polo', 'camisa', 'blazer', 'mocasin'].includes(type) || /medio cierre/.test(t)) return 'smart';
+    if (type === 'pantalon' && !/jean|denim|chino|jogger/.test(t)) return 'smart';
+    return 'casual';
+  };
   const colorName = (c, g) => (g === 'f' && c.f) || (g === 'p' && c.p) || (g === 'fp' && c.fp) || c.name;
   const itemName = (s, c) => `${s.label} ${colorName(c, s.g)}`;
 
@@ -83,6 +94,8 @@ window.CLOSET_DATA = (() => {
       q: o.q || `${color} ${S[type].en}`,
       photo: `img/${id}.${o.ghost ? 'png' : 'webp'}`,
       ...autoProfile(type, o.name || '', o.material || ''),
+      style: o.style || styleOf(type, o.name || '', o.material || ''),
+      loud: /del dim|colombia|big apple/i.test(o.name || ''),  // estampado multicolor
       // días desde la última vez; de la ropa real no se sabe, se asume una semana
       lastWorn: o.lastWorn ?? (o.ghost ? null : 7),
       wearCount: o.wearCount ?? 0,
@@ -93,67 +106,67 @@ window.CLOSET_DATA = (() => {
 
   const items = [
     // arriba — camisetas lisas
-    item('j1484', 'camiseta',  'blanco',    { name: 'Camiseta blanca básica', material: 'algodón', hex: '#D6D7D7' }),
-    item('j1510', 'camiseta',  'blanco',    { name: 'Camiseta blanca básica (2)', material: 'algodón', hex: '#D8D8D7' }),
-    item('j1490', 'camiseta',  'gris',      { name: 'Camiseta gris jaspeada', material: 'algodón', hex: '#CAC9C9' }),
-    item('j1491', 'camiseta',  'negro',     { name: 'Camiseta negra con bolsillo', material: 'algodón', hex: '#262626' }),
-    item('j1497', 'camiseta',  'oliva',     { name: 'Camiseta verde oliva', material: 'algodón', hex: '#545446' }),
-    item('j1493', 'camiseta',  'terracota', { name: 'Camiseta terracota lavada', material: 'algodón', hex: '#7C4D47' }),
-    item('j1495', 'camiseta',  'acero',     { name: 'Camiseta azul acero lavada', material: 'algodón', hex: '#4E5464' }),
-    item('j1502', 'camiseta',  'topo',      { name: 'Camiseta topo', material: 'algodón', hex: '#897C77' }),
-    item('j1501', 'camiseta',  'rosapalo',  { name: 'Camiseta rosa palo raglan', material: 'algodón', hex: '#D3BBB2' }),
-    item('j1487', 'camiseta',  'rosado',    { name: 'Camiseta rosada', material: 'algodón', hex: '#FF7B9F' }),
-    item('j1513', 'camiseta',  'rojo',      { name: 'Camiseta roja waffle', material: 'algodón waffle', hex: '#8F1B1B' }),
+    item('j1484', 'camiseta',  'blanco',    { name: 'Camiseta blanca básica', material: 'algodón', hex: '#DEDEDE' }),
+    item('j1510', 'camiseta',  'blanco',    { name: 'Camiseta blanca básica (2)', material: 'algodón', hex: '#D9DAD9' }),
+    item('j1490', 'camiseta',  'grisclaro',      { name: 'Camiseta gris claro jaspeada', material: 'algodón', hex: '#D6D5D5' }),
+    item('j1491', 'camiseta',  'negro',     { name: 'Camiseta negra con bolsillo', material: 'algodón', hex: '#2A2A2A' }),
+    item('j1497', 'camiseta',  'oliva',     { name: 'Camiseta verde oliva', material: 'algodón', hex: '#5F604E' }),
+    item('j1493', 'camiseta',  'terracota', { name: 'Camiseta terracota lavada', material: 'algodón', hex: '#865451' }),
+    item('j1495', 'camiseta',  'acero',     { name: 'Camiseta azul pizarra lavada', material: 'algodón', hex: '#575E77' }),
+    item('j1502', 'camiseta',  'gris',      { name: 'Camiseta gris', material: 'algodón', hex: '#838685' }),
+    item('j1501', 'camiseta',  'rosapalo',  { name: 'Camiseta rosa palo raglan', material: 'algodón', hex: '#B9A9A1' }),
+    item('j1487', 'camiseta',  'rosado',    { name: 'Camiseta rosada', material: 'algodón', hex: '#E5718E' }),
+    item('j1513', 'camiseta',  'rojo',      { name: 'Camiseta roja waffle', material: 'algodón waffle', hex: '#B11C18' }),
     // arriba — con logo o estampado
-    item('j1476', 'camiseta',  'gris',      { name: 'Camiseta gris Cîroc', material: 'algodón', hex: '#CCCDCC' }),
-    item('j1485', 'camiseta',  'blanco',    { name: 'Camiseta blanca NBA', material: 'algodón', hex: '#CFCECE' }),
-    item('j1489', 'camiseta',  'blanco',    { name: 'Camiseta blanca estampada (oso)', material: 'algodón', hex: '#E1E1E0' }),
-    item('j1500', 'camiseta',  'blanco',    { name: 'Camiseta blanca con logo rojo', material: 'algodón', hex: '#DFDDDE' }),
-    item('j1508', 'camiseta',  'blanco',    { name: 'Camiseta blanca Outsiders', material: 'algodón', hex: '#DADADA' }),
-    item('j1511', 'camiseta',  'blanco',    { name: 'Camiseta blanca Red Bull Racing', material: 'algodón', hex: '#D6D6D5' }),
-    item('j1486', 'camiseta',  'negro',     { name: 'Camiseta negra estampada Big Apple Roll', material: 'algodón', hex: '#232528' }),
-    item('j1498', 'camiseta',  'caqui',     { name: 'Camiseta caqui Champion', material: 'algodón', hex: '#967E64' }),
-    item('j1499', 'camiseta',  'grisosc',   { name: 'Camiseta gris The North Face', material: 'algodón', hex: '#6F6E6E' }),
+    item('j1476', 'camiseta',  'grisclaro',      { name: 'Camiseta gris claro Cîroc', material: 'algodón', hex: '#CCCCCB' }),
+    item('j1485', 'camiseta',  'blanco',    { name: 'Camiseta blanca NBA', material: 'algodón', hex: '#D8D8D7' }),
+    item('j1489', 'camiseta',  'blanco',    { name: 'Camiseta blanca estampada (oso)', material: 'algodón', hex: '#DFDFDF' }),
+    item('j1500', 'camiseta',  'blanco',    { name: 'Camiseta blanca con logo rojo', material: 'algodón', hex: '#DEDDDD' }),
+    item('j1508', 'camiseta',  'blanco',    { name: 'Camiseta blanca Outsiders', material: 'algodón', hex: '#DBDBDB' }),
+    item('j1511', 'camiseta',  'blanco',    { name: 'Camiseta blanca Red Bull Racing', material: 'algodón', hex: '#DBDBDA' }),
+    item('j1486', 'camiseta',  'negro',     { name: 'Camiseta negra estampada Big Apple Roll', material: 'algodón', hex: '#292A29' }),
+    item('j1498', 'camiseta',  'caqui',     { name: 'Camiseta caqui Champion', material: 'algodón', hex: '#928163' }),
+    item('j1499', 'camiseta',  'gris',   { name: 'Camiseta gris The North Face', material: 'algodón', hex: '#747474' }),
     // arriba — deportivas
-    item('j1492', 'camiseta',  'gris',      { name: 'Camiseta deportiva gris adidas', material: 'dry', hex: '#A2A1A2' }),
-    item('j1494', 'camiseta',  'gris',      { name: 'Camiseta deportiva gris claro Reebok', material: 'dry', hex: '#BBBBBB' }),
-    item('j1496', 'camiseta',  'gris',      { name: 'Camiseta deportiva gris', material: 'dry', hex: '#7A7A7A' }),
-    item('j1503', 'camiseta',  'negro',     { name: 'Camiseta deportiva negra Reebok', material: 'dry', hex: '#333333' }),
-    item('j1506', 'camiseta',  'grisosc',   { name: 'Camiseta deportiva gris oscuro', material: 'dry', hex: '#5B5A5A' }),
-    item('j1507', 'camiseta',  'grisosc',   { name: 'Camiseta deportiva gris oscuro (cuello rojo)', material: 'dry', hex: '#4D4D4D' }),
-    item('j1518', 'camiseta',  'marino',    { name: 'Camiseta deportiva azul marino', material: 'dry', hex: '#303349' }),
+    item('j1492', 'camiseta',  'grisclaro',      { name: 'Camiseta deportiva gris claro adidas', material: 'dry', hex: '#BCBBBC' }),
+    item('j1494', 'camiseta',  'grisclaro',      { name: 'Camiseta deportiva gris claro Reebok', material: 'dry', hex: '#D7D7D7' }),
+    item('j1496', 'camiseta',  'gris',      { name: 'Camiseta deportiva gris', material: 'dry', hex: '#7D7D7C' }),
+    item('j1503', 'camiseta',  'negro',     { name: 'Camiseta deportiva negra Reebok', material: 'dry', hex: '#3B3B3B' }),
+    item('j1506', 'camiseta',  'gris',   { name: 'Camiseta deportiva gris', material: 'dry', hex: '#676666' }),
+    item('j1507', 'camiseta',  'grisosc',   { name: 'Camiseta deportiva gris oscuro (cuello rojo)', material: 'dry', hex: '#585958' }),
+    item('j1518', 'camiseta',  'marino',    { name: 'Camiseta deportiva azul marino', material: 'dry', hex: '#3C394B' }),
     // arriba — fútbol
-    item('j1488', 'camiseta',  'amarillo',  { name: 'Camiseta Colombia retro', material: 'deportiva', hex: '#EDB74E' }),
-    item('j1514', 'camiseta',  'blanco',    { name: 'Camiseta Colombia blanca de entrenamiento', material: 'deportiva', hex: '#E4E9F0' }),
-    item('j1504', 'camiseta',  'rojo',      { name: 'Camiseta del DIM roja', material: 'deportiva', hex: '#8B2924' }),
-    item('j1505', 'camiseta',  'rojo',      { name: 'Camiseta del DIM alterna', material: 'deportiva', hex: '#9B554D' }),
-    item('j1520', 'camiseta',  'blanco',    { name: 'Camiseta del DIM blanca', material: 'deportiva', hex: '#E6ECF4' }),
+    item('j1488', 'camiseta',  'amarillo',  { name: 'Camiseta Colombia retro', material: 'deportiva', hex: '#C8A145' }),
+    item('j1514', 'camiseta',  'blanco',    { name: 'Camiseta Colombia blanca de entrenamiento', material: 'deportiva', hex: '#DADADA' }),
+    item('j1504', 'camiseta',  'rojo',      { name: 'Camiseta del DIM roja', material: 'deportiva', hex: '#7B2F2E' }),
+    item('j1505', 'camiseta',  'rojo',      { name: 'Camiseta del DIM alterna', material: 'deportiva', hex: '#87444A' }),
+    item('j1520', 'camiseta',  'blanco',    { name: 'Camiseta del DIM blanca', material: 'deportiva', hex: '#DAD9D9' }),
     // arriba — manga larga
-    item('j1483', 'camiseta',  'grisosc',   { name: 'Camiseta gris oscuro manga larga', material: 'algodón', hex: '#383939' }),
-    item('j1512', 'camiseta',  'gris',      { name: 'Camiseta gris waffle manga larga', material: 'algodón waffle', hex: '#9D9D9C' }),
+    item('j1483', 'camiseta',  'negro',   { name: 'Camiseta negra manga larga', material: 'algodón', hex: '#404140' }),
+    item('j1512', 'camiseta',  'grisclaro',      { name: 'Camiseta gris claro waffle manga larga', material: 'algodón waffle', hex: '#B5B4B5' }),
     // arriba — polos
-    item('j1479', 'polo',      'negro',     { name: 'Polo negra adidas', material: 'poliéster', hex: '#373737' }),
-    item('j1480', 'polo',      'grisosc',   { name: 'Polo gris carbón', material: 'poliéster', hex: '#3B3B3B' }),
-    item('j1481', 'polo',      'topo',      { name: 'Polo topo Tommy', material: 'piqué', hex: '#8F877A' }),
-    item('j1515', 'polo',      'azulrey',   { name: 'Polo azul rey Ralph Lauren', material: 'piqué', hex: '#2B2E6C' }),
-    item('j1517', 'polo',      'blanco',    { name: 'Polo blanca Tommy', material: 'piqué', hex: '#C6C6C6' }),
+    item('j1479', 'polo',      'negro',     { name: 'Polo negra adidas', material: 'poliéster', hex: '#3C3D3C' }),
+    item('j1480', 'polo',      'grisosc',   { name: 'Polo gris carbón', material: 'poliéster', hex: '#434443' }),
+    item('j1481', 'polo',      'gris',      { name: 'Polo gris Tommy', material: 'piqué', hex: '#8C8B84' }),
+    item('j1515', 'polo',      'marino',   { name: 'Polo azul marino Ralph Lauren', material: 'piqué', hex: '#3B3360' }),
+    item('j1517', 'polo',      'blanco',    { name: 'Polo blanca Tommy', material: 'piqué', hex: '#D2D2D1' }),
     // arriba — camisas
-    item('j1477', 'camisa',    'gris',      { name: 'Camisa gris manga larga', material: 'algodón', hex: '#868585' }),
-    item('j1478', 'camisa',    'lila',      { name: 'Camisa oxford lila', material: 'oxford', hex: '#C3A8B3' }),
-    item('j1482', 'camisa',    'blanco',    { name: 'Camisa blanca manga larga', material: 'algodón', hex: '#D4D5D5' }),
-    item('j1525', 'camisa',    'celeste',   { name: 'Camisa oxford celeste', material: 'oxford', hex: '#B7BED1' }),
+    item('j1477', 'camisa',    'gris',      { name: 'Camisa gris manga larga', material: 'algodón', hex: '#9E9F9E' }),
+    item('j1478', 'camisa',    'lila',      { name: 'Camisa oxford lila', material: 'oxford', hex: '#A19CB1' }),
+    item('j1482', 'camisa',    'blanco',    { name: 'Camisa blanca manga larga', material: 'algodón', hex: '#D9D9D8' }),
+    item('j1525', 'camisa',    'celeste',   { name: 'Camisa oxford celeste', material: 'oxford', hex: '#A7A59F' }),
     // capas
-    item('j1529', 'sueter',    'blanco',    { name: 'Medio cierre blanco', material: 'poliéster', hex: '#C3C4C4' }),
+    item('j1529', 'sueter',    'blanco',    { name: 'Medio cierre blanco', material: 'poliéster', hex: '#D9D9D8' }),
     // abajo
-    item('j1519', 'pantalon',  'denimcl',   { name: 'Jean azul claro', material: 'denim', hex: '#93A6CE' }),
-    item('j1516', 'pantalon',  'acero',     { name: 'Pantalón chino azul', material: 'algodón', hex: '#41577D' }),
-    item('j1526', 'pantalon',  'grisosc',   { name: 'Pantalón gris oscuro', material: 'poliéster', hex: '#64626A' }),
-    item('j1527', 'pantalon',  'gris',      { name: 'Pantalón gris', material: 'poliéster', hex: '#87858F' }),
-    item('j1528', 'pantalon',  'blanco',    { name: 'Pantalón blanco', material: 'algodón', hex: '#D5D5D5' }),
-    item('j1521', 'short',     'celeste',   { name: 'Short azul claro', material: 'poliéster', hex: '#597DD1' }),
-    item('j1522', 'short',     'marino',    { name: 'Short azul grisáceo', material: 'poliéster', hex: '#3C487A' }),
-    item('j1523', 'short',     'azulrey',   { name: 'Short azul rey Nike', material: 'dry', hex: '#321DCA' }),
-    item('j1524', 'short',     'negro',     { name: 'Short negro con cierres', material: 'poliéster', hex: '#343334' }),
+    item('j1519', 'pantalon',  'denimcl',   { name: 'Jean azul claro', material: 'denim', hex: '#9CA8B6' }),
+    item('j1516', 'pantalon',  'acero',     { name: 'Pantalón chino azul', material: 'algodón', hex: '#505966' }),
+    item('j1526', 'pantalon',  'gris',   { name: 'Pantalón gris', material: 'poliéster', hex: '#858180' }),
+    item('j1527', 'pantalon',  'grisclaro',      { name: 'Pantalón gris claro', material: 'poliéster', hex: '#BCB9BD' }),
+    item('j1528', 'pantalon',  'blanco',    { name: 'Pantalón blanco', material: 'algodón', hex: '#D8D7D7' }),
+    item('j1521', 'short',     'celeste',   { name: 'Short azul medio', material: 'poliéster', hex: '#5A7BA1' }),
+    item('j1522', 'short',     'grisosc',    { name: 'Short gris oscuro', material: 'poliéster', hex: '#4F4E4E' }),
+    item('j1523', 'short',     'azulrey',   { name: 'Short azul rey Nike', material: 'dry', hex: '#39198F' }),
+    item('j1524', 'short',     'negro',     { name: 'Short negro con cierres', material: 'poliéster', hex: '#3B3B3A' }),
   ];
 
   // Prendas que NO tienes. Comprar mide cuántos outfits nuevos abre cada una.
@@ -191,5 +204,5 @@ window.CLOSET_DATA = (() => {
     { id: 'lluvia', label: 'Lluvia',   temp: 22, rain: true,  desc: 'lluvia',    phrase: 'un día de lluvia' },
   ];
 
-  return { items, catalog, malls, brands, occasions, weathers, colors: C, shapes: S, itemName, colorName, autoProfile, fitsFor };
+  return { items, catalog, malls, brands, occasions, weathers, colors: C, shapes: S, itemName, colorName, autoProfile, styleOf, fitsFor };
 })();
