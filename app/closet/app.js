@@ -365,6 +365,12 @@
           const btn = e.currentTarget; btn.disabled = true; btn.textContent = 'Guardando';
           const meta = { type: draft.type, cat: draft.cat, color: draft.color, name: draft.name || D.itemName(D.shapes[draft.type], draft.color),
             material: '', ...D.autoProfile(draft.type, draft.name, '') };
+          if (!me) {   // sin login: la prenda (con su foto) queda en este navegador
+            const sh = D.shapes[meta.type];
+            state.added.push({ ...meta, id: 'l' + Date.now(), shape: sh.shape, label: sh.label, g: sh.g, en: sh.en, q: '',
+              photo: dataUrl, lastWorn: null, wearCount: 0, own: true });
+            save(); toast('Ya está en tu armario'); armFilter = 'todo'; return go('armario');
+          }
           try {
             const blob = await (await fetch(dataUrl)).blob();
             const fd = new FormData(); fd.append('item', JSON.stringify(meta)); fd.append('photo', blob, 'prenda.jpg');
@@ -461,7 +467,8 @@
         ...wl.map(it => h('div', { class: 'wish-row' }, piece(it, 'settled'), h('span', {}, it.name),
           h('button', { class: 'mini', onclick: () => { state.wishlist = state.wishlist.filter(x => x !== it.id); if (state.filters.withItem === it.id) state.filters.withItem = null; save(); go('comprar'); } }, 'Quitar'),
           h('button', { class: 'mini on', onclick: async () => {
-            try {
+            if (!me) state.added.push({ ...it, id: 'l' + Date.now(), ghost: false, lastWorn: null, wearCount: 0, own: true });
+            else try {
               const { item } = await api('POST', '/items', { type: it.type, cat: it.cat, color: it.color, name: it.name, material: it.material,
                 formality: it.formality, warmth: it.warmth, sample_photo: it.photo });
               state.added.push(fromServer(item));
@@ -609,7 +616,11 @@
     go('explorar');
   }
 
+  // Por ahora la app es solo de Jose y abre sin login: todo queda en este
+  // navegador. Con LOGIN = true vuelve el login por invitación (/closet/api).
+  const LOGIN = false;
   (async () => {
+    if (!LOGIN) return go('explorar');
     try { me = await api('GET', '/me'); await boot(); }
     catch (e) {
       if (e.status === 403) gate('Esta app es por invitación. Pídele acceso a Jose.');
