@@ -29,6 +29,7 @@ window.CLOSET_DATA = (() => {
     amarillo: { hex: '#EDB74E', name: 'amarillo',    f: 'amarilla', p: 'amarillos', fp: 'amarillas', family: 'calido' },
     terracota:{ hex: '#7C4D47', name: 'terracota',   family: 'calido' },
     topo:     { hex: '#897C77', name: 'topo',        family: 'tierra' },
+    salvia:   { hex: '#9EAB8F', name: 'verde salvia', family: 'oliva' },
     acero:    { hex: '#4E5464', name: 'azul acero',  family: 'azul' },
     azulrey:  { hex: '#2B2E8C', name: 'azul rey',    family: 'azul' },
   };
@@ -61,7 +62,7 @@ window.CLOSET_DATA = (() => {
     const t = `${name} ${material}`.toLowerCase();
     if (/jean|denim/.test(t)) f = type === 'pantalon' ? 2 : f;
     if (/vestir|lana fr|sastre/.test(t)) f = 4;
-    if (/chino/.test(t)) f = 3;
+    if (/chino/.test(t) && type === 'pantalon') f = 3;
     if (/lino/.test(t) && type === 'camisa') { f = 2; w = 1; }
     if (/deportiv|dry|running|correr|gym|entrenar/.test(t)) f = 1;
     if (/estampad|gr[aá]fic|floral|tropical|hawai/.test(t)) f = Math.max(1, f - 1);
@@ -92,7 +93,7 @@ window.CLOSET_DATA = (() => {
       color: o.hex ? { ...C[color], hex: o.hex } : C[color],  // hex medido en la foto
       name: o.name || itemName(S[type], C[color]),
       q: o.q || `${color} ${S[type].en}`,
-      photo: `img/${id}.${o.ghost ? 'png' : 'webp'}`,
+      photo: `img/${id}.${id.startsWith('c') ? 'png' : 'webp'}`,
       ...autoProfile(type, o.name || '', o.material || ''),
       style: o.style || styleOf(type, o.name || '', o.material || ''),
       loud: /del dim|colombia|big apple/i.test(o.name || ''),  // estampado multicolor
@@ -101,6 +102,7 @@ window.CLOSET_DATA = (() => {
       wearCount: o.wearCount ?? 0,
       material: o.material || '',
       ghost: !!o.ghost,
+      tip: o.tip || '',   // talla y corte para Jose (1,64 m, atlético)
     };
   };
 
@@ -169,12 +171,30 @@ window.CLOSET_DATA = (() => {
     item('j1524', 'short',     'negro',     { name: 'Short negro con cierres', material: 'poliéster', hex: '#3B3B3A' }),
   ];
 
-  // Prendas que NO tienes. Comprar mide cuántos outfits nuevos abre cada una.
+  // Prendas que NO tienes. Comprar mide cuántos outfits buenos abre cada una,
+  // cuántas prendas olvidadas revive y si ya tienes algo parecido. Las fotos son
+  // prendas tuyas recoloreadas (g-*) o de producto libre (c*).
+  const T = {
+    pant: 'Talla 29 × 28". Slim tapered, que termine en el tobillo sin arrugarse sobre el zapato.',
+    short: 'Talla 29, entrepierna 5–7". Más largo te corta la pierna en la rodilla.',
+    top: 'Talla S, corte regular o athletic. Largo 66–69 cm; que la costura caiga en el hueso del hombro.',
+    shirt: 'Talla S slim. Que no pase de la mitad de la bragueta si la llevas por fuera.',
+  };
   const catalog = [
-    item('c28', 'camiseta', 'crudo',   { ghost: true, q: 'off white t-shirt' }),
-    item('c31', 'chaqueta', 'cafe',    { ghost: true, name: 'Chaqueta de cuero café', q: 'brown leather jacket', material: 'cuero' }),
-    item('c34', 'camisa',   'oliva',   { ghost: true, q: 'olive green shirt' }),
-    item('c41', 'tenis',    'blanco',  { ghost: true, name: 'Tenis blancos minimalistas', q: 'white minimalist leather sneakers', material: 'cuero' }),
+    item('c41', 'tenis', 'blanco', { ghost: true, name: 'Tenis blancos minimalistas', q: 'white minimalist leather sneakers', material: 'cuero',
+      tip: 'Suela delgada, no chunky: la suela gruesa se nota más que la altura que te da.' }),
+    item('g-chino-beige',  'pantalon', 'beige',  { ghost: true, name: 'Chino beige',       q: 'beige slim chino pants', material: 'chino', tip: T.pant }),
+    item('g-chino-oliva',  'pantalon', 'oliva',  { ghost: true, name: 'Chino verde oliva', q: 'olive slim chino pants', material: 'chino', tip: T.pant }),
+    item('g-chino-negro',  'pantalon', 'negro',  { ghost: true, name: 'Chino negro',       q: 'black slim chino pants', material: 'chino', tip: T.pant }),
+    item('g-short-caqui',  'short',    'caqui',  { ghost: true, name: 'Short chino caqui', q: 'khaki chino shorts 5 inch', material: 'algodón', tip: T.short }),
+    item('g-short-marino', 'short',    'marino', { ghost: true, name: 'Short chino azul marino', q: 'navy chino shorts 5 inch', material: 'algodón', tip: T.short }),
+    item('g-polo-crema',   'polo',     'crudo',  { ghost: true, name: 'Polo de punto crema', q: 'cream knit polo shirt', material: 'punto', tip: T.top }),
+    item('g-polo-marino',  'polo',     'marino', { ghost: true, name: 'Polo de punto azul marino', q: 'navy knit polo shirt', material: 'punto', tip: T.top }),
+    item('g-lino-blanca',  'camisa',   'blanco', { ghost: true, name: 'Camisa de lino blanca', q: 'white linen shirt', material: 'lino', tip: T.shirt }),
+    item('g-lino-salvia',  'camisa',   'salvia', { ghost: true, name: 'Camisa de lino verde salvia', q: 'sage green linen shirt', material: 'lino', tip: T.shirt }),
+    item('g-tee-crema',    'camiseta', 'crudo',  { ghost: true, name: 'Camiseta crema de buen algodón', q: 'off white heavyweight t-shirt regular fit', material: 'algodón', tip: T.top }),
+    item('g-tee-marino',   'camiseta', 'marino', { ghost: true, name: 'Camiseta azul marino', q: 'navy t-shirt regular fit', material: 'algodón', tip: T.top }),
+    item('g-sobre-oliva',  'chaqueta', 'oliva',  { ghost: true, name: 'Sobrecamisa oliva', q: 'olive overshirt', material: 'algodón', tip: 'Talla S. Que cierre sin tirar en el pecho y termine en la cadera.' }),
   ];
 
   // Dónde comprar: marcas con tienda física en cada mall y su buscador online

@@ -1,6 +1,6 @@
 # Créditos de las fotos del catálogo de Comprar
 
-Las prendas del armario (j*.webp) son fotos propias de Jose (2026-10-24), sin crédito externo.
+Las prendas del armario (j*.webp) y las sugerencias recoloreadas (g-*.webp) salen de fotos propias de Jose (2026-10-24), sin crédito externo.
 
 Fuentes: Unsplash (licencia Unsplash) y Pexels (licencia Pexels). Ambas permiten uso y modificación
 sin atribución obligatoria; igual se deja el crédito. Todas están en JPG, lado mayor 900 px, < 250 KB.
@@ -8,13 +8,6 @@ sin atribución obligatoria; igual se deja el crédito. Todas están en JPG, lad
 
 | Archivo | Prenda pedida | Fuente (página) | Autor | Estado |
 |---|---|---|---|---|
-| c27.jpg | Pantalón chino beige | https://www.pexels.com/photo/trousers-on-a-hanger-20094389/ | Thomas Richard (Pexels) | aproximada (recorte estrecho del pantalón beige; se ven bordes del café y el oliva vecinos) |
-| c28.jpg | Camiseta crudo/off-white | https://www.pexels.com/photo/a-brown-shirt-hanging-on-a-clothesline-11671275/ | Marina Podrez (Pexels) | aproximada (tono beige/khaki claro más que crudo; en gancho sobre rack blanco, fondo blanco) |
-| c29.jpg | Tenis crema (tipo Samba/Veja) | https://unsplash.com/photos/a-white-sneaker-with-brown-lining-against-a-light-wall-JuTTrDggKvg | Jordan Hou (Unsplash) | aproximada (tenis blanco roto con detalles oliva/café, pared clara con sombra; no es Samba ni Veja) |
-| c30.jpg | Mocasín negro | https://www.pexels.com/photo/elegant-black-leather-loafer-shoe-for-men-s-fashion-38570110/ | Taiye Salawu (Pexels) | aproximada (uno solo, vista lateral, sobre sofá beige claro; logo Clarks pequeño) |
-| c31.jpg | Chaqueta de cuero café | https://unsplash.com/photos/brown-leather-jacket-hanging-on-brown-wooden-wall-hook-3OFBcQQTN64 | Derick McKinney (Unsplash) | aproximada (colgada en perchero de madera, pared beige) |
-| c34.jpg | Camisa verde oliva | https://unsplash.com/photos/brown-button-up-long-sleeve-shirt-kU8e2jfaocU | Nelson Ndongala (Unsplash) | aproximada (sobrecamisa oliva vista por la espalda, estampado de cuadros tono sobre tono; fondo blanco) |
-| c36.jpg | Botas negras chelsea | https://www.pexels.com/photo/stylish-black-combat-boots-on-white-fabric-31129830/ | Eugenia Remark (Pexels) | aproximada (botas negras de cuero pero con cordones y suela track, no chelsea; sobre tela blanca) |
 
 ## Faltantes (no se encontró foto de producto de esa prenda sobre fondo claro en Unsplash/Pexels)
 

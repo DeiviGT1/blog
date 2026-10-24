@@ -416,7 +416,7 @@
   views.comprar = () => {
     const items = wardrobe();
     const gaps = E.gaps(items, D.catalog.filter(c => !state.wishlist.includes(c.id)), D.occasions.slice(0, 3), D.weathers.slice(0, 2), state.votes)
-      .filter(g => g.unlocks > 0).slice(0, 8);
+      .slice(0, 8);
     const total = E.countAll(items, D.occasions, D.weathers.slice(0, 2), state.votes);
     const mall = D.malls.find(m => m.id === state.prefs.mall) || D.malls[0];
     const mallBrands = mall.brands.map(id => ({ id, ...D.brands[id] })).filter(b => b.name).sort((a, b) => a.name.localeCompare(b.name));
@@ -425,6 +425,14 @@
 
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { count(e.target); io.unobserve(e.target); } }), { threshold: 0.6 });
 
+    // Por qué se sugiere, en una línea.
+    const why = g => {
+      if (g.needShoes) return 'No hay zapatos en tu armario: es lo primero.';
+      const bits = [];
+      if (g.revived.length) bits.push(`le da uso a ${g.revived.length} ${g.revived.length === 1 ? 'prenda que casi no sale' : 'prendas que casi no salen'}`);
+      if (g.twins.length) bits.push(`ojo: se parece a tu ${g.twins[0].name.toLowerCase()}`);
+      return bits.join(' · ');
+    };
     const rows = gaps.map(g => {
       const num = h('b', { class: 'num', 'data-n': g.unlocks }, reduced ? g.unlocks : '0');
       // Primero las marcas fuertes en ese tipo de prenda; el resto, al pedirlo.
@@ -435,6 +443,7 @@
       const stores = h('div', { class: 'stores' }, ...where.slice(0, LIMIT).map(link));
       const moreBtn = where.length > LIMIT && !picked.length ? h('button', { class: 'mini', onclick: () => { stores.append(...where.slice(LIMIT).map(link)); moreBtn.remove(); } }, `Ver las ${where.length}`) : null;
       const detail = h('div', { class: 'detail', hidden: true },
+        g.item.tip ? h('p', { class: 'fit-tip' }, h('b', {}, 'Tu talla: '), g.item.tip) : null,
         h('p', { class: 'sub' }, where.length
           ? (mall.id === 'any' ? 'Búscala en' : `En ${mall.name}${mall.outlet ? ' (outlet)' : ''} la tienen`)
           : (mall.id === 'any' ? 'Sin tiendas cargadas todavía.' : `Ninguna de tus marcas en ${mall.name} vende esto.`)),
@@ -445,7 +454,7 @@
       const row = h('div', { class: 'gap' },
         h('button', { class: 'gap-head', onclick: () => { detail.hidden = !detail.hidden; row.classList.toggle('open'); } },
           piece(g.item, 'settled'),
-          h('span', { class: 'gap-name' }, g.item.name),
+          h('span', { class: 'gap-name' }, g.item.name, h('small', { class: 'why' }, why(g))),
           h('span', { class: 'unlock' }, num, h('small', {}, 'outfits nuevos'))),
         detail);
       io.observe(num);

@@ -40,7 +40,7 @@ window.CLOSET_ENGINE = (() => {
     const Y = f(v[0] * 0.2126 + v[1] * 0.7152 + v[2] * 0.0722);
     const Z = f((v[0] * 0.0193 + v[1] * 0.1192 + v[2] * 0.9505) / 1.089);
     const a = 500 * (X - Y), b = 200 * (Y - Z);
-    return { C: Math.hypot(a, b), h: (Math.atan2(b, a) * 180 / Math.PI + 360) % 360 };
+    return { L: 116 * Y - 16, C: Math.hypot(a, b), h: (Math.atan2(b, a) * 180 / Math.PI + 360) % 360 };
   }
   // Fuerte = color saturado o estampado de muchos colores (camisetas de fútbol).
   const loud = p => p.loud || lab(p.color.hex).C > 38;
@@ -183,16 +183,51 @@ window.CLOSET_ENGINE = (() => {
     return keys.size;
   }
 
-  // Cuántos outfits nuevos que COMBINAN BIEN abre cada prenda del catálogo
-  // (solo los de puntaje alto, sin contar variantes de capa por separado).
+  // ¿Ya tienes algo casi igual? Mismo tipo y color que se ve igual (neutros por
+  // claridad; colores por tono). Comprar algo repetido no suma.
+  function similar(a, b) {
+    if (a.type !== b.type) return false;
+    const A = lab(a.color.hex), B = lab(b.color.hex);
+    if (A.C < 12 && B.C < 12) return Math.abs(A.L - B.L) < 12;
+    if (A.C < 12 || B.C < 12) return false;
+    return Math.min(Math.abs(A.h - B.h), 360 - Math.abs(A.h - B.h)) < 25 && Math.abs(A.L - B.L) < 18;
+  }
+
+  // Qué conviene comprar. Por cada candidata:
+  //  - outfits nuevos (sin contar variantes de capa ni zapato),
+  //  - prendas tuyas que hoy casi no salen y con esta vuelven a usarse,
+  //  - castigo si ya tienes algo parecido.
   function gaps(items, catalog, occasions, weathers, votes) {
+    const good = () => true;   // las reglas de estilo y color ya filtran lo que no combina
+    const core = (o, cat) => keyOf(o.parts.filter(p => p.cat !== 'shoes' && (p.cat !== 'layer' || cat === 'layer')));
+    const noShoes = !items.some(i => i.cat === 'shoes');
+    const baseKeys = new Set(), uses = {};
+    for (const occasion of occasions) for (const weather of weathers)
+      for (const o of build(items, { occasion, weather, votes, seed: 1, limit: 5000 })) {
+        if (!good(o)) continue;
+        baseKeys.add(core(o)); baseKeys.add(core(o, 'layer'));
+        for (const p of o.parts) uses[p.id] = (uses[p.id] || 0) + 1;
+      }
+    // "Olvidadas": prendas que salen en muy pocos outfits comparadas con el resto.
+    const counts = items.filter(i => i.style !== 'sport').map(i => uses[i.id] || 0).sort((a, b) => a - b);
+    const cut = counts[Math.floor(counts.length * 0.25)] || 0;
+    const forgotten = new Set(items.filter(i => i.style !== 'sport' && (uses[i.id] || 0) <= cut).map(i => i.id));
     return catalog.map(g => {
-      const keys = new Set();
+      const keys = new Set(), revived = new Set();
       for (const occasion of occasions) for (const weather of weathers)
-        build([...items, g], { occasion, weather, withItem: g.id, votes, seed: 1, limit: 5000 })
-          .forEach(o => { if (o.score >= 2.5) keys.add(keyOf(o.parts.filter(p => p.cat !== 'layer'))); });
-      return { item: g, unlocks: keys.size };
-    }).sort((a, b) => b.unlocks - a.unlocks);
+        for (const o of build([...items, g], { occasion, weather, withItem: g.id, votes, seed: 1, limit: 5000 })) {
+          if (!good(o)) continue;
+          const k = core(o, g.cat);
+          if (baseKeys.has(k) && !(noShoes && g.cat === 'shoes')) continue;
+          keys.add(k);
+          for (const p of o.parts) if (forgotten.has(p.id)) revived.add(p.id);
+        }
+      const twins = items.filter(i => similar(i, g));
+      const unlocks = keys.size;
+      // Una capa duplica outfits de días frescos (variantes), y en Florida pesa menos.
+      const score = unlocks * (g.cat === 'layer' ? 0.2 : 1) + revived.size - 25 * twins.length + (noShoes && g.cat === 'shoes' ? 1000 : 0);
+      return { item: g, unlocks, revived: items.filter(i => revived.has(i.id)), twins, needShoes: noShoes && g.cat === 'shoes', score };
+    }).filter(r => r.unlocks > 0 && r.twins.length < 2).sort((a, b) => b.score - a.score);
   }
 
   return { build, gaps, countAll, isValid, keyOf, climate };

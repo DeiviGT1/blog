@@ -356,3 +356,6 @@ body.gated .tabs, body.gated .side, body.gated .me { display: none; }
 .invite-form { display: flex; gap: 8px; margin-top: 10px; }
 .invite-form input { flex: 1; }
 .v-perfil .ghost-btn { margin-top: 24px; }
+
+.gap-name .why { display: block; margin-top: 2px; font-size: .78em; font-weight: 400; color: var(--ink-2); line-height: 1.3; }
+.fit-tip { margin: 0 0 10px; font-size: .9em; line-height: 1.4; }
