@@ -2,7 +2,7 @@
   const P = window.CUSTODIA;
   const ART = window.ARTISTAS || [];
   const N = ART.length;
-  const CLAVE = "custodia-v2";
+  const CLAVE = "custodia-v3";
   const $ = function (id) { return document.getElementById(id); };
 
   // ---------- Estado ----------
