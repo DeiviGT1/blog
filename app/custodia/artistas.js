@@ -40,7 +40,6 @@ window.ARTISTAS = [
   {"n": "Estopa", "img": "images/estopa.jpg", "yt": "NOjgze5Nmzc"},
   {"n": "Melendi", "img": "images/melendi.jpg", "yt": "7XPmRUp_Yf4"},
   {"n": "Ed Maverick", "img": "images/ed-maverick.jpg", "yt": "PaoCQHwTPg4"},
-  {"n": "Entre Nos", "img": null, "yt": null},
   {"n": "Manu Chao", "img": "images/manu-chao.jpg", "yt": "rs6Y4kZ8qtw"},
   {"n": "Rosalía", "img": "images/rosalia.jpg", "yt": "GkTWxDB21cA"},
   {"n": "Daddy Yankee", "img": "images/daddy-yankee.jpg", "yt": "XO1h5G6xytU"},
