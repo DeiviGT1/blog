@@ -27,30 +27,33 @@
     <button class="link mono chico" id="seguir" type="button" hidden>Continuar donde iban</button>
   </section>
 
-  <!-- Audiencia -->
-  <section id="audiencia" class="pantalla" hidden>
-    <header class="marcador">
-      <div class="lado a"><span class="mono" id="m-a-n"></span><b id="m-a">0</b></div>
-      <div class="centro">
-        <span class="mono chico" id="m-pos"></span>
-        <div class="barra"><i id="m-barra"></i></div>
-        <span class="mono chico" id="m-c"></span>
+  <!-- Tablero -->
+  <section id="tablero" class="pantalla" hidden>
+    <header class="cabecera">
+      <div class="marcador">
+        <div class="lado a"><span class="mono" id="m-a-n"></span><b id="m-a">0</b></div>
+        <div class="centro">
+          <span class="mono chico" id="m-pos"></span>
+          <div class="barra"><i id="m-barra"></i></div>
+          <span class="mono chico" id="m-c"></span>
+        </div>
+        <div class="lado b"><b id="m-b">0</b><span class="mono" id="m-b-n"></span></div>
       </div>
-      <div class="lado b"><b id="m-b">0</b><span class="mono" id="m-b-n"></span></div>
+      <div class="filtros" id="filtros">
+        <button class="chip on" data-f="todos" type="button">Todos</button>
+        <button class="chip" data-f="-" type="button">Sin decidir</button>
+        <button class="chip a" data-f="a" type="button" id="f-a"></button>
+        <button class="chip b" data-f="b" type="button" id="f-b"></button>
+        <button class="chip c" data-f="c" type="button">Compartida</button>
+      </div>
     </header>
 
-    <div class="mesa" id="mesa"></div>
+    <div class="rejilla" id="rejilla"></div>
 
-    <div class="mando">
-      <button class="pieza a" id="d-a" type="button" aria-label="A la izquierda"><span>←</span><small id="d-a-n"></small></button>
-      <button class="pieza c" id="d-c" type="button"><span>↑</span><small>Compartida</small></button>
-      <button class="pieza b" id="d-b" type="button" aria-label="A la derecha"><span>→</span><small id="d-b-n"></small></button>
-    </div>
-    <div class="extras">
+    <div class="pie-fijo">
       <button class="mini" id="x-undo" type="button" title="Deshacer">↶</button>
       <button class="mini" id="x-moneda" type="button">Moneda</button>
-      <button class="mini" id="x-luego" type="button">Luego</button>
-      <button class="mini" id="x-fallo" type="button">Fallo</button>
+      <button class="btn chico" id="x-fallo" type="button">Fallo</button>
     </div>
     <div class="moneda" id="moneda" hidden><div class="disco" id="disco"><span class="cara a" id="cara-a"></span><span class="cara b" id="cara-b"></span></div></div>
   </section>
@@ -85,7 +88,7 @@
     </div>
 
     <div class="cierre">
-      <button class="link mono chico" id="volver" type="button">Volver a la audiencia</button>
+      <button class="link mono chico" id="volver" type="button">Volver al tablero</button>
       <button class="link mono chico" id="enlace" type="button">Copiar enlace del fallo</button>
       <button class="link mono chico" id="reiniciar" type="button">Reiniciar caso</button>
     </div>
