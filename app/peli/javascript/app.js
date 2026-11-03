@@ -50,10 +50,8 @@
     const confirmar = document.getElementById("confirmar");
     const aviso = document.getElementById("aviso");
 
-    // La correcta y los señuelos, en orden aleatorio
-    const lista = (C.senuelos || []).map(function (p) { return { titulo: p.titulo, poster: p.poster, real: false }; });
-    if (C.pelicula) lista.splice(Math.floor(Math.random() * (lista.length + 1)), 0, { titulo: C.pelicula.titulo, poster: C.pelicula.poster, real: true });
-
+    let elegida = null;
+    const lista = (C.peliculas || []).slice();
     lista.forEach(function (item) {
       const b = document.createElement("button");
       b.type = "button";
@@ -67,22 +65,19 @@
       txt.textContent = item.titulo;
       b.appendChild(img);
       b.appendChild(txt);
-      if (item.real) {
-        b.addEventListener("click", function () {
-          document.getElementById("c-titulo").textContent = item.titulo;
-          const cp = document.getElementById("c-poster");
-          cp.src = item.poster || "";
-          cp.hidden = !item.poster;
-          document.getElementById("c-fecha").textContent = C.fecha || "";
-          document.getElementById("c-hora").textContent = C.hora || "";
-          document.getElementById("c-lugar").textContent = C.lugar || "";
-          document.querySelectorAll(".opcion.huyendo").forEach(function (el) { el.remove(); });
-          elegir.hidden = true;
-          cita.hidden = false;
-        });
-      } else {
-        escurridizo(b);
-      }
+      b.addEventListener("click", function () {
+        elegida = item;
+        document.getElementById("c-titulo").textContent = item.titulo;
+        const cp = document.getElementById("c-poster");
+        cp.src = item.poster || "";
+        cp.hidden = !item.poster;
+        document.getElementById("c-fecha").textContent = C.fecha || "";
+        document.getElementById("c-hora").textContent = C.hora || "";
+        document.getElementById("c-lugar").textContent = C.lugar || "";
+        document.querySelectorAll(".opcion.huyendo").forEach(function (el) { el.remove(); });
+        elegir.hidden = true;
+        cita.hidden = false;
+      });
       opciones.appendChild(b);
     });
 
@@ -97,7 +92,7 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          pelicula: C.pelicula.titulo,
+          pelicula: elegida ? elegida.titulo : "",
           fecha: C.fecha, hora: C.hora,
           web: "",  // honeypot: siempre vacío
         }),

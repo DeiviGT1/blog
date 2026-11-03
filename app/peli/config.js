@@ -3,12 +3,12 @@ window.SALIMOS = {
   para: "",                        // su nombre; vacío = no se muestra
   de: "Jose",                      // a quién le "llega" la confirmación (lo que ella ve)
 
-  // La película correcta (la única que se deja escoger)
-  pelicula: { titulo: "Rápidos y Furiosos 3", poster: "images/rapidos3.jpg" },
-  // Las que huyen cuando intenta escogerlas
-  senuelos: [
-    { titulo: "Shrek 2",  poster: "images/shrek2.jpg" },
-    { titulo: "Titanic",  poster: "images/titanic.png" },
+  // Las películas para escoger (todas se dejan escoger)
+  peliculas: [
+    { titulo: "Rápidos y Furiosos 6", poster: "images/rapidos6.jpg" },
+    { titulo: "Cars",                 poster: "images/cars.jpg" },
+    { titulo: "El Principito",        poster: "images/principito.jpg" },
+    { titulo: "Attack on Titan",      poster: "images/titan.jpg" },
   ],
 
   // Datos de la cita — MOCKUP, cámbialos
