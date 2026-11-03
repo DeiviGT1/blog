@@ -112,8 +112,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 .rejilla {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
   padding: 12px 16px;
 }
 .tile {
@@ -141,8 +141,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .tile .nom {
   position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 18px 7px 6px;
-  font-size: 0.6rem; line-height: 1.15; letter-spacing: 0.02em;
+  padding: 22px 10px 9px;
+  font-size: 0.72rem; line-height: 1.15; letter-spacing: 0.02em;
   color: #fff;
   background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
   text-shadow: 0 1px 2px rgba(0,0,0,.6);
@@ -150,7 +150,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .tile .tag {
   position: absolute; top: 6px; right: 6px;
-  min-width: 22px; height: 22px; padding: 0 6px;
+  min-width: 26px; height: 26px; padding: 0 7px;
   border-radius: 999px;
   display: grid; place-items: center;
   font-family: var(--mono); font-weight: 500; font-size: 0.62rem; letter-spacing: 0.06em;
@@ -262,12 +262,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 
 @media (min-width: 600px) {
-  .rejilla { grid-template-columns: repeat(5, 1fr); gap: 10px; }
-  .tile .nom { font-size: 0.68rem; }
+  .rejilla { grid-template-columns: repeat(4, 1fr); gap: 12px; }
 }
 @media (min-width: 900px) {
   #tablero { max-width: 1000px; }
-  .rejilla { grid-template-columns: repeat(8, 1fr); }
+  .rejilla { grid-template-columns: repeat(6, 1fr); }
   #sentencia { max-width: 1000px; }
   .grupos { flex-direction: row; align-items: flex-start; }
   .grupo { flex: 1; }
