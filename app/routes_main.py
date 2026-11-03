@@ -24,6 +24,7 @@ def register_routes(app):
     from .routes.brisa_sites_routes import brisa_sites_bp
     from .routes.meper_routes import meper_bp
     from .routes.peli_routes import peli_bp
+    from .routes.custodia_routes import custodia_bp
     from .routes.trabajo_a_routes import trabajo_a_bp
     from .routes.closet_routes import closet_bp
     from .routes.mario_routes import mario_bp
@@ -40,6 +41,7 @@ def register_routes(app):
     app.register_blueprint(brisa_sites_bp)
     app.register_blueprint(meper_bp)
     app.register_blueprint(peli_bp)
+    app.register_blueprint(custodia_bp)
     app.register_blueprint(trabajo_a_bp)
     app.register_blueprint(closet_bp)
     app.register_blueprint(mario_bp)
