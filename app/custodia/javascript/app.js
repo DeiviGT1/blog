@@ -29,11 +29,66 @@
   }
   function cuenta(k) { return S.asig.filter(function (x) { return x === k; }).length; }
 
+  // ---------- Servidor (reparto compartido entre celulares) ----------
+  const API = "./api/estado";
+  const idx = {};
+  ART.forEach(function (a, i) { idx[a.n] = i; });
+  let enLinea = false, cola = Promise.resolve();
+
+  function subir(i, k) {
+    if (!P.caso) return;
+    cola = cola.then(function () {
+      return fetch(API, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ caso: P.caso, artista: ART[i].n, lado: k }),
+      }).then(function (r) { if (!r.ok) throw 0; enLinea = true; })
+        .catch(function () { if (enLinea) aviso("Sin conexión: el cambio no se guardó"); enLinea = false; });
+    });
+  }
+  function subirReinicio() {
+    if (!P.caso) return;
+    cola = cola.then(function () {
+      return fetch(API, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ caso: P.caso, reiniciar: true }),
+      }).catch(function () {});
+    });
+  }
+  // Trae el reparto del servidor y aplica lo que cambió; devuelve true si había algo.
+  function bajar() {
+    if (!P.caso) return Promise.resolve(false);
+    return cola.then(function () {
+      return fetch(API + "?caso=" + encodeURIComponent(P.caso), { cache: "no-store" });
+    }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (remoto) {
+        enLinea = true;
+        let cambio = false;
+        ART.forEach(function (a, i) {
+          const k = remoto[a.n] || "-";
+          if (S.asig[i] !== k) { S.asig[i] = k; cambio = true; }
+        });
+        if (cambio) guardar();
+        return cambio;
+      })
+      .catch(function () { enLinea = false; return false; });
+  }
+  let reloj = null;
+  function vigilar(on) {
+    clearInterval(reloj); reloj = null;
+    if (on) reloj = setInterval(function () {
+      if (document.hidden) return;
+      bajar().then(function (c) { if (c && !$("tablero").hidden) pintar(); else if (c && !$("sentencia").hidden) sentencia(); });
+    }, 4000);
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && reloj) bajar().then(function (c) { if (c && !$("tablero").hidden) pintar(); else if (c && !$("sentencia").hidden) sentencia(); });
+  });
+
   // Fallo compartido por enlace: ?f=aab-c...
   const f = new URLSearchParams(location.search).get("f");
   if (f && /^[-abc]+$/.test(f)) {
     S = nuevo();
-    f.split("").slice(0, N).forEach(function (x, i) { S.asig[i] = x; });
+    f.split("").slice(0, N).forEach(function (x, i) { S.asig[i] = x; if (x !== "-") subir(i, x); });
     guardar();
     history.replaceState(null, "", location.pathname);
   } else {
@@ -65,6 +120,15 @@
       });
   }
 
+  // Doble toque para borrar: el primero avisa, el segundo (en 2,5 s) confirma.
+  let seguroEn = null;
+  function confirmarReinicio(b, texto) {
+    if (seguroEn === b) { seguroEn = null; b.textContent = texto; return true; }
+    seguroEn = b; b.textContent = "¿Seguro? Toque otra vez";
+    setTimeout(function () { if (seguroEn === b) { seguroEn = null; b.textContent = texto; } }, 2500);
+    return false;
+  }
+
   // ---------- Portada ----------
   $("p-a").textContent = P.a.nombre;
   $("p-b").textContent = P.b.nombre;
@@ -73,11 +137,20 @@
     $("m-" + k + "-n").textContent = P[k].corto;
     $("g-" + k + "-n").textContent = P[k].nombre;
   });
-  if (S && S.asig.some(function (x) { return x !== "-"; })) {
-    $("seguir").hidden = false;
-    $("abrir").textContent = "Caso nuevo";
+  function portada() {
+    const hay = S && S.asig.some(function (x) { return x !== "-"; });
+    $("seguir").hidden = !hay;
+    $("abrir").textContent = hay ? "Caso nuevo" : "Abrir caso";
   }
+  portada();
+  if (!S) { S = nuevo(); }
+  bajar().then(function () { portada(); });
   $("abrir").addEventListener("click", function () {
+    if (S.asig.some(function (x) { return x !== "-"; })) {
+      // ya hay reparto (aquí o en el otro celular): no lo pise sin querer
+      if (!confirmarReinicio($("abrir"), "Abrir caso")) return;
+      subirReinicio();
+    }
     S = nuevo(); guardar(); tablero();
   });
   $("seguir").addEventListener("click", function () {
@@ -129,7 +202,7 @@
     if (!vis.length) { rejilla.innerHTML = '<p class="vacio mono chico">Nadie por aquí</p>'; return; }
     vis.forEach(function (i) { rejilla.appendChild(tile(i)); });
   }
-  function tablero() { mostrar("tablero"); pintar(); }
+  function tablero() { mostrar("tablero"); pintar(); vigilar(true); }
 
   function asignar(i, k) {
     const prev = S.asig[i];
@@ -137,6 +210,7 @@
     S.asig[i] = k;
     S.hist.push({ i: i, prev: prev });
     guardar();
+    subir(i, k);
     vibra(k === "-" ? 6 : 14);
     marcador();
     if (k === "a" || k === "b") {
@@ -177,7 +251,7 @@
     const h = S.hist.pop();
     if (!h) return;
     S.asig[h.i] = h.prev;
-    guardar(); vibra(10);
+    guardar(); subir(h.i, h.prev); vibra(10);
     if ($("tablero").hidden) tablero(); else pintar();
   });
 
@@ -229,6 +303,7 @@
 
   function sentencia() {
     mostrar("sentencia");
+    vigilar(true);
     $("s-a").textContent = cuenta("a");
     $("s-b").textContent = cuenta("b");
     const pend = cuenta("-");
@@ -276,15 +351,10 @@
   $("enlace").addEventListener("click", function () {
     copiar(location.origin + location.pathname + "?f=" + S.asig.join(""), "Enlace copiado");
   });
-  let seguro = false;
   $("reiniciar").addEventListener("click", function () {
-    const b = $("reiniciar");
-    if (!seguro) {
-      seguro = true; b.textContent = "¿Seguro? Toque otra vez";
-      setTimeout(function () { seguro = false; b.textContent = "Reiniciar caso"; }, 2500);
-      return;
-    }
-    S = nuevo(); guardar(); seguro = false; b.textContent = "Reiniciar caso";
+    if (!confirmarReinicio($("reiniciar"), "Reiniciar caso")) return;
+    subirReinicio();
+    S = nuevo(); guardar();
     tablero();
   });
 })();
